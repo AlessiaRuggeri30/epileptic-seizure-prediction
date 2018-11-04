@@ -1,0 +1,18 @@
+DATA DESCRIPTION
+
+Dataset keys:
+['ieeg', 'ieeg_mn', 'szr_bool', 'time_of_day_sec', 'srate_hz', 'day_since_implant']
+
+Number of electrodes: 90
+Number of timestamps: 1800000
+
+Max voltage:	9796.7421875
+Min voltage:	-9624.2294921875
+Voltage mean:	0.000924888881854713
+Voltage rms:	4671.72900390625
+Number of total timestamps with ongoing seizure:	15000
+Number of total timestamps without ongoing seizure:	1785000
+
+Seizures:
+{'seizure1': {'start_idx': 1684382, 'end_idx': 1699382}}
+
