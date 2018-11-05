@@ -18,8 +18,11 @@ The most interesting for me are:
     - szr_bool:             labels that indicates if in that timestamp there is an ongoing seizure or not.
 '''
 
-sns.countplot(data['szr_bool'])
-plt.show()
+# sns.countplot(data['szr_bool'])
+# plt.show()
+
+
+''' Plot of first electrodes in first timestamps'''
 
 ieeg = pd.DataFrame(data['ieeg'])
 electrodes = 10
@@ -27,8 +30,20 @@ timestamps = 10000
 ieeg_subset = ieeg.loc[0:(electrodes-1), 0:(timestamps-1)]
 ieeg_subset = ieeg_subset.T
 
-fig = sns.lineplot(data=ieeg_subset, hue='szr_bool', dashes=False, legend=False)
+fig1 = sns.lineplot(data=ieeg_subset, hue='szr_bool', dashes=False, legend=False)
 plt.xlabel("Time")
 plt.ylabel("Signal values")
-plt.title("EEG of first 60 electrodes for first 1000 timestamps")
+plt.title(f"EEG of first {electrodes} electrodes for first {timestamps} timestamps")
+plt.show()
+
+
+''' Plot of first electrodes during seizure timestamps'''
+
+ieeg_subset = ieeg.loc[0:(electrodes-1), 1684381:1699381]
+ieeg_subset = ieeg_subset.T
+
+fig2 = sns.lineplot(data=ieeg_subset, hue='szr_bool', dashes=False, legend=False)
+plt.xlabel("Time")
+plt.ylabel("Signal values")
+plt.title(f"EEG of first {electrodes} electrodes during seizure timestamps")
 plt.show()

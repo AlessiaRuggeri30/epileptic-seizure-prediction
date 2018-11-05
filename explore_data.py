@@ -43,6 +43,7 @@ print(np.where(data['szr_bool'][s['seizure1']['start_idx']:s['seizure1']['end_id
 
 print(rms(data['ieeg'][0:15000]))
 print(rms(data['ieeg'][:, s['seizure1']['start_idx']:s['seizure1']['end_idx']]))
+print(rms(data['ieeg'][:, 1692500:s['seizure1']['end_idx']]))
 
 
 
