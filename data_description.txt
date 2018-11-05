@@ -14,5 +14,5 @@ Number of total timestamps with ongoing seizure:	15000
 Number of total timestamps without ongoing seizure:	1785000
 
 Seizures:
-{'seizure1': {'start_idx': 1684382, 'end_idx': 1699382}}
+{'seizure1': {'start_idx': 1684381, 'end_idx': 1699381}}
 

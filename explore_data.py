@@ -32,9 +32,9 @@ s = {}
 k = 1
 for i in range(1, data['time_of_day_sec'].shape[0]):
     if data['szr_bool'][i] == True and data['szr_bool'][i-1] == False:
-        s[f"seizure{k}"] = {'start_idx': i}
+        s[f"seizure{k}"] = {'start_idx': i-1}
     if data['szr_bool'][i] == False and data['szr_bool'][i-1] == True:
-        s[f"seizure{k}"]['end_idx'] = i
+        s[f"seizure{k}"]['end_idx'] = i-1
         k += 1
 print(s)
 
