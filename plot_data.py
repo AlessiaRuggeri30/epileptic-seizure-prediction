@@ -5,45 +5,55 @@ import seaborn as sns
 sns.set()
 sns.set_style('whitegrid')
 
+path = "dataset/TWH056_Day-504_Clip-0-1.npz"
+
 ''' Load dataset '''
-with np.load('dataset/TWH056_Day-504_Clip-0-1.npz') as data:
+with np.load(path) as data:
     data = dict(data)
 
-'''
-Dataset keys:
-    ['ieeg', 'ieeg_mn', 'szr_bool', 'time_of_day_sec', 'srate_hz', 'day_since_implant']
-The most interesting for me are:
-    - ieeg:                 matrix with rows representing electrodes and columns representing timestamps;
-    - time_of_day_sec:      timestamps in which the electrodes signal are measured;
-    - szr_bool:             labels that indicates if in that timestamp there is an ongoing seizure or not.
-'''
-
+''' Histogram of number of True/False labels '''
 # sns.countplot(data['szr_bool'])
-# plt.show()
+# plt.show()
+
+''' Convert np array in dataframe and transpose '''
+ieeg = pd.DataFrame(data['ieeg'])
+ieeg = ieeg.T
+
+electrodes = 15
+timestamps = 10000
+seizure_start = 1670000     # 1684381
+seizure_end = 1800000       # 1699381
+
+''' Correlation heatmaps of initial timestamps'''
+# corr1 = ieeg[0:10000].corr()
+# sns.heatmap(corr1, cmap="RdBu_r", center=0)
+# plt.title("First 100")
+# plt.show()
+
+''' Correlation heatmaps of seizure timestamps'''
+# corr2 = ieeg[seizure_start:seizure_start+10000].corr()
+# sns.heatmap(corr2, cmap="RdBu_r", center=0)
+# plt.title("First 100 of seizure")
+# plt.show()
 
 
 ''' Plot of first electrodes in first timestamps'''
-
-ieeg = pd.DataFrame(data['ieeg'])
-electrodes = 10
-timestamps = 10000
-ieeg_subset = ieeg.loc[0:(electrodes-1), 0:(timestamps-1)]
-ieeg_subset = ieeg_subset.T
-
-fig1 = sns.lineplot(data=ieeg_subset, hue='szr_bool', dashes=False, legend=False)
-plt.xlabel("Time")
-plt.ylabel("Signal values")
-plt.title(f"EEG of first {electrodes} electrodes for first {timestamps} timestamps")
-plt.show()
+# ieeg_subset = ieeg.loc[0:(timestamps-1), 0:(electrodes-1)]
+#
+# fig1 = sns.lineplot(data=ieeg_subset, hue='szr_bool', dashes=False, legend=False)
+# plt.xlabel("Time")
+# plt.ylabel("Signal values")
+# plt.title(f"EEG of first {electrodes} electrodes for first {timestamps} timestamps")
+# plt.show()
 
 
 ''' Plot of first electrodes during seizure timestamps'''
-
-ieeg_subset = ieeg.loc[0:(electrodes-1), 1684381:1699381]
-ieeg_subset = ieeg_subset.T
-
-fig2 = sns.lineplot(data=ieeg_subset, hue='szr_bool', dashes=False, legend=False)
-plt.xlabel("Time")
-plt.ylabel("Signal values")
-plt.title(f"EEG of first {electrodes} electrodes during seizure timestamps")
-plt.show()
+# ieeg_subset = ieeg.loc[seizure_start:seizure_end, 0:(electrodes-1)]
+#
+# fig2 = sns.lineplot(data=ieeg_subset, hue='szr_bool', dashes=False, legend=False)
+# plt.xlabel("Time")
+# plt.ylabel("Signal values")
+# plt.title(f"EEG of first {electrodes} electrodes during seizure timestamps")
+# plt.axvline(x=1684381)
+# plt.axvline(x=1699381)
+# plt.show()
