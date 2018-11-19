@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set()
-sns.set_style('whitegrid')
+# import seaborn as sns
+# sns.set()
+# sns.set_style('whitegrid')
 
 path = "dataset/TWH056_Day-504_Clip-0-1.npz"
 
@@ -25,16 +25,16 @@ seizure_start = 1670000     # 1684381
 seizure_end = 1800000       # 1699381
 
 ''' Correlation heatmaps of initial timestamps'''
-# corr1 = ieeg[0:10000].corr()
-# sns.heatmap(corr1, cmap="RdBu_r", center=0)
-# plt.title("First 100")
-# plt.show()
+corr1 = ieeg[0:100].corr()
+sns.heatmap(corr1, cmap="RdBu_r", center=0)
+plt.title("First 100")
+plt.show()
 
 ''' Correlation heatmaps of seizure timestamps'''
-# corr2 = ieeg[seizure_start:seizure_start+10000].corr()
-# sns.heatmap(corr2, cmap="RdBu_r", center=0)
-# plt.title("First 100 of seizure")
-# plt.show()
+corr2 = ieeg[seizure_start:seizure_start+100].corr()
+sns.heatmap(corr2, cmap="RdBu_r", center=0)
+plt.title("First 100 of seizure")
+plt.show()
 
 
 ''' Plot of first electrodes in first timestamps'''

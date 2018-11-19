@@ -3,9 +3,9 @@ import pandas as pd
 import pyedflib
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
-import seaborn as sns
-sns.set()
-sns.set_style('whitegrid')
+# import seaborn as sns
+# sns.set()
+# sns.set_style('whitegrid')
 
 
 path = "dataset/CHB-MIT Scalp EEG Database/chb18/chb18_29.edf"
