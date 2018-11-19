@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 # sns.set()
 # sns.set_style('whitegrid')
 
-path = "dataset/TWH056_Day-504_Clip-0-1.npz"
+path = "~/.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"
+# path = "dataset/TWH056_Day-504_Clip-0-1.npz"
 
 ''' Load dataset '''
 with np.load(path) as data:

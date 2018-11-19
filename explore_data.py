@@ -15,8 +15,8 @@ import matplotlib.pyplot as plt
 # sns.set()
 # sns.set_style('whitegrid')
 
-
-path = "dataset/TWH056_Day-504_Clip-0-1.npz"
+path = "~/.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"
+# path = "dataset/TWH056_Day-504_Clip-0-1.npz"
 
 ''' Load dataset '''
 with np.load(path) as data:
@@ -35,7 +35,7 @@ for i in range(1, data['time_of_day_sec'].shape[0]):
     if data['szr_bool'][i] == False and data['szr_bool'][i-1] == True:
         s[f"seizure{k}"]['end_idx'] = i-1
         k += 1
-# print(s)
+print(s)
 
 ''' Check if it did miss some seizure in the middle '''
 # print(np.where(data['szr_bool'][s['seizure1']['start_idx']:s['seizure1']['end_idx']] == False))
