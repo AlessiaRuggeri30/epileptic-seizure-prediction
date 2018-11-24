@@ -8,7 +8,7 @@ from matplotlib.collections import LineCollection
 # sns.set_style('whitegrid')
 
 
-path = "dataset/CHB-MIT Scalp EEG Database/chb18/chb18_29.edf"
+path = "../dataset/CHB-MIT Scalp EEG Database/chb18/chb18_29.edf"
 
 ''' Load dataset '''
 data = pyedflib.EdfReader(path)

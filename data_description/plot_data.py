@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 # sns.set()
 # sns.set_style('whitegrid')
 
-path = "../.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"
-# path = "dataset/TWH056_Day-504_Clip-0-1.npz"
-
 ''' Load dataset '''
+# path = "../.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"     # server
+path = "../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
+
 with np.load(path) as data:
     data = dict(data)
 
@@ -26,17 +26,17 @@ timestamps = 10000
 seizure_start = 1670000     # 1684381
 seizure_end = 1800000       # 1699381
 
-# ''' Correlation heatmaps of initial timestamps'''
-# corr1 = ieeg[0:100].corr()
-# plt.imshow(corr1, cmap="RdBu_r")
-# plt.title("First 100")
-# plt.show()
+''' Correlation heatmaps of initial timestamps'''
+corr1 = ieeg[0:100].corr()
+plt.imshow(corr1, cmap="RdBu_r")
+plt.title("First 100")
+plt.show()
 
-# ''' Correlation heatmaps of seizure timestamps'''
-# corr2 = ieeg[seizure_start:seizure_start+100].corr()
-# plt.imshow(corr2, cmap="RdBu_r")
-# plt.title("First 100 of seizure")
-# plt.show()
+''' Correlation heatmaps of seizure timestamps'''
+corr2 = ieeg[seizure_start:seizure_start+100].corr()
+plt.imshow(corr2, cmap="RdBu_r")
+plt.title("First 100 of seizure")
+plt.show()
 
 
 ''' Plot of first electrodes in first timestamps'''

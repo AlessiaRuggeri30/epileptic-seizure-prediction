@@ -15,10 +15,10 @@ import matplotlib.pyplot as plt
 # sns.set()
 # sns.set_style('whitegrid')
 
-path = "../.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"
-# path = "dataset/TWH056_Day-504_Clip-0-1.npz"
-
 ''' Load dataset '''
+# path = "../.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"     # server
+path = "../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
+
 with np.load(path) as data:
     data = dict(data)
 
