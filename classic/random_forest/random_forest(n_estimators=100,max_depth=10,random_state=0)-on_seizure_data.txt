@@ -1,0 +1,16 @@
+EXPERIMENT: RANDOM FOREST
+
+Parameters
+	n_estimators:	100
+	max_depth:		10
+	random_state:	0
+	dataset:		on_seizure_data
+
+Data shape
+	X shape:	(130000, 90)
+	y shape:	(130000,)
+
+Results
+	Loss:		0.0048
+	Accuracy:	0.9952
+

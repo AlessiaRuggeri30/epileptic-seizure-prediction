@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.ensemble import RandomForestClassifier
+from sklearn import svm
 from sklearn.metrics import brier_score_loss, accuracy_score
 
 ''' Load dataset '''
@@ -17,16 +17,18 @@ X = data['ieeg'].T[1670000:]
 y = data['szr_bool'][1670000:]
 print(X.shape, y.shape)
 
-print("Creating the random forest classifier...")
-n_estimators = 100
-max_depth = 10
-random_state = 0
+print("Creating the svm classifier...")
+gamma = 'scale'
+weighted = False
 on_seizure = True
-clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                             random_state=random_state)
+clf = svm.SVC(gamma=gamma)
 
-print("Fitting training data to the random forest classifier...")
-clf.fit(X, y)
+print("Fitting training data to the svm classifier...")
+if weighted is False:
+    clf.fit(X, y)
+else:
+    weighted = class_weight = {1: 10}
+    clf.fit(X, y, class_weight=class_weight)
 
 print("Predicting values on test data...")
 predictions = clf.predict(X)
@@ -38,7 +40,7 @@ accuracy = round(accuracy_score(y, predictions), 4)
 print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
 
-plt.plot(errors[14300:30000])
+# print(errors[14300:30000])
 
 
 ''' Write results into file '''
@@ -47,16 +49,15 @@ if on_seizure:
 else:
     dataset = "on_whole_data"
 
-file_name = f"random_forest(n_estimators={n_estimators},max_depth={max_depth}," \
-    f"random_state={random_state})-{dataset}.txt"
+file_name = f"svm(gamma={gamma},weighted={weighted}," \
+    f"-{dataset}.txt"
 with open(file_name, 'w') as file:
-    file.write("EXPERIMENT: RANDOM FOREST\n\n")
+    file.write("EXPERIMENT: SVM\n\n")
 
     file.write("Parameters\n")
-    file.write(f"\tn_estimators:\t{n_estimators}\n")
-    file.write(f"\tmax_depth:\t\t{max_depth}\n")
-    file.write(f"\trandom_state:\t{random_state}\n")
-    file.write(f"\tdataset:\t\t{dataset}\n\n")
+    file.write(f"\tgamma:\t\t{gamma}\n")
+    file.write(f"\tweighted:\t{weighted}\n")
+    file.write(f"\tdataset:\t{dataset}\n\n")
 
     file.write("Data shape\n")
     file.write(f"\tX shape:\t{X.shape}\n")
@@ -65,4 +66,3 @@ with open(file_name, 'w') as file:
     file.write("Results\n")
     file.write(f"\tLoss:\t\t{loss}\n")
     file.write(f"\tAccuracy:\t{accuracy}\n\n")
-
