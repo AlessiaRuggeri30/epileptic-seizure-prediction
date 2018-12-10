@@ -1,0 +1,5 @@
+DATA DESCRIPTION
+
+Seizures:
+{'seizure1': {'start_idx': 1684381, 'end_idx': 1699381, 'duration': 15000, 'clip_location': 1}, 'seizure2': {'start_idx': 188013, 'end_idx': 201013, 'duration': 13000, 'clip_location': 2}, 'seizure3': {'start_idx': 96699, 'end_idx': 110699, 'duration': 14000, 'clip_location': 3}}
+
