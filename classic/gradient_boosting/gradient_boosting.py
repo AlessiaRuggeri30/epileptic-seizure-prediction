@@ -74,8 +74,10 @@ with open(file_name, 'w') as file:
     file.write(f"\tdataset:\t\t{dataset}\n\n")
 
     file.write("Data shape\n")
-    file.write(f"\tX shape:\t{X.shape}\n")
-    file.write(f"\ty shape:\t{y.shape}\n\n")
+    file.write(f"\tX_training shape:\t{X_training.shape}\n")
+    file.write(f"\ty_training shape:\t{y_training.shape}\n")
+    file.write(f"\tX_test shape:\t\t{X_test.shape}\n")
+    file.write(f"\ty_test shape:\t\t{y_test.shape}\n\n")
 
     file.write("Results\n")
     file.write(f"\tLoss:\t\t{loss}\n")
