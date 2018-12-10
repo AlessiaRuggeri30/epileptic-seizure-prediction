@@ -1,0 +1,18 @@
+EXPERIMENT: RANDOM FOREST
+
+Parameters
+	n_estimators:	100
+	max_depth:		10
+	random_state:	0
+	dataset:		on_whole_data
+
+Data shape
+	X_training shape:	(200000, 90)
+	y_training shape:	(200000,)
+	X_test shape:		(100000, 90)
+	y_test shape:		(100000,)
+
+Results
+	Loss:		0.1492
+	Accuracy:	0.8508
+
