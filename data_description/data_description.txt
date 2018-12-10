@@ -10,9 +10,6 @@ Max voltage:	9796.7421875
 Min voltage:	-9624.2294921875
 Voltage mean:	0.000924888881854713
 Voltage std:	4671.72900390625
-Number of total timestamps with ongoing seizure:	15000
-Number of total timestamps without ongoing seizure:	1785000
-
 Seizures:
-{'seizure1': {'start_idx': 1684381, 'end_idx': 1699381}}
+{'seizure1': {'start_idx': 1684381, 'end_idx': 1699381, 'duration': 15000, 'clip_location': 1}}
 

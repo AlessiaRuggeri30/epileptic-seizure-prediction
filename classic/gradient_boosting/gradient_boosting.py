@@ -4,7 +4,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import brier_score_loss, accuracy_score
 
 ''' Load dataset '''
-# path = "../.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"     # server
+# path = "/home/phait/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"     # server
 path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
 
 with np.load(path) as data:

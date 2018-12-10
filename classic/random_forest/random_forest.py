@@ -4,23 +4,23 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import brier_score_loss, accuracy_score
 
 ''' Load dataset '''
-# path = "../.spektral/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"     # server
-path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
+path = "/home/phait/datasets/ieeg/TWH056_Day-504_Clip-0-1.npz"     # server
+# path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
 
 with np.load(path) as data:
     data = dict(data)
 
 data['szr_bool'] = data['szr_bool'].astype(int)     # one-hot encoding
 
-X = data['ieeg'].T[1670000:]
-y = data['szr_bool'][1670000:]
+X = data['ieeg'].T  # [1670000:]
+y = data['szr_bool']    # [1670000:]
 print(X.shape, y.shape)
 
 print("Creating the random forest classifier...")
 n_estimators = 100
 max_depth = 10
 random_state = 0
-on_seizure = True
+on_seizure = False
 clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
                              random_state=random_state)
 
