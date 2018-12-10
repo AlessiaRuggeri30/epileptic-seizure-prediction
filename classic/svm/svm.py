@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn.metrics import brier_score_loss, accuracy_score

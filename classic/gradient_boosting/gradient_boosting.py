@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import brier_score_loss, accuracy_score
 
 ''' Load dataset '''
@@ -16,15 +16,15 @@ X = data['ieeg'].T[1670000:]
 y = data['szr_bool'][1670000:]
 print(X.shape, y.shape)
 
-print("Creating the random forest classifier...")
+print("Creating the gradient boosting classifier...")
 n_estimators = 100
 max_depth = 10
 random_state = 0
 on_seizure = True
-clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                             random_state=random_state)
+clf = GradientBoostingClassifier(n_estimators=n_estimators, max_depth=max_depth,
+                                 random_state=random_state)
 
-print("Fitting training data to the random forest classifier...")
+print("Fitting training data to the gradient boosting classifier...")
 clf.fit(X, y)
 
 print("Predicting values on test data...")
@@ -44,10 +44,10 @@ if on_seizure:
 else:
     dataset = "on_whole_data"
 
-file_name = f"random_forest(n_estimators={n_estimators},max_depth={max_depth}," \
+file_name = f"gradient_boosting(n_estimators={n_estimators},max_depth={max_depth}," \
     f"random_state={random_state})-{dataset}.txt"
 with open(file_name, 'w') as file:
-    file.write("EXPERIMENT: RANDOM FOREST\n\n")
+    file.write("EXPERIMENT: GRADIENT BOOSTING\n\n")
 
     file.write("Parameters\n")
     file.write(f"\tn_estimators:\t{n_estimators}\n")
@@ -62,4 +62,3 @@ with open(file_name, 'w') as file:
     file.write("Results\n")
     file.write(f"\tLoss:\t\t{loss}\n")
     file.write(f"\tAccuracy:\t{accuracy}\n\n")
-
