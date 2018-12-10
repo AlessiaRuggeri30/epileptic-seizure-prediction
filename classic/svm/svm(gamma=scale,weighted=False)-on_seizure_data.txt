@@ -1,0 +1,8 @@
+EXPERIMENT: SVM
+
+Parameters
+	gamma:		scale
+	weighted:	False
+	dataset:	on_seizure_data
+
+Data shape
