@@ -76,3 +76,6 @@ print(seizures)
 #
 #     file.write(f"Seizures:\n")
 #     file.write(str(seizures) + "\n\n")
+
+
+

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.metrics import brier_score_loss, accuracy_score
+from sklearn.metrics import brier_score_loss, accuracy_score, roc_auc_score
 
 n_clip = 3
 X = {}
@@ -40,7 +40,7 @@ max_depth = 10
 random_state = 0
 on_seizure = True
 clf = GradientBoostingClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                                 random_state=random_state)
+                                 random_state=random_state, n_jobs=-1)
 
 print("Fitting training data to the gradient boosting classifier...")
 clf.fit(X_training, y_training)
@@ -52,8 +52,10 @@ errors = abs(predictions - y_test)
 print("Results")
 loss = round(brier_score_loss(y_test, predictions), 4)
 accuracy = round(accuracy_score(y_test, predictions), 4)
+roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
 print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
+print(f"\tRoc:\t\t{roc_auc_score}")
 
 
 ''' Write results into file '''
@@ -81,4 +83,5 @@ with open(file_name, 'w') as file:
 
     file.write("Results\n")
     file.write(f"\tLoss:\t\t{loss}\n")
-    file.write(f"\tAccuracy:\t{accuracy}\n\n")
+    file.write(f"\tAccuracy:\t{accuracy}\n")
+    file.write(f"\tRoc:\t{roc_auc_score}\n\n")
