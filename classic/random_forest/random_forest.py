@@ -40,14 +40,13 @@ max_depth = 100
 random_state = 0
 on_seizure = False
 clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                             random_state=random_state, n_jobs=-1, class_weight='balanced')
+                             random_state=random_state, n_jobs=-1)
 
 print("Fitting training data to the random forest classifier...")
 clf.fit(X_training, y_training)
 
 print("Predicting values on test data...")
 predictions = clf.predict(X_test)
-# scores = clf.predict_proba(X_test)
 errors = abs(predictions - y_test)
 
 print("Results")
@@ -87,3 +86,10 @@ with open(file_name, 'w') as file:
     file.write(f"\tAccuracy:\t{accuracy}\n")
     file.write(f"\tRoc:\t{roc_auc_score}\n\n")
 
+plt.subplot(2, 1, 1)
+plt.plot(y_test)
+plt.axvline(x=1684381)
+plt.axvline(x=1699381)
+plt.subplot(2, 1, 2)
+plt.plot(predictions)
+plt.savefig("predictions_rf_nobalanced.png")

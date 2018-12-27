@@ -40,7 +40,7 @@ max_depth = 10
 random_state = 0
 on_seizure = True
 clf = GradientBoostingClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                                 random_state=random_state, n_jobs=-1)
+                                 random_state=random_state)
 
 print("Fitting training data to the gradient boosting classifier...")
 clf.fit(X_training, y_training)
