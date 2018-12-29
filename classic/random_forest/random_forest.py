@@ -96,8 +96,10 @@ with open(file_name, 'w') as file:
 """ Plots """
 plt.subplot(2, 1, 1)
 plt.plot(y_test)
-plt.axvline(x=seizure[1]['start'])
-plt.axvline(x=seizure[1]['end'])
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.subplot(2, 1, 2)
 plt.plot(predictions)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig("./plots/predictions.png")
