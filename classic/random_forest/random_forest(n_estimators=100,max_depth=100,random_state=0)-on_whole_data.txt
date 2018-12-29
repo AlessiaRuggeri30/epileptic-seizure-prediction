@@ -13,7 +13,7 @@ Data shape
 	y_test shape:		(100000,)
 
 Results
-	Loss:		0.1503
-	Accuracy:	0.8497
-	Roc:	0.5174
+	Loss:		0.1518
+	Accuracy:	0.8482
+	Roc:	0.4989
 
