@@ -52,7 +52,7 @@ if weighted is False:
     clf.fit(X_training, y_training)
 else:
     weighted = class_weight = {1: 10}
-    clf.fit(X_training, y_training, class_weight=class_weight)
+    clf.fit(X_training, y_training, class_weight="balanced")
 
 print("Predicting values on test data...")
 predictions = clf.predict(X_test)
