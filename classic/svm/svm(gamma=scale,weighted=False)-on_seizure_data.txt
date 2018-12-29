@@ -6,11 +6,13 @@ Parameters
 	dataset:	on_seizure_data
 
 Data shape
-    X_training shape:	(200000, 90)
+	X_training shape:	(200000, 90)
 	y_training shape:	(200000,)
-	X_test shape:       (100000, 90)
-	y_test shape:       (100000,)
+	X_test shape:		(100000, 90)
+	y_test shape:		(100000,)
 
 Results
 	Loss:		0.1547
 	Accuracy:	0.8453
+	Roc:	0.5086
+
