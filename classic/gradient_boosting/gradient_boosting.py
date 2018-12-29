@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import brier_score_loss, accuracy_score, roc_auc_score
+import xgboost as xgb
 
 
 """ Variables """
@@ -46,8 +47,11 @@ n_estimators = 100
 max_depth = 10
 random_state = 0
 on_seizure = True
-clf = GradientBoostingClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                                 random_state=random_state)
+# clf = GradientBoostingClassifier(n_estimators=n_estimators, max_depth=max_depth,
+#                                  random_state=random_state)
+
+clf = xgb.XGBClassifier(n_estimators=n_estimators, max_depth=max_depth,
+                        random_state=random_state, nthread=-1)
 
 print("Fitting training data to the gradient boosting classifier...")
 clf.fit(X_training, y_training)
