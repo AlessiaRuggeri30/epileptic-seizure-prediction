@@ -3,16 +3,23 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import brier_score_loss, accuracy_score, roc_auc_score
 
+
+""" Variables """
 n_clip = 3
 X = {}
 y = {}
-delimiters = {1: {'start': 1640000, 'end': 1740000},
-              2: {'start': 150000, 'end': 250000},
-              3: {'start': 60000, 'end': 160000}}
+interval = {1: {'start': 1640000, 'end': 1740000},
+            2: {'start': 150000, 'end': 250000},
+            3: {'start': 60000, 'end': 160000}}
+seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interval[1]['start']},
+           2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
+           3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
+
+
+""" Load datasets """
 
 for c in range(1, n_clip+1):
 
-    ''' Load dataset '''
     path = f"/home/phait/datasets/ieeg/TWH056_Day-504_Clip-0-{c}.npz"     # server
     # path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
 
@@ -21,11 +28,11 @@ for c in range(1, n_clip+1):
 
     data['szr_bool'] = data['szr_bool'].astype(int)     # one-hot encoding
 
-    X[c] = data['ieeg'].T[delimiters[c]['start']:delimiters[c]['end']]
-    y[c] = data['szr_bool'][delimiters[c]['start']:delimiters[c]['end']]
+    X[c] = data['ieeg'].T[interval[c]['start']:interval[c]['end']]
+    y[c] = data['szr_bool'][interval[c]['start']:interval[c]['end']]
 
 
-''' Select training set and test set '''
+""" Select training set and test set """
 X_training = np.concatenate((X[2], X[3]), axis=0)
 y_training = np.concatenate((y[2], y[3]), axis=0)
 X_test = X[1]
@@ -58,7 +65,7 @@ print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
 
 
-''' Write results into file '''
+""" Write results into file """
 if on_seizure:
     dataset = "on_seizure_data"
 else:
@@ -85,3 +92,13 @@ with open(file_name, 'w') as file:
     file.write(f"\tLoss:\t\t{loss}\n")
     file.write(f"\tAccuracy:\t{accuracy}\n")
     file.write(f"\tRoc:\t{roc_auc_score}\n\n")
+
+
+""" Plots """
+plt.subplot(2, 1, 1)
+plt.plot(y_test)
+plt.axvline(x=seizure[1]['start'])
+plt.axvline(x=seizure[1]['end'])
+plt.subplot(2, 1, 2)
+plt.plot(predictions)
+plt.savefig(".plots/predictions.png")

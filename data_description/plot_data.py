@@ -50,7 +50,7 @@ for c in range(1, n_clip+1):
     plt.xlabel("Time")
     plt.ylabel("Signal values")
     plt.title(f"IEEG")
-    plt.savefig(f"seizure{c}.png", dpi=400)
+    plt.savefig(f"./plots/seizure{c}.png", dpi=400)
 
     plt.figure(figsize=(13.0, 8.0))
     plt.plot(ieeg_norm[c][interval[c]['start']:interval[c]['end'], :],
@@ -61,7 +61,7 @@ for c in range(1, n_clip+1):
     plt.xlabel("Time")
     plt.ylabel("Signal values")
     plt.title(f"IEEG")
-    plt.savefig(f"seizure{c}_norm.png", dpi=400)
+    plt.savefig(f"./plots/seizure{c}_norm.png", dpi=400)
 
 
 ''' Plot of first electrodes in first timestamps'''
