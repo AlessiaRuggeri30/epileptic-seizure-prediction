@@ -42,7 +42,7 @@ print(X_test.shape, y_test.shape)
 
 print("Creating the random forest classifier...")
 n_estimators = 100
-max_depth = 100
+max_depth = 10
 random_state = 0
 on_seizure = False
 clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
@@ -71,7 +71,7 @@ else:
     dataset = "on_whole_data"
 
 file_name = f"random_forest(n_estimators={n_estimators},max_depth={max_depth}," \
-    f"random_state={random_state})-{dataset}.txt"
+    f"random_state={random_state}, balanced)-{dataset}.txt"
 with open(file_name, 'w') as file:
     file.write("EXPERIMENT: RANDOM FOREST\n\n")
 
@@ -79,6 +79,7 @@ with open(file_name, 'w') as file:
     file.write(f"\tn_estimators:\t{n_estimators}\n")
     file.write(f"\tmax_depth:\t\t{max_depth}\n")
     file.write(f"\trandom_state:\t{random_state}\n")
+    file.write(f"\tbalanced\n")
     file.write(f"\tdataset:\t\t{dataset}\n\n")
 
     file.write("Data shape\n")
@@ -102,4 +103,4 @@ plt.subplot(2, 1, 2)
 plt.plot(predictions)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/predictions.png")
+plt.savefig("./plots/predictions_nonbalanced.png")
