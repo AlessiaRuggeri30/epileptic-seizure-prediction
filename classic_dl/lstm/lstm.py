@@ -58,13 +58,14 @@ epochs = 20
 batch_size = 64
 
 model = Sequential()
-model.add(LSTM(100))
+model.add(LSTM(100, dropout=0.5))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
 # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# model.add(Dropout(0.5))
 # model.summary()
 
 """ Fit the model """
@@ -95,3 +96,13 @@ print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
 
+""" Plots """
+plt.subplot(2, 1, 1)
+plt.plot(y_test)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.subplot(2, 1, 2)
+plt.plot(predictions)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.savefig("./plots/predictions.png")
