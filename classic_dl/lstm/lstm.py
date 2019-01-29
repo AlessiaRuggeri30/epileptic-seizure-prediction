@@ -2,9 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn import preprocessing
-# import keras.backend as K
 from keras.models import Sequential, load_model
-from keras.layers import Input, Embedding, Dense, Dropout, LSTM, InputLayer, Reshape
+from keras.layers import Dense, Dropout, LSTM, InputLayer, Reshape
 
 """ Variables """
 n_clip = 3
@@ -54,11 +53,13 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
-epochs = 20
+epochs = 10
 batch_size = 64
 
 model = Sequential()
-model.add(LSTM(100, dropout=0.5))
+model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
