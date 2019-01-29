@@ -16,7 +16,6 @@ seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interva
            2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
            3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
 
-
 """ Load datasets """
 for c in range(1, n_clip + 1):
     path = f"/home/phait/datasets/ieeg/TWH056_Day-504_Clip-0-{c}.npz"  # server
@@ -29,7 +28,10 @@ for c in range(1, n_clip + 1):
 
     X[c] = data['ieeg'].T[interval[c]['start']:interval[c]['end']]
     y[c] = data['szr_bool'][interval[c]['start']:interval[c]['end']]
-
+    if c == 1:
+        dataset = X[c]
+    else:
+        dataset = np.concatenate((dataset, X[c]), axis=0)
 
 """ Select training set and test set """
 X_train = np.concatenate((X[2], X[3]), axis=0)
@@ -37,10 +39,13 @@ y_train = np.concatenate((y[2], y[3]), axis=0)
 X_test = X[1]
 y_test = y[1]
 
-min_max_scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
-X_train = min_max_scaler.fit_transform(X_train)
-X_test = min_max_scaler.fit_transform(X_test)
+""" Normalize data """
+scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
+scaler.fit(dataset)
+X_train = scaler.transform(X_train)
+X_test = scaler.transform(X_test)
 
+""" Reshape data """
 X_train = np.reshape(X_train, (X_train.shape[0], 1, X_train.shape[1]))
 y_train = np.reshape(y_train, (y_train.shape[0], 1))
 X_test = np.reshape(X_test, (X_test.shape[0], 1, X_test.shape[1]))
@@ -56,26 +61,44 @@ print(X_test.shape, y_test.shape)
 epochs = 10
 batch_size = 64
 
-model = Sequential()
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid'))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# model = Sequential()
+# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
 # model.add(Dropout(0.5))
-# model.summary()
-
-""" Fit the model """
-model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
-
-""" Save and reload the model """
-model.save('lstm_model.h5')
-del model
+# model.add(Dense(1, activation='sigmoid'))
+# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+#
+# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# # model.add(Dropout(0.5))
+# # model.summary()
+#
+# """ Fit the model """
+# model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
+#
+# """ Save and reload the model """
+# model.save('lstm_model.h5')
+# del model
 model = load_model('lstm_model.h5')
+
+
+""" Predictions on training data """
+print("Predicting values on training data...")
+predictions_train = model.predict(X_train, batch_size=batch_size)
+predictions_train = predictions_train.reshape(-1)
+predictions_train[predictions_train <= 0.5] = 0
+predictions_train[predictions_train > 0.5] = 1
+# errors = abs(predictions_train - y_test)
+
+print("Results on training data")
+loss_train = round(log_loss(y_train, predictions_train, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
+accuracy_train = round(accuracy_score(y_train, predictions_train), 4)
+roc_auc_score_train = round(roc_auc_score(y_train, predictions_train), 4)
+print(f"\tLoss:\t\t{loss_train}")
+print(f"\tAccuracy:\t{accuracy_train}")
+print(f"\tRoc:\t\t{roc_auc_score_train}")
+
 
 """ Predictions on test data """
 loss, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
@@ -87,9 +110,9 @@ predictions = model.predict(X_test, batch_size=batch_size)
 predictions = predictions.reshape(-1)
 predictions[predictions <= 0.5] = 0
 predictions[predictions > 0.5] = 1
-errors = abs(predictions - y_test)
+# errors = abs(predictions - y_test)
 
-print("Results")
+print("Results on test data")
 loss = round(log_loss(y_test, predictions, eps=1e-7), 4)    # for the clip part, eps=1e-15 is too small for float32
 accuracy = round(accuracy_score(y_test, predictions), 4)
 roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
@@ -98,6 +121,19 @@ print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
 
 """ Plots """
+plt.subplot(2, 1, 1)
+plt.plot(y_test)
+plt.axvline(x=seizure[2]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[2]['end'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[3]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[3]['end'], color="orange", linewidth=0.5)
+plt.subplot(2, 1, 2)
+plt.plot(predictions_train)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.savefig("./plots/predictions_train.png")
+plt.close()
+
 plt.subplot(2, 1, 1)
 plt.plot(y_test)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
