@@ -15,6 +15,8 @@ interval = {1: {'start': 1640000, 'end': 1740000},
 seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interval[1]['start']},
            2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
            3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
+class_weight = {0: 1,
+                1: 10}
 
 """ Load datasets """
 for c in range(1, n_clip + 1):
@@ -61,25 +63,25 @@ print(X_test.shape, y_test.shape)
 epochs = 10
 batch_size = 64
 
-# model = Sequential()
-# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
+model = Sequential()
+model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
 # model.add(Dropout(0.5))
-# model.add(Dense(1, activation='sigmoid'))
-# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-#
-# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
-# # model.add(Dropout(0.5))
-# # model.summary()
-#
-# """ Fit the model """
-# model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
-#
-# """ Save and reload the model """
-# model.save('lstm_model.h5')
-# del model
+# model.summary()
+
+""" Fit the model """
+model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
+
+""" Save and reload the model """
+model.save('lstm_model.h5')
+del model
 model = load_model('lstm_model.h5')
 
 
@@ -89,7 +91,6 @@ predictions_train = model.predict(X_train, batch_size=batch_size)
 predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
-# errors = abs(predictions_train - y_test)
 
 print("Results on training data")
 loss_train = round(log_loss(y_train, predictions_train, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
@@ -110,7 +111,6 @@ predictions = model.predict(X_test, batch_size=batch_size)
 predictions = predictions.reshape(-1)
 predictions[predictions <= 0.5] = 0
 predictions[predictions > 0.5] = 1
-# errors = abs(predictions - y_test)
 
 print("Results on test data")
 loss = round(log_loss(y_test, predictions, eps=1e-7), 4)    # for the clip part, eps=1e-15 is too small for float32
