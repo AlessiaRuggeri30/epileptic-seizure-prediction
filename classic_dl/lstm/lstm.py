@@ -60,12 +60,13 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
-epochs = 20
+epochs = 30
 batch_size = 64
 
 model = Sequential()
 model.add(LSTM(256, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
 model.add(LSTM(256, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
 model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
