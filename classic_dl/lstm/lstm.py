@@ -16,7 +16,7 @@ seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interva
            2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
            3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
 class_weight = {0: 1,
-                1: 3}
+                1: 8}
 
 """ Load datasets """
 for c in range(1, n_clip + 1):
@@ -60,12 +60,12 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
-epochs = 15
+epochs = 20
 batch_size = 64
 
 model = Sequential()
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(256, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(256, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
 model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
