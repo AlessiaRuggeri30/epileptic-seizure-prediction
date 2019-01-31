@@ -64,10 +64,10 @@ epochs = 30
 batch_size = 64
 
 model = Sequential()
-model.add(LSTM(256, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(256, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
+model.add(LSTM(90, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(370, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(180, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+model.add(LSTM(90, dropout=0.5, recurrent_dropout=0.5))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
