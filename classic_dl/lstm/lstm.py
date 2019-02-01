@@ -63,25 +63,25 @@ print(X_test.shape, y_test.shape)
 epochs = 30
 batch_size = 128
 
-model = Sequential()
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid'))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# model = Sequential()
+# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
+# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
 # model.add(Dropout(0.5))
-# model.summary()
-
-""" Fit the model """
-model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
-
-""" Save and reload the model """
-model.save('lstm_model.h5')
-del model
+# model.add(Dense(1, activation='sigmoid'))
+# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+#
+# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# # model.add(Dropout(0.5))
+# # model.summary()
+# 
+# """ Fit the model """
+# model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
+#
+# """ Save and reload the model """
+# model.save('lstm_model.h5')
+# del model
 model = load_model('lstm_model.h5')
 
 
@@ -108,6 +108,7 @@ print(f"Accuracy: {metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)
+sigmoid = predictions
 predictions = predictions.reshape(-1)
 predictions[predictions <= 0.5] = 0
 predictions[predictions > 0.5] = 1
@@ -137,3 +138,14 @@ plt.plot(predictions)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig("./plots/predictions.png")
+plt.close()
+
+plt.subplot(2, 1, 1)
+plt.plot(y_test)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.subplot(2, 1, 2)
+plt.plot(sigmoid)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.savefig("./plots/sigmoid.png")
