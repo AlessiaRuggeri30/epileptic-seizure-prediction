@@ -153,7 +153,7 @@ def running_mean(x, N):
 # plt.subplot(2, 1, 2)
 plt.figure(figsize=(15.0, 8.0))
 plt.plot(sigmoid)
-plt.plot(running_mean(sigmoid, 100))
+plt.plot(running_mean(sigmoid, 1000))
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig("./plots/sigmoid.png", dpi=400)
