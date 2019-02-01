@@ -75,7 +75,7 @@ batch_size = 128
 # # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
 # # model.add(Dropout(0.5))
 # # model.summary()
-# 
+#
 # """ Fit the model """
 # model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
 #
@@ -108,8 +108,8 @@ print(f"Accuracy: {metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)
-sigmoid = predictions
 predictions = predictions.reshape(-1)
+sigmoid = np.copy(predictions)
 predictions[predictions <= 0.5] = 0
 predictions[predictions > 0.5] = 1
 
