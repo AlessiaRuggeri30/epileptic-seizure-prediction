@@ -47,7 +47,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Reshape data """
-timestamps = 100
+timestamps = -1
 
 X_train = np.reshape(X_train, (X_train.shape[0], timestamps, X_train.shape[1]))
 y_train = np.reshape(y_train, (y_train.shape[0], 1))
@@ -61,7 +61,7 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
-epochs = 30
+epochs = 20
 batch_size = 128
 units = 128
 reg = l2(5e-4)
