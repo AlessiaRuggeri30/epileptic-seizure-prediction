@@ -76,7 +76,7 @@ model = Sequential()
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, return_sequences=True))
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+model.add(Dense(timestamps, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
