@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn import preprocessing
 from keras.models import Sequential, load_model
-from keras.layers import Dense, Dropout, LSTM, InputLayer, Reshape
+from keras.layers import Dense, Dropout, LSTM, InputLayer, Reshape, Flatten
 from keras.regularizers import l2
 
 """ Variables """
@@ -48,12 +48,11 @@ X_test = scaler.transform(X_test)
 
 """ Reshape data """
 timestamps = 100
-target_shape = (X_train.shape[0], X_train.shape[1])
 
 X_train = np.reshape(X_train, (-1, timestamps, X_train.shape[1]))
-# y_train = np.reshape(y_train, (-1, timestamps))
+y_train = np.reshape(y_train, (-1, timestamps))
 X_test = np.reshape(X_test, (-1, timestamps, X_test.shape[1]))
-# y_test = np.reshape(y_test, (-1, timestamps))
+y_test = np.reshape(y_test, (-1, timestamps))
 
 # X_train = np.reshape(X_train, (X_train.shape[0], timestamps, X_train.shape[1]))
 # y_train = np.reshape(y_train, (y_train.shape[0], timestamps))
@@ -74,12 +73,12 @@ reg = l2(5e-4)
 class_weight = {0: 1, 1: 7}
 
 model = Sequential()
-model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, return_sequences=True))
+model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, timestamps, 90), return_sequences=True))
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
-model.add(Reshape(target_shape))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.summary()
 
 # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
 # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
