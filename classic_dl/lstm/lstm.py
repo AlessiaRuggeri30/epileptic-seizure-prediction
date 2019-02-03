@@ -47,12 +47,17 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Reshape data """
-timestamps = -1
+timestamps = 100
 
-X_train = np.reshape(X_train, (X_train.shape[0], timestamps, X_train.shape[1]))
-y_train = np.reshape(y_train, (y_train.shape[0], timestamps))
-X_test = np.reshape(X_test, (X_test.shape[0], timestamps, X_test.shape[1]))
-y_test = np.reshape(y_test, (y_test.shape[0], timestamps))
+X_train = np.reshape(X_train, (-1, timestamps, X_train.shape[1]))
+y_train = np.reshape(y_train, (-1, timestamps))
+X_test = np.reshape(X_test, (-1, timestamps, X_test.shape[1]))
+y_test = np.reshape(y_test, (-1, timestamps))
+
+# X_train = np.reshape(X_train, (X_train.shape[0], timestamps, X_train.shape[1]))
+# y_train = np.reshape(y_train, (y_train.shape[0], timestamps))
+# X_test = np.reshape(X_test, (X_test.shape[0], timestamps, X_test.shape[1]))
+# y_test = np.reshape(y_test, (y_test.shape[0], timestamps))
 
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
