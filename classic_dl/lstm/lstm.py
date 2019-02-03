@@ -50,9 +50,9 @@ X_test = scaler.transform(X_test)
 timestamps = -1
 
 X_train = np.reshape(X_train, (X_train.shape[0], timestamps, X_train.shape[1]))
-y_train = np.reshape(y_train, (y_train.shape[0], 1))
+y_train = np.reshape(y_train, (y_train.shape[0], timestamps))
 X_test = np.reshape(X_test, (X_test.shape[0], timestamps, X_test.shape[1]))
-y_test = np.reshape(y_test, (y_test.shape[0], 1))
+y_test = np.reshape(y_test, (y_test.shape[0], timestamps))
 
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
