@@ -4,6 +4,7 @@ from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn import preprocessing
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, LSTM, InputLayer, Reshape
+from keras.regularizers import l2
 
 """ Variables """
 n_clip = 3
@@ -15,8 +16,6 @@ interval = {1: {'start': 1640000, 'end': 1740000},
 seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interval[1]['start']},
            2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
            3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
-class_weight = {0: 1,
-                1: 6}
 
 """ Load datasets """
 for c in range(1, n_clip + 1):
@@ -48,9 +47,11 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Reshape data """
-X_train = np.reshape(X_train, (X_train.shape[0], 1, X_train.shape[1]))
+timestamps = 100
+
+X_train = np.reshape(X_train, (X_train.shape[0], timestamps, X_train.shape[1]))
 y_train = np.reshape(y_train, (y_train.shape[0], 1))
-X_test = np.reshape(X_test, (X_test.shape[0], 1, X_test.shape[1]))
+X_test = np.reshape(X_test, (X_test.shape[0], timestamps, X_test.shape[1]))
 y_test = np.reshape(y_test, (y_test.shape[0], 1))
 
 print(X_train.shape, y_train.shape)
@@ -62,26 +63,27 @@ print(X_test.shape, y_test.shape)
 """ Build the model """
 epochs = 30
 batch_size = 128
+units = 128
+reg = l2(5e-4)
+class_weight = {0: 1, 1: 7}
 
-# model = Sequential()
-# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5, return_sequences=True))
-# model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.5))
-# model.add(Dropout(0.5))
-# model.add(Dense(1, activation='sigmoid'))
-# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-#
-# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
-# # model.add(Dropout(0.5))
-# # model.summary()
-#
-# """ Fit the model """
-# model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
-#
-# """ Save and reload the model """
-# model.save('lstm_model.h5')
-# del model
+model = Sequential()
+model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, return_sequences=True))
+model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# model.summary()
+
+""" Fit the model """
+model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
+
+""" Save and reload the model """
+model.save('lstm_model.h5')
+del model
 model = load_model('lstm_model.h5')
 
 
@@ -145,12 +147,7 @@ def running_mean(x, N):
     cumsum = np.cumsum(np.insert(x, 0, 0))
     return (cumsum[N:] - cumsum[:-N]) / float(N)
 
-# plt.subplot(2, 1, 1)
-# plt.figure(figsize=(13.0, 8.0))
-# plt.plot(y_test)
-# plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
-# plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-# plt.subplot(2, 1, 2)
+
 plt.figure(figsize=(15.0, 8.0))
 plt.plot(sigmoid)
 plt.plot(running_mean(sigmoid, 1000))
