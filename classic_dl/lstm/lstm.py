@@ -48,11 +48,12 @@ X_test = scaler.transform(X_test)
 
 """ Reshape data """
 timestamps = 100
+target_shape = (X_train.shape[0], X_train.shape[1])
 
 X_train = np.reshape(X_train, (-1, timestamps, X_train.shape[1]))
-y_train = np.reshape(y_train, (-1, timestamps))
+# y_train = np.reshape(y_train, (-1, timestamps))
 X_test = np.reshape(X_test, (-1, timestamps, X_test.shape[1]))
-y_test = np.reshape(y_test, (-1, timestamps))
+# y_test = np.reshape(y_test, (-1, timestamps))
 
 # X_train = np.reshape(X_train, (X_train.shape[0], timestamps, X_train.shape[1]))
 # y_train = np.reshape(y_train, (y_train.shape[0], timestamps))
@@ -76,7 +77,8 @@ model = Sequential()
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, return_sequences=True))
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
-model.add(Dense(timestamps, activation='sigmoid', kernel_regularizer=reg))
+model.add(Reshape(target_shape))
+model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
