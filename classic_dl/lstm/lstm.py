@@ -101,7 +101,7 @@ batch_size = 64
 steps_per_epoch = int(len(generator)/batch_size)
 units = 128
 reg = l2(5e-4)
-class_weight = {0: 1, 1: (n_negative/n_positive)}
+class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
 model = Sequential()
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
