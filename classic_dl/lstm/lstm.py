@@ -103,12 +103,11 @@ reg = l2(5e-4)
 class_weight = {0: 1, 1: (n_negative/n_positive)}
 
 model = Sequential()
-model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, look_back, 90), return_sequences=True))
+model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, return_sequences=True))
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.summary()
 
 # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
 # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
