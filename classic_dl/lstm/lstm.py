@@ -64,6 +64,7 @@ X_test = scaler.transform(X_test)
 
 """ Reshape data """
 look_back = 100
+stride = 30
 predicted_timestamps = 1
 shift = -1        # starting from the position len(sequence) + 1
 
@@ -82,7 +83,7 @@ elif shift > 0:
     X_train = np.resize(X_train, (X_train.shape[0] - abs(shift), X_train.shape[1]))
 # in cases in which changes are necessary, also X_train needs to be modified in order to maintain the same size between data and targets
 
-generator = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=predicted_timestamps, stride=20)
+generator = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=predicted_timestamps, stride=stride)
 
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
@@ -103,7 +104,7 @@ reg = l2(5e-4)
 class_weight = {0: 1, 1: (n_negative/n_positive)}
 
 model = Sequential()
-model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, return_sequences=True))
+model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
 model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
