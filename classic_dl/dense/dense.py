@@ -92,9 +92,9 @@ model.summary()
 model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
 
 """ Save and reload the model """
-model.save('conv_model.h5')
+model.save('dense_model.h5')
 del model
-model = load_model('conv_model.h5')
+model = load_model('dense_model.h5')
 
 
 # -----------------------------------------------------------------------------
@@ -173,3 +173,4 @@ plt.plot(running_mean(sigmoid, 1000))
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig("./plots/sigmoid.png", dpi=400)
+
