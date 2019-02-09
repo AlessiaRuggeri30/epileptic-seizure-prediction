@@ -96,7 +96,7 @@ print('Samples: %d' % len(generator))
 
 
 """ Build the model """
-epochs = 20
+epochs = 10
 batch_size = 64
 steps_per_epoch = int(len(generator)/batch_size)
 units = 128
