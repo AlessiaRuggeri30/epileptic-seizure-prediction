@@ -121,9 +121,9 @@ print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
 
 """ Predictions on test data """
-loss, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
-print(f"Loss: {loss}")
-print(f"Accuracy: {metrics}")
+# loss, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
+# print(f"Loss: {loss}")
+# print(f"Accuracy: {metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)
