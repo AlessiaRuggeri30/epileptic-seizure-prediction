@@ -81,10 +81,11 @@ reg = l2(5e-4)
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
 model = Sequential()
-model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, timestamps, 90), return_sequences=True))
-model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
+model.add(Dense(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
+model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.summary()
 
@@ -105,7 +106,7 @@ model = load_model('dense_model.h5')
 """ Predictions on training data """
 print("Predicting values on training data...")
 predictions_train = model.predict(X_train, batch_size=batch_size)
-predictions_train = predictions_train.reshape(-1)
+# predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
 
@@ -124,7 +125,7 @@ print(f"Accuracy: {metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)
-predictions = predictions.reshape(-1)
+# predictions = predictions.reshape(-1)
 sigmoid = np.copy(predictions)
 predictions[predictions <= 0.5] = 0
 predictions[predictions > 0.5] = 1

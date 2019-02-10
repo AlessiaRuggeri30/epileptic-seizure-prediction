@@ -103,24 +103,24 @@ units = 128
 reg = l2(5e-4)
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
-model = Sequential()
-model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
-model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
-# model.summary()
-
-""" Fit the model """
-
-model.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs, class_weight=class_weight)
-
-""" Save and reload the model """
-model.save('lstm_model.h5')
-del model
+# model = Sequential()
+# model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
+# model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
+# model.add(Dropout(0.5))
+# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+#
+# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# # model.summary()
+#
+# """ Fit the model """
+#
+# model.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs, class_weight=class_weight)
+#
+# """ Save and reload the model """
+# model.save('lstm_model.h5')
+# del model
 model = load_model('lstm_model.h5')
 
 
@@ -131,7 +131,7 @@ model = load_model('lstm_model.h5')
 
 """ Predictions on training data """
 print("Predicting values on training data...")
-predictions_train = model.predict(X_train, batch_size=batch_size)
+predictions_train = model.predict_generator(X_train, batch_size=batch_size)
 predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
