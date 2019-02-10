@@ -74,7 +74,7 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
-epochs = 20
+epochs = 15
 batch_size = 64
 units = 128
 reg = l2(5e-4)
@@ -82,10 +82,12 @@ class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
 model = Sequential()
 model.add(Dense(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
+model.add(Dropout(0.5))
+model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
+model.add(Dropout(0.5))
 model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
-# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.summary()
 
