@@ -75,7 +75,7 @@ print(X_test.shape, y_test.shape)
 
 """ Build the model """
 epochs = 30
-batch_size = 64
+batch_size = 32
 units = 128
 reg = l2(5e-4)
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
@@ -117,13 +117,14 @@ loss_train = round(log_loss(y_train, predictions_train, eps=1e-7), 4)  # for the
 accuracy_train = round(accuracy_score(y_train, predictions_train), 4)
 roc_auc_score_train = round(roc_auc_score(y_train, predictions_train), 4)
 print(f"\tLoss:\t\t{loss_train}")
+print(f"\tLoss_norm:\t\t{loss_train/batch_size}")
 print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
 
 """ Predictions on test data """
-# loss, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
-# print(f"Loss: {loss}")
-# print(f"Accuracy: {metrics}")
+loss, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
+print(f"Loss: {loss}")
+print(f"Accuracy: {metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)
@@ -137,6 +138,7 @@ loss = round(log_loss(y_test, predictions, eps=1e-7), 4)  # for the clip part, e
 accuracy = round(accuracy_score(y_test, predictions), 4)
 roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
 print(f"\tLoss:\t\t{loss}")
+print(f"\tLoss_norm:\t\t{loss/batch_size}")
 print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
 
@@ -145,35 +147,35 @@ print(f"\tRoc:\t\t{roc_auc_score}")
 # PLOTS
 # -----------------------------------------------------------------------------
 
-
-plt.subplot(2, 1, 1)
-plt.plot(y_train)
-plt.subplot(2, 1, 2)
-plt.plot(predictions_train)
-plt.savefig("./plots/predictions_train.png")
-plt.close()
-
-plt.subplot(2, 1, 1)
-plt.plot(y_test)
-plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
-plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.subplot(2, 1, 2)
-plt.plot(predictions)
-plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
-plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/predictions.png")
-plt.close()
-
-
-def running_mean(x, N):
-    cumsum = np.cumsum(np.insert(x, 0, 0))
-    return (cumsum[N:] - cumsum[:-N]) / float(N)
-
-
-plt.figure(figsize=(15.0, 8.0))
-plt.plot(sigmoid)
-plt.plot(running_mean(sigmoid, 1000))
-plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
-plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/sigmoid.png", dpi=400)
+#
+# plt.subplot(2, 1, 1)
+# plt.plot(y_train)
+# plt.subplot(2, 1, 2)
+# plt.plot(predictions_train)
+# plt.savefig("./plots/predictions_train.png")
+# plt.close()
+#
+# plt.subplot(2, 1, 1)
+# plt.plot(y_test)
+# plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+# plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+# plt.subplot(2, 1, 2)
+# plt.plot(predictions)
+# plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+# plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+# plt.savefig("./plots/predictions.png")
+# plt.close()
+#
+#
+# def running_mean(x, N):
+#     cumsum = np.cumsum(np.insert(x, 0, 0))
+#     return (cumsum[N:] - cumsum[:-N]) / float(N)
+#
+#
+# plt.figure(figsize=(15.0, 8.0))
+# plt.plot(sigmoid)
+# plt.plot(running_mean(sigmoid, 1000))
+# plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+# plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+# plt.savefig("./plots/sigmoid.png", dpi=400)
 
