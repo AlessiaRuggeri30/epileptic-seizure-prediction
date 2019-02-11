@@ -147,35 +147,35 @@ print(f"\tRoc:\t\t{roc_auc_score}")
 # PLOTS
 # -----------------------------------------------------------------------------
 
-#
-# plt.subplot(2, 1, 1)
-# plt.plot(y_train)
-# plt.subplot(2, 1, 2)
-# plt.plot(predictions_train)
-# plt.savefig("./plots/predictions_train.png")
-# plt.close()
-#
-# plt.subplot(2, 1, 1)
-# plt.plot(y_test)
-# plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
-# plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-# plt.subplot(2, 1, 2)
-# plt.plot(predictions)
-# plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
-# plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-# plt.savefig("./plots/predictions.png")
-# plt.close()
-#
-#
-# def running_mean(x, N):
-#     cumsum = np.cumsum(np.insert(x, 0, 0))
-#     return (cumsum[N:] - cumsum[:-N]) / float(N)
-#
-#
-# plt.figure(figsize=(15.0, 8.0))
-# plt.plot(sigmoid)
-# plt.plot(running_mean(sigmoid, 1000))
-# plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
-# plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-# plt.savefig("./plots/sigmoid.png", dpi=400)
+
+plt.subplot(2, 1, 1)
+plt.plot(y_train)
+plt.subplot(2, 1, 2)
+plt.plot(predictions_train)
+plt.savefig("./plots/predictions_train.png")
+plt.close()
+
+plt.subplot(2, 1, 1)
+plt.plot(y_test)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.subplot(2, 1, 2)
+plt.plot(predictions)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.savefig("./plots/predictions.png")
+plt.close()
+
+
+def running_mean(x, N):
+    cumsum = np.cumsum(np.insert(x, 0, 0))
+    return (cumsum[N:] - cumsum[:-N]) / float(N)
+
+
+plt.figure(figsize=(15.0, 8.0))
+plt.plot(sigmoid)
+plt.plot(running_mean(sigmoid, 1000))
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.savefig("./plots/sigmoid.png", dpi=400)
 
