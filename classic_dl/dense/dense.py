@@ -74,7 +74,7 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
-epochs = 15
+epochs = 30
 batch_size = 64
 units = 128
 reg = l2(5e-4)

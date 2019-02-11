@@ -36,7 +36,6 @@ for c in range(1, n_clip + 1):
     else:
         dataset = np.concatenate((dataset, X[c]), axis=0)
 
-
 # X[c]      samples from clip c
 # y[c]      targets from clip c
 # dataset   concatenation of samples from all clips (concatenation of all X[c], used for scaling on entire dataset)
@@ -66,12 +65,12 @@ X_test = scaler.transform(X_test)
 look_back = 100
 stride = 30
 predicted_timestamps = 1
-shift = -1        # starting from the position len(sequence) + 1
+shift = -1  # starting from the position len(sequence) + 1
 
 if shift < 0:
     # detection: targets are shifted forward in order to detect targets inside the seen sequence
     fake_targets = np.repeat(0, repeats=abs(shift))
-    fake_samples = np.repeat(0, repeats=90*abs(shift))
+    fake_samples = np.repeat(0, repeats=90 * abs(shift))
     fake_samples = np.reshape(fake_samples, (abs(shift), 90))
     y_train = np.insert(y_train, obj=0, values=fake_targets, axis=0)
     X_train = np.insert(X_train, obj=len(X_train), values=fake_samples, axis=0)
@@ -88,7 +87,9 @@ generator = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=p
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 print('Samples: %d' % len(generator))
-
+# for i in range(2):
+#     x, y = generator[i]
+#     print('%s => %s' % (x, y))
 
 # -----------------------------------------------------------------------------
 # MODEL BUILDING, TRAINING AND TESTING
@@ -98,10 +99,10 @@ print('Samples: %d' % len(generator))
 """ Build the model """
 epochs = 10
 batch_size = 64
-steps_per_epoch = int(len(generator)/batch_size)
+steps_per_epoch = int(len(generator) / batch_size)
 units = 128
 reg = l2(5e-4)
-class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
+class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 # model = Sequential()
 # model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
@@ -122,7 +123,6 @@ class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 # model.save('lstm_model.h5')
 # del model
 model = load_model('lstm_model.h5')
-
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -164,7 +164,6 @@ print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
 
-
 # -----------------------------------------------------------------------------
 # PLOTS
 # -----------------------------------------------------------------------------
@@ -200,4 +199,3 @@ plt.plot(running_mean(sigmoid, 1000))
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig("./plots/sigmoid.png", dpi=400)
-
