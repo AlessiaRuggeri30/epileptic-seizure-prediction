@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import brier_score_loss, accuracy_score, roc_auc_score
 import xgboost as xgb
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 
 """ Variables """

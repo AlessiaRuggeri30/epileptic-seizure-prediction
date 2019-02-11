@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn.metrics import brier_score_loss, accuracy_score, roc_auc_score
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 
 """ Variables """

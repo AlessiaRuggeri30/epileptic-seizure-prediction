@@ -6,6 +6,8 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, LSTM, InputLayer, Reshape, Flatten
 from keras.regularizers import l2
 from keras.preprocessing.sequence import TimeseriesGenerator
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 """ Variables """
 n_clip = 3
