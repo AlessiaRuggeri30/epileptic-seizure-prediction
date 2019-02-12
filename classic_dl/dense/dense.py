@@ -78,7 +78,7 @@ print(X_test.shape, y_test.shape)
 """ Build the model """
 epochs = 20
 batch_size = 32
-units = 256
+units = 512
 reg = l2(5e-4)
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
@@ -87,7 +87,7 @@ model.add(Dense(units, activation='tanh', kernel_regularizer=reg, batch_input_sh
 model.add(Dropout(0.5))
 model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
-model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
+model.add(Dense(256, activation='tanh', kernel_regularizer=reg))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -119,7 +119,6 @@ loss_train = round(log_loss(y_train, predictions_train, eps=1e-7), 4)  # for the
 accuracy_train = round(accuracy_score(y_train, predictions_train), 4)
 roc_auc_score_train = round(roc_auc_score(y_train, predictions_train), 4)
 print(f"\tLoss:\t\t{loss_train}")
-print(f"\tLoss_norm:\t\t{loss_train/batch_size}")
 print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
 
@@ -140,7 +139,6 @@ loss = round(log_loss(y_test, predictions, eps=1e-7), 4)  # for the clip part, e
 accuracy = round(accuracy_score(y_test, predictions), 4)
 roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
 print(f"\tLoss:\t\t{loss}")
-print(f"\tLoss_norm:\t\t{loss/batch_size}")
 print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
 
