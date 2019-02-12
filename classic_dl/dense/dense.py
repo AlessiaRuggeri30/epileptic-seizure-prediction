@@ -76,9 +76,9 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
-epochs = 30
+epochs = 20
 batch_size = 32
-units = 128
+units = 256
 reg = l2(5e-4)
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
