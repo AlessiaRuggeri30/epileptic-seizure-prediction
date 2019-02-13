@@ -148,7 +148,8 @@ print(f"\tRoc:\t\t{roc_auc_score}")
 # -----------------------------------------------------------------------------
 
 num = 1
-file_name = "exp" + str(num) + "_dense"
+exp = "exp" + str(num)
+file_name = exp + "_dense"
 summary = str(model.to_json())
 
 with open(file_name, 'w') as file:
@@ -190,7 +191,7 @@ plt.subplot(2, 1, 1)
 plt.plot(y_train)
 plt.subplot(2, 1, 2)
 plt.plot(predictions_train)
-plt.savefig("./plots/predictions_train.png")
+plt.savefig(f"./plots/{exp}-predictions_train.png")
 plt.close()
 
 plt.subplot(2, 1, 1)
@@ -201,7 +202,7 @@ plt.subplot(2, 1, 2)
 plt.plot(predictions)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/predictions.png")
+plt.savefig(f"./plots/{exp}-predictions.png")
 plt.close()
 
 
@@ -215,5 +216,5 @@ plt.plot(sigmoid)
 plt.plot(running_mean(sigmoid, 1000))
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/sigmoid.png", dpi=400)
+plt.savefig(f"./plots/{exp}-sigmoid.png", dpi=400)
 
