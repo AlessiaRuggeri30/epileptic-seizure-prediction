@@ -4,6 +4,7 @@ Parameters
 	epochs:			20
 	batch_size:		32
 	reg:			l2(5e-4)
+	activation:		tanh
 	class_weight:	{0: 1.1560693641618498, 1: 7.407407407407407}
 
 Model
@@ -41,8 +42,7 @@ Results on train set
 	Roc_auc:	0.95
 
 Results on test set
-	Loss_keras:	0.8845
+	Loss_keras:	0.8846
 	Loss:		2.6337
 	Accuracy:	0.836
 	Roc_auc:	0.6123
-
