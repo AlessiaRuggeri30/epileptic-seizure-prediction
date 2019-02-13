@@ -1,28 +1,48 @@
 EXPERIMENT: DENSE NEURAL NETWORK
 
 Parameters
-	epochs:	20
+	epochs:		20
 	batch_size:		32
-	reg:	<keras.regularizers.L1L2 object at 0x7f386be164a8>
-	class_weight:		{0: 1.1560693641618498, 1: 7.407407407407407}
+	reg:		l2(5e-4)
+	class_weight:	{0: 1.1560693641618498, 1: 7.407407407407407}
 
 Model
-{"class_name": "Sequential", "config": {"name": "sequential_1", "layers": [{"class_name": "Dense", "config": {"name": "dense_1", "trainable": true, "batch_input_shape": [32, 90], "dtype": "float32", "units": 512, "activation": "tanh", "use_bias": true, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"scale": 1.0, "mode": "fan_avg", "distribution": "uniform", "seed": null}}, "bias_initializer": {"class_name": "Zeros", "config": {}}, "kernel_regularizer": {"class_name": "L1L2", "config": {"l1": 0.0, "l2": 0.0005000000237487257}}, "bias_regularizer": null, "activity_regularizer": null, "kernel_constraint": null, "bias_constraint": null}}, {"class_name": "Dropout", "config": {"name": "dropout_1", "trainable": true, "rate": 0.5, "noise_shape": null, "seed": null}}, {"class_name": "Dense", "config": {"name": "dense_2", "trainable": true, "units": 512, "activation": "tanh", "use_bias": true, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"scale": 1.0, "mode": "fan_avg", "distribution": "uniform", "seed": null}}, "bias_initializer": {"class_name": "Zeros", "config": {}}, "kernel_regularizer": {"class_name": "L1L2", "config": {"l1": 0.0, "l2": 0.0005000000237487257}}, "bias_regularizer": null, "activity_regularizer": null, "kernel_constraint": null, "bias_constraint": null}}, {"class_name": "Dropout", "config": {"name": "dropout_2", "trainable": true, "rate": 0.5, "noise_shape": null, "seed": null}}, {"class_name": "Dense", "config": {"name": "dense_3", "trainable": true, "units": 256, "activation": "tanh", "use_bias": true, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"scale": 1.0, "mode": "fan_avg", "distribution": "uniform", "seed": null}}, "bias_initializer": {"class_name": "Zeros", "config": {}}, "kernel_regularizer": {"class_name": "L1L2", "config": {"l1": 0.0, "l2": 0.0005000000237487257}}, "bias_regularizer": null, "activity_regularizer": null, "kernel_constraint": null, "bias_constraint": null}}, {"class_name": "Dropout", "config": {"name": "dropout_3", "trainable": true, "rate": 0.5, "noise_shape": null, "seed": null}}, {"class_name": "Dense", "config": {"name": "dense_4", "trainable": true, "units": 1, "activation": "sigmoid", "use_bias": true, "kernel_initializer": {"class_name": "VarianceScaling", "config": {"scale": 1.0, "mode": "fan_avg", "distribution": "uniform", "seed": null}}, "bias_initializer": {"class_name": "Zeros", "config": {}}, "kernel_regularizer": {"class_name": "L1L2", "config": {"l1": 0.0, "l2": 0.0005000000237487257}}, "bias_regularizer": null, "activity_regularizer": null, "kernel_constraint": null, "bias_constraint": null}}]}, "keras_version": "2.2.4", "backend": "tensorflow"}
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_1 (Dense)              (32, 512)                 46592     
+_________________________________________________________________
+dropout_1 (Dropout)          (32, 512)                 0         
+_________________________________________________________________
+dense_2 (Dense)              (32, 512)                 262656    
+_________________________________________________________________
+dropout_2 (Dropout)          (32, 512)                 0         
+_________________________________________________________________
+dense_3 (Dense)              (32, 256)                 131328    
+_________________________________________________________________
+dropout_3 (Dropout)          (32, 256)                 0         
+_________________________________________________________________
+dense_4 (Dense)              (32, 1)                   257       
+=================================================================
+Total params: 440,833
+Trainable params: 440,833
+Non-trainable params: 0
+_________________________________________________________________
 
 Data shape
 	X_train shape:	(200000, 90)
 	y_train shape:	(200000,)
-	X_test shape:		(100000, 90)
-	y_test shape:		(100000,)
+	X_test shape:	(100000, 90)
+	y_test shape:	(100000,)
 
 Results on train set
 	Loss:		0.706
 	Accuracy:	0.9558
-	Roc:	0.95
+	Roc_auc:	0.95
 
 Results on test set
-	Loss_keras:		0.8845622627449036
+	Loss_keras:	0.8845622637176513
 	Loss:		2.6337
 	Accuracy:	0.836
-	Roc:	0.6123
+	Roc_auc:	0.6123
 
