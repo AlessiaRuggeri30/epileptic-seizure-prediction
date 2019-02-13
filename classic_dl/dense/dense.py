@@ -90,7 +90,7 @@ model.add(Dense(units, activation=activation, kernel_regularizer=reg, batch_inpu
 model.add(Dropout(0.5))
 model.add(Dense(units, activation=activation, kernel_regularizer=reg))
 model.add(Dropout(0.5))
-model.add(Dense(units, activation=activation, kernel_regularizer=reg))
+model.add(Dense(256, activation=activation, kernel_regularizer=reg))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
