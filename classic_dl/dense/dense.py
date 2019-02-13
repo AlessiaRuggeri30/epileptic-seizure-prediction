@@ -80,14 +80,15 @@ epochs = 20
 batch_size = 32
 units = 512
 reg = l2(5e-4)
+activation = 'tanh'
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
 # model = Sequential()
-# model.add(Dense(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
+# model.add(Dense(units, activation=activation, kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
 # model.add(Dropout(0.5))
-# model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
+# model.add(Dense(units, activation=activation, kernel_regularizer=reg))
 # model.add(Dropout(0.5))
-# model.add(Dense(256, activation='tanh', kernel_regularizer=reg))
+# model.add(Dense(256, activation=activation, kernel_regularizer=reg))
 # model.add(Dropout(0.5))
 # model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 # model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -124,6 +125,7 @@ print(f"\tRoc:\t\t{roc_auc_score_train}")
 
 """ Predictions on test data """
 loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
+loss_keras = round(loss_keras, 4)
 print(f"Loss: {loss_keras}")
 print(f"Accuracy: {metrics}")
 
@@ -147,7 +149,7 @@ print(f"\tRoc:\t\t{roc_auc_score}")
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
 
-num = 1
+num = 3
 exp = "exp" + str(num)
 file_name = exp + "_dense.txt"
 string_list = []
@@ -158,9 +160,10 @@ with open(file_name, 'w') as file:
     file.write("EXPERIMENT: DENSE NEURAL NETWORK\n\n")
 
     file.write("Parameters\n")
-    file.write(f"\tepochs:\t\t{epochs}\n")
+    file.write(f"\tepochs:\t\t\t{epochs}\n")
     file.write(f"\tbatch_size:\t\t{batch_size}\n")
-    file.write(f"\treg:\t\tl2(5e-4)\n")
+    file.write(f"\treg:\t\t\tl2(5e-4)\n")
+    file.write(f"\tactivation:\t\t{activation}\n")
     file.write(f"\tclass_weight:\t{str(class_weight)}\n\n")
 
     file.write("Model\n")
@@ -181,7 +184,7 @@ with open(file_name, 'w') as file:
     file.write(f"\tLoss_keras:\t{loss_keras}\n")
     file.write(f"\tLoss:\t\t{loss}\n")
     file.write(f"\tAccuracy:\t{accuracy}\n")
-    file.write(f"\tRoc_auc:\t{roc_auc_score}\n\n")
+    file.write(f"\tRoc_auc:\t{roc_auc_score}\n")
 
 
 # -----------------------------------------------------------------------------
