@@ -149,17 +149,19 @@ print(f"\tRoc:\t\t{roc_auc_score}")
 
 num = 1
 exp = "exp" + str(num)
-file_name = exp + "_dense"
-summary = str(model.to_json())
+file_name = exp + "_dense.txt"
+string_list = []
+model.summary(print_fn=lambda x: string_list.append(x))
+summary = "\n".join(string_list)
 
 with open(file_name, 'w') as file:
     file.write("EXPERIMENT: DENSE NEURAL NETWORK\n\n")
 
     file.write("Parameters\n")
-    file.write(f"\tepochs:\t{epochs}\n")
+    file.write(f"\tepochs:\t\t{epochs}\n")
     file.write(f"\tbatch_size:\t\t{batch_size}\n")
-    file.write(f"\treg:\t{str(reg)}\n")
-    file.write(f"\tclass_weight:\t\t{str(class_weight)}\n\n")
+    file.write(f"\treg:\t\tl2(5e-4)\n")
+    file.write(f"\tclass_weight:\t{str(class_weight)}\n\n")
 
     file.write("Model\n")
     file.write(f"{summary}\n\n")
@@ -167,19 +169,19 @@ with open(file_name, 'w') as file:
     file.write("Data shape\n")
     file.write(f"\tX_train shape:\t{X_train.shape}\n")
     file.write(f"\ty_train shape:\t{y_train.shape}\n")
-    file.write(f"\tX_test shape:\t\t{X_test.shape}\n")
-    file.write(f"\ty_test shape:\t\t{y_test.shape}\n\n")
+    file.write(f"\tX_test shape:\t{X_test.shape}\n")
+    file.write(f"\ty_test shape:\t{y_test.shape}\n\n")
 
     file.write("Results on train set\n")
     file.write(f"\tLoss:\t\t{loss_train}\n")
     file.write(f"\tAccuracy:\t{accuracy_train}\n")
-    file.write(f"\tRoc:\t{roc_auc_score_train}\n\n")
+    file.write(f"\tRoc_auc:\t{roc_auc_score_train}\n\n")
 
     file.write("Results on test set\n")
-    file.write(f"\tLoss_keras:\t\t{loss_keras}\n")
+    file.write(f"\tLoss_keras:\t{loss_keras}\n")
     file.write(f"\tLoss:\t\t{loss}\n")
     file.write(f"\tAccuracy:\t{accuracy}\n")
-    file.write(f"\tRoc:\t{roc_auc_score}\n\n")
+    file.write(f"\tRoc_auc:\t{roc_auc_score}\n\n")
 
 
 # -----------------------------------------------------------------------------
