@@ -128,8 +128,8 @@ print(f"\tRoc:\t\t{roc_auc_score_train}")
 """ Predictions on test data """
 loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
 loss_keras = round(loss_keras, 4)
-print(f"Loss: {loss_keras}")
-print(f"Accuracy: {metrics}")
+print(f"\tLoss:\t\t{loss_keras}")
+print(f"\tAccuracy:\t{metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)

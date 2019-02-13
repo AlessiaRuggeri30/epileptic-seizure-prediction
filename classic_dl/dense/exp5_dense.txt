@@ -1,4 +1,4 @@
-EXPERIMENT: DENSE NEURAL NETWORK
+EXPERIMENT 3: DENSE NEURAL NETWORK
 
 Parameters
 	epochs:			20
@@ -37,12 +37,12 @@ Data shape
 	y_test shape:	(100000,)
 
 Results on train set
-	Loss:		0.706
-	Accuracy:	0.9558
-	Roc_auc:	0.95
+	Loss:		0.6007
+	Accuracy:	0.9624
+	Roc_auc:	0.9609
 
 Results on test set
-	Loss_keras:	0.8846
-	Loss:		2.6337
-	Accuracy:	0.836
-	Roc_auc:	0.6123
+	Loss_keras:	1.6307
+	Loss:		5.4146
+	Accuracy:	0.661
+	Roc_auc:	0.6545
