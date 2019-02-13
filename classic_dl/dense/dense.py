@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn import preprocessing
 from keras.models import Sequential, load_model
-from keras.layers import Dense, Dropout, LSTM, InputLayer, Reshape, Flatten
+from keras.layers import Dense, Dropout, Reshape, Flatten
 from keras.regularizers import l2
 from keras.preprocessing.sequence import TimeseriesGenerator
 import os
@@ -83,23 +83,23 @@ reg = l2(5e-4)
 activation = 'tanh'
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
-# model = Sequential()
-# model.add(Dense(units, activation=activation, kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
-# model.add(Dropout(0.5))
-# model.add(Dense(units, activation=activation, kernel_regularizer=reg))
-# model.add(Dropout(0.5))
-# model.add(Dense(256, activation=activation, kernel_regularizer=reg))
-# model.add(Dropout(0.5))
-# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
-# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-# model.summary()
-#
-# """ Fit the model """
-# model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
-#
-# """ Save and reload the model """
-# model.save('dense_model.h5')
-# del model
+model = Sequential()
+model.add(Dense(units, activation=activation, kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
+model.add(Dropout(0.5))
+model.add(Dense(units, activation=activation, kernel_regularizer=reg))
+model.add(Dropout(0.5))
+model.add(Dense(units, activation=activation, kernel_regularizer=reg))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.summary()
+
+""" Fit the model """
+model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
+
+""" Save and reload the model """
+model.save('dense_model.h5')
+del model
 model = load_model('dense_model.h5')
 
 
@@ -111,7 +111,6 @@ model = load_model('dense_model.h5')
 """ Predictions on training data """
 print("Predicting values on training data...")
 predictions_train = model.predict(X_train, batch_size=batch_size)
-# predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
 
@@ -131,7 +130,6 @@ print(f"Accuracy: {metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)
-# predictions = predictions.reshape(-1)
 sigmoid = np.copy(predictions)
 predictions[predictions <= 0.5] = 0
 predictions[predictions > 0.5] = 1
@@ -149,7 +147,7 @@ print(f"\tRoc:\t\t{roc_auc_score}")
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
 
-num = 3
+num = 4
 exp = "exp" + str(num)
 file_name = exp + "_dense.txt"
 string_list = []

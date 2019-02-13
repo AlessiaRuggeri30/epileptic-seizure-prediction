@@ -4,6 +4,7 @@ Parameters
 	epochs:			30
 	batch_size:		32
 	reg:			l2(5e-4)
+	activation:		tanh
 	class_weight:	{0: 1.1560693641618498, 1: 7.407407407407407}
 
 Model
