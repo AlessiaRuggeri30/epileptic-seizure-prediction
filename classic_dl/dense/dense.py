@@ -82,23 +82,23 @@ units = 512
 reg = l2(5e-4)
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
-model = Sequential()
-model.add(Dense(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
-model.add(Dropout(0.5))
-model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
-model.add(Dropout(0.5))
-model.add(Dense(256, activation='tanh', kernel_regularizer=reg))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.summary()
-
-""" Fit the model """
-model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
-
-""" Save and reload the model """
-model.save('dense_model.h5')
-del model
+# model = Sequential()
+# model.add(Dense(units, activation='tanh', kernel_regularizer=reg, batch_input_shape=(batch_size, 90)))
+# model.add(Dropout(0.5))
+# model.add(Dense(units, activation='tanh', kernel_regularizer=reg))
+# model.add(Dropout(0.5))
+# model.add(Dense(256, activation='tanh', kernel_regularizer=reg))
+# model.add(Dropout(0.5))
+# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+# model.summary()
+#
+# """ Fit the model """
+# model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
+#
+# """ Save and reload the model """
+# model.save('dense_model.h5')
+# del model
 model = load_model('dense_model.h5')
 
 
@@ -123,8 +123,8 @@ print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
 
 """ Predictions on test data """
-loss, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
-print(f"Loss: {loss}")
+loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
+print(f"Loss: {loss_keras}")
 print(f"Accuracy: {metrics}")
 
 print("Predicting values on test data...")
@@ -141,6 +141,44 @@ roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
 print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
+
+
+# -----------------------------------------------------------------------------
+# EXPERIMENT RESULTS SUMMARY
+# -----------------------------------------------------------------------------
+
+num = 1
+file_name = "exp" + str(num) + "_dense"
+summary = str(model.to_json())
+
+with open(file_name, 'w') as file:
+    file.write("EXPERIMENT: DENSE NEURAL NETWORK\n\n")
+
+    file.write("Parameters\n")
+    file.write(f"\tepochs:\t{epochs}\n")
+    file.write(f"\tbatch_size:\t\t{batch_size}\n")
+    file.write(f"\treg:\t{str(reg)}\n")
+    file.write(f"\tclass_weight:\t\t{str(class_weight)}\n\n")
+
+    file.write("Model\n")
+    file.write(f"{summary}\n\n")
+
+    file.write("Data shape\n")
+    file.write(f"\tX_train shape:\t{X_train.shape}\n")
+    file.write(f"\ty_train shape:\t{y_train.shape}\n")
+    file.write(f"\tX_test shape:\t\t{X_test.shape}\n")
+    file.write(f"\ty_test shape:\t\t{y_test.shape}\n\n")
+
+    file.write("Results on train set\n")
+    file.write(f"\tLoss:\t\t{loss_train}\n")
+    file.write(f"\tAccuracy:\t{accuracy_train}\n")
+    file.write(f"\tRoc:\t{roc_auc_score_train}\n\n")
+
+    file.write("Results on test set\n")
+    file.write(f"\tLoss_keras:\t\t{loss_keras}\n")
+    file.write(f"\tLoss:\t\t{loss}\n")
+    file.write(f"\tAccuracy:\t{accuracy}\n")
+    file.write(f"\tRoc:\t{roc_auc_score}\n\n")
 
 
 # -----------------------------------------------------------------------------
