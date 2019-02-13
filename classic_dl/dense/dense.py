@@ -76,6 +76,8 @@ print(X_test.shape, y_test.shape)
 
 
 """ Build the model """
+num = 3
+
 epochs = 20
 batch_size = 32
 units = 512
@@ -98,9 +100,10 @@ model.summary()
 model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
 
 """ Save and reload the model """
-model.save('dense_model.h5')
+model.save(f"dense_model{num}.h5")
 del model
-model = load_model('dense_model.h5')
+model = load_model(f"dense_model{num}.h5")
+# model = load_model(f"dense_model3.h5")
 
 
 # -----------------------------------------------------------------------------
@@ -147,7 +150,6 @@ print(f"\tRoc:\t\t{roc_auc_score}")
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
 
-num = 4
 exp = "exp" + str(num)
 file_name = exp + "_dense.txt"
 string_list = []
@@ -155,7 +157,7 @@ model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
 with open(file_name, 'w') as file:
-    file.write("EXPERIMENT: DENSE NEURAL NETWORK\n\n")
+    file.write(f"EXPERIMENT {num}: DENSE NEURAL NETWORK\n\n")
 
     file.write("Parameters\n")
     file.write(f"\tepochs:\t\t\t{epochs}\n")
