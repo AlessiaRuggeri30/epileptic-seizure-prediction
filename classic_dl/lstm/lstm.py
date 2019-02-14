@@ -38,6 +38,7 @@ for c in range(1, n_clip + 1):
     else:
         dataset = np.concatenate((dataset, X[c]), axis=0)
 
+
 # X[c]      samples from clip c
 # y[c]      targets from clip c
 # dataset   concatenation of samples from all clips (concatenation of all X[c], used for scaling on entire dataset)
@@ -93,22 +94,26 @@ print('Samples: %d' % len(generator))
 #     x, y = generator[i]
 #     print('%s => %s' % (x, y))
 
+
 # -----------------------------------------------------------------------------
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 
 
 """ Build the model """
+num = 1
+
 epochs = 10
 batch_size = 64
 steps_per_epoch = int(len(generator) / batch_size)
 units = 128
 reg = l2(5e-4)
+activation = 'tanh'
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 # model = Sequential()
-# model.add(LSTM(units, activation='tanh', kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
-# model.add(LSTM(units, activation='tanh', kernel_regularizer=reg))
+# model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
+# model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
 # model.add(Dropout(0.5))
 # model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 # model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -122,9 +127,11 @@ class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 # model.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs, class_weight=class_weight)
 #
 # """ Save and reload the model """
-# model.save('lstm_model.h5')
+# model.save(f"lstm_model{num}.h5")
 # del model
-model = load_model('lstm_model.h5')
+model = load_model(f"lstm_model{num}.h5")
+# model = load_model(f"lstm_model1.h5")
+
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -147,9 +154,10 @@ print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
 
 """ Predictions on test data """
-loss, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
-print(f"Loss: {loss}")
-print(f"Accuracy: {metrics}")
+loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
+loss_keras = round(loss_keras, 4)
+print(f"\tLoss:\t\t{loss_keras}")
+print(f"\tAccuracy:\t{metrics}")
 
 print("Predicting values on test data...")
 predictions = model.predict(X_test, batch_size=batch_size)
@@ -166,6 +174,54 @@ print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
 
+
+# -----------------------------------------------------------------------------
+# EXPERIMENT RESULTS SUMMARY
+# -----------------------------------------------------------------------------
+
+
+exp = "exp" + str(num)
+file_name = exp + "_lstm.txt"
+string_list = []
+model.summary(print_fn=lambda x: string_list.append(x))
+summary = "\n".join(string_list)
+
+with open(file_name, 'w') as file:
+    file.write(f"EXPERIMENT {num}: LSTM NEURAL NETWORK\n\n")
+
+    file.write("Parameters\n")
+    file.write(f"\tepochs:\t\t\t\t{epochs}\n")
+    file.write(f"\tbatch_size:\t\t\t{batch_size}\n")
+    file.write(f"\treg:\t\t\t\tl2(5e-4)\n")
+    file.write(f"\tactivation:\t\t\t{activation}\n")
+    file.write(f"\tclass_weight:\t\t{str(class_weight)}\n")
+    file.write(f"\tlook_back:\t\t\t{look_back}\n")
+    file.write(f"\tstride:\t\t\t\t{stride}\n")
+    file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
+    file.write(f"\tshift:\t\t\t\t{shift}\n\n")
+
+    file.write("Model\n")
+    file.write(f"{summary}\n\n")
+
+    file.write("Data shape\n")
+    file.write(f"\tX_train shape:\t{X_train.shape}\n")
+    file.write(f"\ty_train shape:\t{y_train.shape}\n")
+    file.write(f"\tX_test shape:\t{X_test.shape}\n")
+    file.write(f"\ty_test shape:\t{y_test.shape}\n\n")
+    file.write(f"\tNumber of generator samples: {len(generator)}")
+
+    file.write("Results on train set\n")
+    file.write(f"\tLoss:\t\t{loss_train}\n")
+    file.write(f"\tAccuracy:\t{accuracy_train}\n")
+    file.write(f"\tRoc_auc:\t{roc_auc_score_train}\n\n")
+
+    file.write("Results on test set\n")
+    file.write(f"\tLoss_keras:\t{loss_keras}\n")
+    file.write(f"\tLoss:\t\t{loss}\n")
+    file.write(f"\tAccuracy:\t{accuracy}\n")
+    file.write(f"\tRoc_auc:\t{roc_auc_score}\n")
+
+
 # -----------------------------------------------------------------------------
 # PLOTS
 # -----------------------------------------------------------------------------
@@ -175,7 +231,7 @@ plt.subplot(2, 1, 1)
 plt.plot(y_train)
 plt.subplot(2, 1, 2)
 plt.plot(predictions_train)
-plt.savefig("./plots/predictions_train.png")
+plt.savefig(f"./plots/{exp}-predictions_train.png")
 plt.close()
 
 plt.subplot(2, 1, 1)
@@ -186,7 +242,7 @@ plt.subplot(2, 1, 2)
 plt.plot(predictions)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/predictions.png")
+plt.savefig(f"./plots/{exp}-predictions.png")
 plt.close()
 
 
@@ -200,4 +256,4 @@ plt.plot(sigmoid)
 plt.plot(running_mean(sigmoid, 1000))
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/sigmoid.png", dpi=400)
+plt.savefig(f"./plots/{exp}-sigmoid.png", dpi=400)
