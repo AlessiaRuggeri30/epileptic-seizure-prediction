@@ -105,30 +105,30 @@ num = 1
 
 epochs = 10
 batch_size = 64
-steps_per_epoch = int(len(generator) / batch_size)
+steps = int(len(generator) / batch_size)
 units = 128
 reg = l2(5e-4)
 activation = 'tanh'
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
-# model = Sequential()
-# model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
-# model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
-# model.add(Dropout(0.5))
-# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
-# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-#
-# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
-# # model.summary()
-#
-# """ Fit the model """
-#
-# model.fit_generator(generator, steps_per_epoch=steps_per_epoch, epochs=epochs, class_weight=class_weight)
-#
-# """ Save and reload the model """
-# model.save(f"lstm_model{num}.h5")
-# del model
+model = Sequential()
+model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
+model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# model.summary()
+
+""" Fit the model """
+
+model.fit_generator(generator, steps_per_epoch=steps, epochs=epochs, class_weight=class_weight)
+
+""" Save and reload the model """
+model.save(f"lstm_model{num}.h5")
+del model
 model = load_model(f"lstm_model{num}.h5")
 # model = load_model(f"lstm_model1.h5")
 
@@ -140,8 +140,9 @@ model = load_model(f"lstm_model{num}.h5")
 
 """ Predictions on training data """
 print("Predicting values on training data...")
-predictions_train = model.predict_generator(X_train, batch_size=batch_size)
-predictions_train = predictions_train.reshape(-1)
+predictions_train = model.predict_generator(generator, steps=steps)
+print(predictions_train.shape)
+# predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
 
