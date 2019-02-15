@@ -77,25 +77,36 @@ if shift < 0:
     fake_samples = np.reshape(fake_samples, (abs(shift), 90))
     y_train = np.insert(y_train, obj=0, values=fake_targets, axis=0)
     X_train = np.insert(X_train, obj=len(X_train), values=fake_samples, axis=0)
+    y_test = np.insert(y_test, obj=0, values=fake_targets, axis=0)
+    X_test = np.insert(X_test, obj=len(X_test), values=fake_samples, axis=0)
+
 elif shift > 0:
     # prediction: targets are removed from the beginning in order to predict targets future to the sequence
     # if shift = 0 no changes are needed because the predicted targets start exactly from the target next to the end of the sequence
     idx_targets = np.arange(abs(shift))
     y_train = np.delete(y_train, obj=idx_targets, axis=0)
     X_train = np.resize(X_train, (X_train.shape[0] - abs(shift), X_train.shape[1]))
+    y_test = np.delete(y_test, obj=idx_targets, axis=0)
+    X_test = np.resize(X_test, (X_test.shape[0] - abs(shift), X_test.shape[1]))
 # in cases in which changes are necessary, also X_train needs to be modified in order to maintain the same size between data and targets
 
 generator_train = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=predicted_timestamps, stride=stride)
+generator_test = TimeseriesGenerator(X_test, y_test, length=look_back, batch_size=predicted_timestamps, stride=stride)
 
 y_train_gen = []
 for batch in generator_train:
     x, y = batch
     y_train_gen = np.append(y_train_gen, y)
 
+y_test_gen = []
+for batch in generator_test:
+    x, y = batch
+    y_test_gen = np.append(y_test_gen, y)
+
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
-print('Samples: %d' % len(generator_train))
-print(len(y_train_gen))
+print('Samples train: %d' % len(generator_train))
+print('Samples test: %d' % len(generator_test))
 
 # for i in range(2):
 #     x, y = generator_train[i]
@@ -147,8 +158,7 @@ model = load_model(f"lstm_model{num}.h5")
 
 """ Predictions on training data """
 print("Predicting values on training data...")
-predictions_train = model.predict_generator(generator_train, steps=steps)
-print(predictions_train.shape)
+predictions_train = np.ndarray.flatten(model.predict_generator(generator_train, steps=len(generator_train)))
 # predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
@@ -162,22 +172,22 @@ print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
 
 """ Predictions on test data """
-loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
+loss_keras, metrics = model.evaluate_generator(generator_test, steps=len(generator_test))
 loss_keras = round(loss_keras, 4)
 print(f"\tLoss:\t\t{loss_keras}")
 print(f"\tAccuracy:\t{metrics}")
 
 print("Predicting values on test data...")
-predictions = model.predict(X_test, batch_size=batch_size)
-predictions = predictions.reshape(-1)
+predictions = np.ndarray.flatten(model.predict_generator(generator_test, steps=len(generator_test)))
+# predictions = predictions.reshape(-1)
 sigmoid = np.copy(predictions)
 predictions[predictions <= 0.5] = 0
 predictions[predictions > 0.5] = 1
 
 print("Results on test data")
-loss = round(log_loss(y_test, predictions, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
-accuracy = round(accuracy_score(y_test, predictions), 4)
-roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
+loss = round(log_loss(y_test_gen, predictions, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
+accuracy = round(accuracy_score(y_test_gen, predictions), 4)
+roc_auc_score = round(roc_auc_score(y_test_gen, predictions), 4)
 print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
 print(f"\tRoc:\t\t{roc_auc_score}")
@@ -215,8 +225,9 @@ with open(file_name, 'w') as file:
     file.write(f"\tX_train shape:\t{X_train.shape}\n")
     file.write(f"\ty_train shape:\t{y_train.shape}\n")
     file.write(f"\tX_test shape:\t{X_test.shape}\n")
-    file.write(f"\ty_test shape:\t{y_test.shape}\n\n")
-    file.write(f"\tNumber of generator_train samples: {len(generator_train)}")
+    file.write(f"\ty_test shape:\t{y_test.shape}\n")
+    file.write(f"\tNumber of generator_train samples: {len(generator_train)}\n")
+    file.write(f"\tNumber of generator_test samples: {len(generator_test)}\n\n")
 
     file.write("Results on train set\n")
     file.write(f"\tLoss:\t\t{loss_train}\n")
