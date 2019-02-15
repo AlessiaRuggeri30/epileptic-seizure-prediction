@@ -33,8 +33,8 @@ Data shape
 	y_train shape:	(200001,)
 	X_test shape:	(100001, 90)
 	y_test shape:	(100001,)
-	Number of generator_train samples: 6664
-	Number of generator_test samples: 3331
+	Number of generator_train samples:	6664
+	Number of generator_test samples:	3331
 
 Results on train set
 	Loss:		13.5215
