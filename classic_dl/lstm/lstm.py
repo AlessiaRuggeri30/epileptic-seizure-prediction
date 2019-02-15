@@ -85,13 +85,20 @@ elif shift > 0:
     X_train = np.resize(X_train, (X_train.shape[0] - abs(shift), X_train.shape[1]))
 # in cases in which changes are necessary, also X_train needs to be modified in order to maintain the same size between data and targets
 
-generator = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=predicted_timestamps, stride=stride)
+generator_train = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=predicted_timestamps, stride=stride)
+
+y_train_gen = []
+for batch in generator_train:
+    x, y = batch
+    y_train_gen = np.append(y_train_gen, y)
 
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
-print('Samples: %d' % len(generator))
+print('Samples: %d' % len(generator_train))
+print(len(y_train_gen))
+
 # for i in range(2):
-#     x, y = generator[i]
+#     x, y = generator_train[i]
 #     print('%s => %s' % (x, y))
 
 
@@ -105,30 +112,30 @@ num = 1
 
 epochs = 10
 batch_size = 64
-steps = int(len(generator) / batch_size)
+steps = int(len(generator_train) / batch_size)
 units = 128
 reg = l2(5e-4)
 activation = 'tanh'
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
-model = Sequential()
-model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
-model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
-# model.summary()
-
-""" Fit the model """
-
-model.fit_generator(generator, steps_per_epoch=steps, epochs=epochs, class_weight=class_weight)
-
-""" Save and reload the model """
-model.save(f"lstm_model{num}.h5")
-del model
+# model = Sequential()
+# model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
+# model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
+# model.add(Dropout(0.5))
+# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+#
+# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# # model.summary()
+#
+# """ Fit the model """
+#
+# model.fit_generator(generator_train, steps_per_epoch=steps, epochs=epochs, class_weight=class_weight)
+#
+# """ Save and reload the model """
+# model.save(f"lstm_model{num}.h5")
+# del model
 model = load_model(f"lstm_model{num}.h5")
 # model = load_model(f"lstm_model1.h5")
 
@@ -140,16 +147,16 @@ model = load_model(f"lstm_model{num}.h5")
 
 """ Predictions on training data """
 print("Predicting values on training data...")
-predictions_train = model.predict_generator(generator, steps=steps)
+predictions_train = model.predict_generator(generator_train, steps=steps)
 print(predictions_train.shape)
 # predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
 
 print("Results on training data")
-loss_train = round(log_loss(y_train, predictions_train, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
-accuracy_train = round(accuracy_score(y_train, predictions_train), 4)
-roc_auc_score_train = round(roc_auc_score(y_train, predictions_train), 4)
+loss_train = round(log_loss(y_train_gen, predictions_train, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
+accuracy_train = round(accuracy_score(y_train_gen, predictions_train), 4)
+roc_auc_score_train = round(roc_auc_score(y_train_gen, predictions_train), 4)
 print(f"\tLoss:\t\t{loss_train}")
 print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
@@ -209,7 +216,7 @@ with open(file_name, 'w') as file:
     file.write(f"\ty_train shape:\t{y_train.shape}\n")
     file.write(f"\tX_test shape:\t{X_test.shape}\n")
     file.write(f"\ty_test shape:\t{y_test.shape}\n\n")
-    file.write(f"\tNumber of generator samples: {len(generator)}")
+    file.write(f"\tNumber of generator_train samples: {len(generator_train)}")
 
     file.write("Results on train set\n")
     file.write(f"\tLoss:\t\t{loss_train}\n")
