@@ -1,15 +1,15 @@
 EXPERIMENT 1: LSTM NEURAL NETWORK
 
 Parameters
-	epochs:				10
-	batch_size:			64
-	reg:				l2(5e-4)
-	activation:			tanh
-	class_weight:		{0: 1.1560751445086705, 1: 7.407444444444445}
-	look_back:			100
-	stride:				30
+	epochs:					10
+	batch_size:				64
+	reg:					l2(5e-4)
+	activation:				tanh
+	class_weight:			{0: 1.1560751445086705, 1: 7.407444444444445}
+	look_back:				100
+	stride:					30
 	predicted_timestamps:	1
-	shift:				-1
+	shift:					-1
 
 Model
 _________________________________________________________________
