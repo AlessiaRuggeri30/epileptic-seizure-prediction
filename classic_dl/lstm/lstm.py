@@ -90,8 +90,8 @@ elif shift > 0:
     X_test = np.resize(X_test, (X_test.shape[0] - abs(shift), X_test.shape[1]))
 # in cases in which changes are necessary, also X_train needs to be modified in order to maintain the same size between data and targets
 
-generator_train = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=predicted_timestamps, stride=stride)
-generator_test = TimeseriesGenerator(X_test, y_test, length=look_back, batch_size=predicted_timestamps, stride=stride)
+generator_train = TimeseriesGenerator(X_train, y_train, length=look_back, batch_size=64, stride=stride)
+generator_test = TimeseriesGenerator(X_test, y_test, length=look_back, batch_size=64, stride=stride)
 
 y_train_gen = []
 for batch in generator_train:
@@ -119,7 +119,7 @@ print('Samples test: %d' % len(generator_test))
 
 
 """ Build the model """
-num = 1
+num = 2
 
 epochs = 10
 batch_size = 64
@@ -129,24 +129,25 @@ reg = l2(5e-4)
 activation = 'tanh'
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
-# model = Sequential()
-# model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
-# model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
-# model.add(Dropout(0.5))
-# model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
-# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-#
-# # model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
-# # model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
-# # model.summary()
-#
-# """ Fit the model """
-#
-# model.fit_generator(generator_train, steps_per_epoch=steps, epochs=epochs, class_weight=class_weight)
-#
-# """ Save and reload the model """
-# model.save(f"lstm_model{num}.h5")
-# del model
+model = Sequential()
+model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
+model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# model.add(InputLayer(batch_input_shape=(batch_size, None, 90)))
+# model.add(LSTM(100, dropout=0.5, recurrent_dropout=0.5, stateful=True))
+# model.summary()
+
+""" Fit the model """
+from keras.callbacks import TensorBoard
+tensorboard = TensorBoard("plots")
+model.fit_generator(generator_train, epochs=epochs, class_weight=class_weight)
+
+""" Save and reload the model """
+model.save(f"lstm_model{num}.h5")
+del model
 model = load_model(f"lstm_model{num}.h5")
 # model = load_model(f"lstm_model1.h5")
 
@@ -158,7 +159,7 @@ model = load_model(f"lstm_model{num}.h5")
 
 """ Predictions on training data """
 print("Predicting values on training data...")
-predictions_train = np.ndarray.flatten(model.predict_generator(generator_train, steps=len(generator_train)))
+predictions_train = np.ndarray.flatten(model.predict_generator(generator_train))
 # predictions_train = predictions_train.reshape(-1)
 predictions_train[predictions_train <= 0.5] = 0
 predictions_train[predictions_train > 0.5] = 1
@@ -172,7 +173,7 @@ print(f"\tAccuracy:\t{accuracy_train}")
 print(f"\tRoc:\t\t{roc_auc_score_train}")
 
 """ Predictions on test data """
-loss_keras, metrics = model.evaluate_generator(generator_test, steps=len(generator_test), verbose=1)
+loss_keras, metrics = model.evaluate_generator(generator_test, verbose=1)
 loss_keras = round(loss_keras, 4)
 print(f"\tLoss:\t\t{loss_keras}")
 print(f"\tAccuracy:\t{metrics}")
