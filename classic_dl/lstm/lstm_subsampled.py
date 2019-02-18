@@ -87,7 +87,7 @@ y_train = y_train[target_indices_seq]
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 1
+num = 2
 epochs = 10
 batch_size = 64
 units = 128
@@ -112,8 +112,8 @@ model.fit(X_train, y_train,
           class_weight=class_weight,
           callbacks=callbacks)
 
-# """ Save and reload the model """
-# model.save(f"lstm_model{num}.h5")
+""" Save and reload the model """
+model.save(f"lstm_model{num}.h5")
 # del model
 # model = load_model(f"lstm_model{num}.h5")
 # model = load_model(f"lstm_model1.h5")
