@@ -66,7 +66,7 @@ dump(clf, f"svm_model{num}.joblib")
 
 print("Predicting values on test data...")
 predictions = clf.predict(X_test)
-probabilities = clf.predict_proba(X_test)
+probabilities = clf.predict_proba(X_test)[:, 1]
 errors = abs(predictions - y_test)
 
 print("Results")
