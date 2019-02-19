@@ -1,8 +1,11 @@
+import os
+from joblib import dump, load
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn.metrics import brier_score_loss, accuracy_score, roc_auc_score
-import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 
@@ -44,9 +47,10 @@ print(X_training.shape, y_training.shape)
 print(X_test.shape, y_test.shape)
 
 print("Creating the svm classifier...")
+num = 1
 gamma = 'scale'
 weighted = False
-on_seizure = True
+
 clf = svm.SVC(gamma=gamma)
 
 print("Fitting training data to the svm classifier...")
@@ -56,34 +60,34 @@ else:
     weighted = class_weight = {1: 10}
     clf.fit(X_training, y_training, class_weight="balanced")
 
+dump(clf, f"svm_model{num}.joblib")
+# clf = load(f"svm_model{num}.joblib")
+# clf = load(f"svm_model1.joblib")
+
 print("Predicting values on test data...")
 predictions = clf.predict(X_test)
+probabilities = clf.predict_proba(X_test)
 errors = abs(predictions - y_test)
 
 print("Results")
-loss = round(brier_score_loss(y_test, predictions), 4)
+loss = round(brier_score_loss(y_test, probabilities), 4)
 accuracy = round(accuracy_score(y_test, predictions), 4)
-roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
+roc_auc_score = round(roc_auc_score(y_test, probabilities), 4)
 print(f"\tLoss:\t\t{loss}")
 print(f"\tAccuracy:\t{accuracy}")
-print(f"\tRoc:\t\t{roc_auc_score}")
+print(f"\tROC-AUC:\t{roc_auc_score}")
 
 
 """ Write results into file """
-if on_seizure:
-    dataset = "on_seizure_data"
-else:
-    dataset = "on_whole_data"
+exp = "exp" + str(num)
+file_name = exp + "_svm.txt"
 
-file_name = f"svm(gamma={gamma},weighted={weighted})" \
-    f"-{dataset}.txt"
 with open(file_name, 'w') as file:
-    file.write("EXPERIMENT: SVM\n\n")
+    file.write(f"EXPERIMENT {num}: SVM\n\n")
 
     file.write("Parameters\n")
     file.write(f"\tgamma:\t\t{gamma}\n")
-    file.write(f"\tweighted:\t{weighted}\n")
-    file.write(f"\tdataset:\t{dataset}\n\n")
+    file.write(f"\tweighted:\t{weighted}\n\n")
 
     file.write("Data shape\n")
     file.write(f"\tX_training shape:\t{X_training.shape}\n")
@@ -94,7 +98,7 @@ with open(file_name, 'w') as file:
     file.write("Results\n")
     file.write(f"\tLoss:\t\t{loss}\n")
     file.write(f"\tAccuracy:\t{accuracy}\n")
-    file.write(f"\tRoc:\t{roc_auc_score}\n\n")
+    file.write(f"\tROC-AUC:\t{roc_auc_score}\n\n")
 
 
 """ Plots """
@@ -106,4 +110,18 @@ plt.subplot(2, 1, 2)
 plt.plot(predictions)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
-plt.savefig("./plots/predictions.png")
+plt.savefig(f"./plots/{exp}-predictions.png")
+plt.close()
+
+
+def running_mean(x, N):
+    cumsum = np.cumsum(np.insert(x, 0, 0))
+    return (cumsum[N:] - cumsum[:-N]) / float(N)
+
+
+plt.figure(figsize=(15.0, 8.0))
+plt.plot(probabilities)
+plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
+plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
+plt.plot(running_mean(probabilities, 1000))
+plt.savefig(f"./plots/{exp}-probabilities.png", dpi=400)
