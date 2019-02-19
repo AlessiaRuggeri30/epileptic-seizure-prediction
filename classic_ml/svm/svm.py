@@ -51,7 +51,7 @@ num = 1
 gamma = 'scale'
 weighted = False
 
-clf = svm.SVC(gamma=gamma)
+clf = svm.SVC(gamma=gamma, probability=True)
 
 print("Fitting training data to the svm classifier...")
 if weighted is False:
