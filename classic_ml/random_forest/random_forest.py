@@ -46,13 +46,16 @@ print(X_training.shape, y_training.shape)
 print(X_test.shape, y_test.shape)
 
 print("Creating the random forest classifier...")
-num = 1
+num = 2
 n_estimators = 100
 max_depth = 10
 random_state = 0
 
+# clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
+#                              random_state=random_state, n_jobs=-1, class_weight="balanced")
+
 clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                             random_state=random_state, n_jobs=-1, class_weight="balanced")
+                             random_state=random_state, n_jobs=-1)
 
 print("Fitting training data to the random forest classifier...")
 clf.fit(X_training, y_training)
@@ -86,7 +89,8 @@ with open(file_name, 'w') as file:
     file.write(f"\tn_estimators:\t{n_estimators}\n")
     file.write(f"\tmax_depth:\t\t{max_depth}\n")
     file.write(f"\trandom_state:\t{random_state}\n")
-    file.write(f"\tbalanced\n\n")
+    # file.write(f"\tbalanced\n\n")
+    file.write(f"\tunbalanced\n\n")
 
     file.write("Data shape\n")
     file.write(f"\tX_training shape:\t{X_training.shape}\n")
@@ -110,7 +114,6 @@ plt.plot(predictions)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig(f"./plots/{exp}-predictions.png")
-# plt.savefig("./plots/{exp}-predictions_nonbalanced.png")
 plt.close()
 
 
