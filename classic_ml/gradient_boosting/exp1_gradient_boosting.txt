@@ -1,0 +1,18 @@
+EXPERIMENT 1: GRADIENT BOOSTING
+
+Parameters
+	n_estimators:	100
+	max_depth:		10
+	random_state:	0
+
+Data shape
+	X_training shape:	(200000, 90)
+	y_training shape:	(200000,)
+	X_test shape:		(100000, 90)
+	y_test shape:		(100000,)
+
+Results
+	Loss:		0.1512
+	Accuracy:	0.8405
+	ROC-AUC:	0.6565
+
