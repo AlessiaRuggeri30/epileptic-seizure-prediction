@@ -68,17 +68,18 @@ X_test = scaler.transform(X_test)
 look_back = 100
 stride = 1  # Keep this =1 so that you keep all positive samples
 predicted_timestamps = 1
-shift = -1  # starting from the position len(sequence) + 1
+target_steps_ahead = 0  # starting from the position len(sequence) + 1
+subsampling_factor = 2
 
 """ Generate sequences """
 # Generate sequences by computing indices
 inputs_indices_seq, target_indices_seq =  \
-    generate_indices([y_train],             # Targets associated to X_train (same shape[0])
-                     look_back,             # Length of input sequences
-                     stride=stride,         # Stride between windows
-                     target_steps_ahead=0,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
-                     subsample=True,        # Whether to subsample
-                     subsampling_factor=2   # Keep this many negative samples w.r.t. to positive ones
+    generate_indices([y_train],                              # Targets associated to X_train (same shape[0])
+                     look_back,                              # Length of input sequences
+                     stride=stride,                          # Stride between windows
+                     target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                     subsample=True,                         # Whether to subsample
+                     subsampling_factor=subsampling_factor   # Keep this many negative samples w.r.t. to positive ones
                      )
 X_train = X_train[inputs_indices_seq]
 y_train = y_train[target_indices_seq]
@@ -116,10 +117,9 @@ model.fit(X_train, y_train,
           callbacks=callbacks)
 
 """ Save and reload the model """
-model.save(f"lstm_model{num}.h5")
+model.save(f"models/lstm_model{num}.h5")
 # del model
-# model = load_model(f"lstm_model{num}.h5")
-# model = load_model(f"lstm_model1.h5")
+# model = load_model(f"models/lstm_model{num}.h5")
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -160,19 +160,19 @@ string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
-with open(file_name, 'w') as file:
+with open(f"results/{file_name}", 'w') as file:
     file.write(f"EXPERIMENT {num}: LSTM NEURAL NETWORK\n\n")
 
     file.write("Parameters\n")
-    file.write(f"\tepochs:\t\t\t\t\t{epochs}\n")
-    file.write(f"\tbatch_size:\t\t\t\t{batch_size}\n")
-    file.write(f"\treg:\t\t\t\t\tl2(5e-4)\n")
-    file.write(f"\tactivation:\t\t\t\t{activation}\n")
-    file.write(f"\tclass_weight:\t\t\t{str(class_weight)}\n")
-    file.write(f"\tlook_back:\t\t\t\t{look_back}\n")
-    file.write(f"\tstride:\t\t\t\t\t{stride}\n")
+    file.write(f"\tepochs:\t\t\t{epochs}\n")
+    file.write(f"\tbatch_size:\t\t{batch_size}\n")
+    file.write(f"\treg:\t\t\tl2(5e-4)\n")
+    file.write(f"\tactivation:\t\t{activation}\n")
+    file.write(f"\tclass_weight:\t\t{str(class_weight)}\n")
+    file.write(f"\tlook_back:\t\t{look_back}\n")
+    file.write(f"\tstride:\t\t\t{stride}\n")
     file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
-    file.write(f"\tshift:\t\t\t\t\t{shift}\n\n")
+    file.write(f"\tshift:\t\t\t{shift}\n\n")
 
     file.write("Model\n")
     file.write(f"{summary}\n\n")
@@ -182,8 +182,6 @@ with open(file_name, 'w') as file:
     file.write(f"\ty_train shape:\t{y_train.shape}\n")
     file.write(f"\tX_test shape: \t{X_test.shape}\n")
     file.write(f"\ty_test shape: \t{y_test.shape}\n")
-    file.write(f"\tNumber of train samples:\t{len(y_train)}\n")
-    file.write(f"\tNumber of test samples: \t{len(y_test)}\n\n")
 
     file.write("Results on train set\n")
     file.write(f"\tLoss:\t\t{loss_train}\n")

@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+import os.path
 
 
 def generate_sequences(inputs, targets, length, target_steps_ahead=0,
@@ -128,17 +130,51 @@ def generate_indices(targets, length, target_steps_ahead=0,
     return inputs_indices_seq, target_indices_seq
 
 
+def create_experiments(hyperpar):
+    data = np.array([hyperpar])
+    df = pd.DataFrame(data=data[1:, 1:],
+                      index=data[1:, 0],
+                      columns=data[0, 1:])
+    return df
+
+
+def add_experiment(num, exp_hyperpar, filename, hyperpar):
+    if not os.path.isfile(filename):
+        df = create_experiments(hyperpar=hyperpar)
+    else:
+        df = pd.read_pickle(filename)
+    df.loc[f"exp{num}"] = exp_hyperpar
+    return df
+
+
+def save_experiments(dataframe, filename):
+    dataframe.to_pickle(filename)
+
+
 if __name__ == '__main__':
-    x_1 = np.arange(1, 14)
-    x_2 = np.arange(101, 114)
-    y_1 = np.arange(1, 14)
-    y_2 = np.arange(101, 114)
-    data = generate_sequences([x_1, x_2], [y_1, y_2], 4, target_steps_ahead=2,
-                              stride=1, batch_size=1, shuffle=False, subsample=True)
-    print(data.__next__())
-    for (x_1_, x_2_), (y_1_, y_2_) in data:
-        print('batch')
-        print(x_1_)
-        # print(x_2_)
-        print(y_1_)
-        # print(y_2_)
+    # pass
+
+    # x_1 = np.arange(1, 14)
+    # x_2 = np.arange(101, 114)
+    # y_1 = np.arange(1, 14)
+    # y_2 = np.arange(101, 114)
+    # data = generate_sequences([x_1, x_2], [y_1, y_2], 4, target_steps_ahead=2,
+    #                           stride=1, batch_size=1, shuffle=False, subsample=True)
+    # print(data.__next__())
+    # for (x_1_, x_2_), (y_1_, y_2_) in data:
+    #     print('batch')
+    #     print(x_1_)
+    #     # print(x_2_)
+    #     print(y_1_)
+    #     # print(y_2_)
+
+    filename = "experiments"
+    hyperpar = ['', 'par1', 'par2', 'par3', 'par4']
+    num = 4
+    exp_hyperpar = [10, 11, 12, 13]
+    df = add_experiment(num, exp_hyperpar, filename, hyperpar)
+
+    print(df)
+
+    save_experiments(df, filename)
+

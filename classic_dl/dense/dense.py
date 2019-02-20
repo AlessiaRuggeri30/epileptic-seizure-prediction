@@ -107,10 +107,9 @@ model.fit(X_train, y_train,
           callbacks=callbacks)
 
 """ Save and reload the model """
-model.save(f"dense_model{num}.h5")
+model.save(f"models/dense_model{num}.h5")
 del model
-model = load_model(f"dense_model{num}.h5")
-# model = load_model(f"dense_model3.h5")
+model = load_model(f"models/dense_model{num}.h5")
 
 
 # -----------------------------------------------------------------------------
@@ -152,7 +151,7 @@ string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
-with open(file_name, 'w') as file:
+with open(f"results/{file_name}", 'w') as file:
     file.write(f"EXPERIMENT {num}: DENSE NEURAL NETWORK\n\n")
 
     file.write("Parameters\n")
