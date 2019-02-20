@@ -1,12 +1,14 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
-from sklearn import preprocessing
-from keras.models import Sequential, load_model
-from keras.layers import Dense, Dropout, Reshape, Flatten
-from keras.regularizers import l2
-from keras.preprocessing.sequence import TimeseriesGenerator
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+from keras.models import Sequential, load_model
+from keras.layers import Dense, Dropout
+from keras.regularizers import l2
+from sklearn import preprocessing
+from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
+from keras import callbacks
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 """ Variables """
@@ -47,8 +49,6 @@ for c in range(1, n_clip + 1):
 # -----------------------------------------------------------------------------
 # DATA PREPROCESSING
 # -----------------------------------------------------------------------------
-
-
 """ Select training set and test set """
 X_train = np.concatenate((X[2], X[3]), axis=0)
 y_train = np.concatenate((y[2], y[3]), axis=0)
@@ -73,10 +73,10 @@ print(X_test.shape, y_test.shape)
 # -----------------------------------------------------------------------------
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
-
-
 """ Build the model """
-num = 3
+num = 7
+exp = "exp" + str(num)
+file_name = exp + "_dense.txt"
 
 epochs = 20
 batch_size = 32
@@ -97,62 +97,57 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 model.summary()
 
 """ Fit the model """
-model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, class_weight=class_weight)
+callbacks = [
+    callbacks.TensorBoard(log_dir=f".logs/{exp}"),
+]
+model.fit(X_train, y_train,
+          batch_size=batch_size,
+          epochs=epochs,
+          class_weight=class_weight,
+          callbacks=callbacks)
 
 """ Save and reload the model """
 model.save(f"dense_model{num}.h5")
-del model
-model = load_model(f"dense_model{num}.h5")
+# del model
+# model = load_model(f"dense_model{num}.h5")
 # model = load_model(f"dense_model3.h5")
 
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
 # -----------------------------------------------------------------------------
-
-
 """ Predictions on training data """
 print("Predicting values on training data...")
-predictions_train = model.predict(X_train, batch_size=batch_size)
-predictions_train[predictions_train <= 0.5] = 0
-predictions_train[predictions_train > 0.5] = 1
+predictions_train = model.predict(X_train, batch_size=batch_size).flatten()
 
 print("Results on training data")
-loss_train = round(log_loss(y_train, predictions_train, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
-accuracy_train = round(accuracy_score(y_train, predictions_train), 4)
-roc_auc_score_train = round(roc_auc_score(y_train, predictions_train), 4)
-print(f"\tLoss:\t\t{loss_train}")
-print(f"\tAccuracy:\t{accuracy_train}")
-print(f"\tRoc:\t\t{roc_auc_score_train}")
+loss_train = log_loss(y_train, predictions_train, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
+accuracy_train = accuracy_score(y_train, np.round(predictions_train))
+roc_auc_score_train = roc_auc_score(y_train, predictions_train)
+print(f"\tLoss:    \t{loss_train:.4f}")
+print(f"\tAccuracy:\t{accuracy_train:.4f}")
+print(f"\tROC-AUC: \t{roc_auc_score_train:.4f}")
 
 """ Predictions on test data """
-loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size)
-loss_keras = round(loss_keras, 4)
-print(f"\tLoss:\t\t{loss_keras}")
-print(f"\tAccuracy:\t{metrics}")
+loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size, verbose=1)
+print(f"\tLoss:    \t{loss_keras:.4f}")
+print(f"\tAccuracy:\t{metrics:.4f}")
 
 print("Predicting values on test data...")
-predictions = model.predict(X_test, batch_size=batch_size)
-sigmoid = np.copy(predictions)
-predictions[predictions <= 0.5] = 0
-predictions[predictions > 0.5] = 1
+predictions_test = model.predict(X_test, batch_size=batch_size).flatten()
 
 print("Results on test data")
-loss = round(log_loss(y_test, predictions, eps=1e-7), 4)  # for the clip part, eps=1e-15 is too small for float32
-accuracy = round(accuracy_score(y_test, predictions), 4)
-roc_auc_score = round(roc_auc_score(y_test, predictions), 4)
-print(f"\tLoss:\t\t{loss}")
-print(f"\tAccuracy:\t{accuracy}")
-print(f"\tRoc:\t\t{roc_auc_score}")
+loss_test = log_loss(y_test, predictions_test, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
+accuracy_test = accuracy_score(y_test, np.round(predictions_test))
+roc_auc_score_test = roc_auc_score(y_test, predictions_test)
+print(f"\tLoss:    \t{loss_test:.4f}")
+print(f"\tAccuracy:\t{accuracy_test:.4f}")
+print(f"\tROC-AUC: \t{roc_auc_score_test:.4f}")
 
 
 # -----------------------------------------------------------------------------
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
-
-
-exp = "exp" + str(num)
-file_name = exp + "_dense.txt"
 string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
@@ -183,15 +178,19 @@ with open(file_name, 'w') as file:
 
     file.write("Results on test set\n")
     file.write(f"\tLoss_keras:\t{loss_keras}\n")
-    file.write(f"\tLoss:\t\t{loss}\n")
-    file.write(f"\tAccuracy:\t{accuracy}\n")
-    file.write(f"\tRoc_auc:\t{roc_auc_score}\n")
+    file.write(f"\tLoss:\t\t{loss_test}\n")
+    file.write(f"\tAccuracy:\t{accuracy_test}\n")
+    file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
 
 
 # -----------------------------------------------------------------------------
 # PLOTS
 # -----------------------------------------------------------------------------
-
+predictions_train[predictions_train <= 0.5] = 0
+predictions_train[predictions_train > 0.5] = 1
+sigmoid = np.copy(predictions_test)
+predictions_test[predictions_test <= 0.5] = 0
+predictions_test[predictions_test > 0.5] = 1
 
 plt.subplot(2, 1, 1)
 plt.plot(y_train)
@@ -205,7 +204,7 @@ plt.plot(y_test)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.subplot(2, 1, 2)
-plt.plot(predictions)
+plt.plot(predictions_test)
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig(f"./plots/{exp}-predictions.png")

@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 from keras.layers import Dense, Dropout, LSTM
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.regularizers import l2
 from sklearn import preprocessing
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
@@ -88,6 +88,9 @@ y_train = y_train[target_indices_seq]
 # -----------------------------------------------------------------------------
 """ Build the model """
 num = 2
+exp = "exp" + str(num)
+file_name = exp + "_lstm.txt"
+
 epochs = 10
 batch_size = 64
 units = 128
@@ -153,14 +156,13 @@ print(f"\tROC-AUC: \t{roc_auc_score_test:.4f}")
 # -----------------------------------------------------------------------------
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
-exp = "exp" + str(num)
-file_name = exp + "_lstm.txt"
 string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
 with open(file_name, 'w') as file:
     file.write(f"EXPERIMENT {num}: LSTM NEURAL NETWORK\n\n")
+
     file.write("Parameters\n")
     file.write(f"\tepochs:\t\t\t\t\t{epochs}\n")
     file.write(f"\tbatch_size:\t\t\t\t{batch_size}\n")
