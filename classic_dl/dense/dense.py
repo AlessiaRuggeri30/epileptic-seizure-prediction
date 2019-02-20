@@ -74,7 +74,7 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 7
+num = 8
 exp = "exp" + str(num)
 file_name = exp + "_dense.txt"
 
@@ -82,7 +82,7 @@ epochs = 20
 batch_size = 32
 units = 512
 reg = l2(5e-4)
-activation = 'tanh'
+activation = 'relu'
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
 model = Sequential()
@@ -108,8 +108,8 @@ model.fit(X_train, y_train,
 
 """ Save and reload the model """
 model.save(f"dense_model{num}.h5")
-# del model
-# model = load_model(f"dense_model{num}.h5")
+del model
+model = load_model(f"dense_model{num}.h5")
 # model = load_model(f"dense_model3.h5")
 
 
