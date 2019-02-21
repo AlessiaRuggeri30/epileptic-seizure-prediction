@@ -48,7 +48,7 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 9
+num = 10
 exp = "exp" + str(num)
 file_name = exp + "_dense.txt"
 
