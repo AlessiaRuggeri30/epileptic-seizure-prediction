@@ -9,7 +9,7 @@ from sklearn import preprocessing
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from keras import callbacks
 import sys
-sys.path.append("...")
+sys.path.append("....")
 from utils.utils import add_experiment, save_experiments
 from utils.load_data import load_data
 
