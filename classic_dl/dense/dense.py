@@ -7,6 +7,7 @@ from keras.layers import Dense, Dropout
 from keras.regularizers import l2
 from sklearn import preprocessing
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
+from sklearn.utils import shuffle
 from keras import callbacks
 import sys
 sys.path.append("....")
@@ -36,7 +37,8 @@ scaler.fit(dataset)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
-""" Reshape data """
+""" Shuffle training data """
+X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
 
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
@@ -72,7 +74,7 @@ model.summary()
 callbacks = [
     callbacks.TensorBoard(log_dir=f".logs/{exp}"),
 ]
-model.fit(X_train, y_train,
+model.fit(X_train_shuffled, y_train_shuffled,
           batch_size=batch_size,
           epochs=epochs,
           class_weight=class_weight,
