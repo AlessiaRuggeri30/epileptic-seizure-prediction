@@ -8,8 +8,10 @@ from keras.regularizers import l2
 from sklearn import preprocessing
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from keras import callbacks
-from ...utils.utils import add_experiment, save_experiments
-from ...utils.load_data import load_data
+import sys
+sys.path.append("...")
+from utils.utils import add_experiment, save_experiments
+from utils.load_data import load_data
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
