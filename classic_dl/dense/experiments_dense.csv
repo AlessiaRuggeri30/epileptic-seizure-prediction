@@ -1,0 +1,2 @@
+,epochs,units,activation,loss,acc,roc-auc
+exp9,20,512,tanh,2.1836164949212584,0.54815,0.48439019474354683
