@@ -46,3 +46,6 @@ Results on test set
 	Loss:		1.8402089484477433
 	Accuracy:	0.59461
 	Roc_auc:	0.462407332922127
+
+
+I tried shuffling the training data, but it didn't help in this case

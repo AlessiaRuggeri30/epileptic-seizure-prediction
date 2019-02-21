@@ -46,3 +46,8 @@ Results on test set
 	Loss:		2.1836164949212584
 	Accuracy:	0.54815
 	Roc_auc:	0.48439019474354683
+
+
+Here I've modified the dataset so that each clip is trimmed ending
+with the end of the seizure and starting 100,000 timestamps before
+the end of the seizure

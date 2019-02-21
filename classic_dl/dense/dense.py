@@ -5,7 +5,7 @@ import numpy as np
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout
 from keras.regularizers import l2
-from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
 from keras import callbacks
@@ -32,7 +32,7 @@ n_positive = np.sum(y_train)
 n_negative = len(y_train) - n_positive
 
 """ Normalize data """
-scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
+scaler = StandardScaler()
 scaler.fit(dataset)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
@@ -48,7 +48,7 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 10
+num = 11
 exp = "exp" + str(num)
 file_name = exp + "_dense.txt"
 
