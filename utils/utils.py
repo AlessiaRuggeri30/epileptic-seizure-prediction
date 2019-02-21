@@ -149,6 +149,7 @@ def add_experiment(num, exp_hyperpar, filename, hyperpar):
 
 def save_experiments(dataframe, filename):
     dataframe.to_pickle(filename)
+    dataframe.to_csv(f"{filename}.csv")
 
 
 if __name__ == '__main__':
@@ -170,7 +171,7 @@ if __name__ == '__main__':
 
     filename = "experiments"
     hyperpar = ['', 'par1', 'par2', 'par3', 'par4']
-    num = 4
+    num = 5
     exp_hyperpar = [10, 11, 12, 13]
     df = add_experiment(num, exp_hyperpar, filename, hyperpar)
 

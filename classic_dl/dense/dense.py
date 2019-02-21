@@ -8,43 +8,13 @@ from keras.regularizers import l2
 from sklearn import preprocessing
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from keras import callbacks
+from ...utils.utils import add_experiment, save_experiments
+from ...utils.load_data import load_data
+
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
-""" Variables """
-n_clip = 3
-X = {}
-y = {}
-interval = {1: {'start': 1640000, 'end': 1740000},
-            2: {'start': 150000, 'end': 250000},
-            3: {'start': 60000, 'end': 160000}}
-seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interval[1]['start']},
-           2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
-           3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
-
-""" Load datasets """
-for c in range(1, n_clip + 1):
-    path = f"/home/phait/datasets/ieeg/TWH056_Day-504_Clip-0-{c}.npz"  # server
-    # path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
-
-    with np.load(path) as data:
-        data = dict(data)
-
-    data['szr_bool'] = data['szr_bool'].astype(int)  # one-hot encoding
-
-    X[c] = data['ieeg'].T[interval[c]['start']:interval[c]['end']]
-    y[c] = data['szr_bool'][interval[c]['start']:interval[c]['end']]
-
-    if c == 1:
-        dataset = X[c]
-    else:
-        dataset = np.concatenate((dataset, X[c]), axis=0)
-
-
-# X[c]      samples from clip c
-# y[c]      targets from clip c
-# dataset   concatenation of samples from all clips (concatenation of all X[c], used for scaling on entire dataset)
-
+X, y, dataset, seizure = load_data()
 
 # -----------------------------------------------------------------------------
 # DATA PREPROCESSING
@@ -74,7 +44,7 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 8
+num = 9
 exp = "exp" + str(num)
 file_name = exp + "_dense.txt"
 
@@ -82,7 +52,7 @@ epochs = 20
 batch_size = 32
 units = 512
 reg = l2(5e-4)
-activation = 'relu'
+activation = 'tanh'
 class_weight = {0: (len(y_train)/n_negative), 1: (len(y_train)/n_positive)}
 
 model = Sequential()
@@ -181,6 +151,11 @@ with open(f"results/{file_name}", 'w') as file:
     file.write(f"\tAccuracy:\t{accuracy_test}\n")
     file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
 
+experiments = "experiments_dense"
+hyperpar = ['', 'epochs', 'units', 'activation', 'loss', 'acc', 'roc-auc']
+exp_hyperpar = [epochs, units, activation, loss_test, accuracy_test, roc_auc_score_test]
+df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
+save_experiments(df, experiments)
 
 # -----------------------------------------------------------------------------
 # PLOTS
@@ -221,4 +196,3 @@ plt.plot(running_mean(sigmoid, 1000))
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig(f"./plots/{exp}-sigmoid.png", dpi=400)
-
