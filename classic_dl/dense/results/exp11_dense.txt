@@ -46,3 +46,7 @@ Results on test set
 	Loss:		1.5659845083103043
 	Accuracy:	0.62718
 	Roc_auc:	0.6549080562500749
+
+
+Changed MinMaxScaler to StandardScaler to normalize the data, it has done
+a pretty good job

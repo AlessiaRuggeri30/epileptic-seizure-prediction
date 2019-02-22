@@ -6,9 +6,14 @@ def load_data():
     n_clip = 3
     X = {}
     y = {}
-    interval = {1: {'start': 1599381, 'end': 1699381},
-                2: {'start': 101013, 'end': 201013},
-                3: {'start': 10699, 'end': 110699}}
+    # Trimming around the centered seizure
+    interval = {1: {'start': 1640000, 'end': 1740000},
+                2: {'start': 150000, 'end': 250000},
+                3: {'start': 60000, 'end': 160000}}
+    # Trimming so that the interval finishes exactly with the end of the seizure
+    # interval = {1: {'start': 1599381, 'end': 1699381},
+    #             2: {'start': 101013, 'end': 201013},
+    #             3: {'start': 10699, 'end': 110699}}
     seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interval[1]['start']},
                2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
                3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
