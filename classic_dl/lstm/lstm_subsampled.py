@@ -96,7 +96,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 
 """ Fit the model """
 callbacks = [
-    callbacks.TensorBoard('plots'),
+    callbacks.TensorBoard(log_dir=f".logs/{exp}"),
 ]
 model.fit(X_train_shuffled, y_train_shuffled,
           batch_size=batch_size,
@@ -154,17 +154,17 @@ with open(f"results/{file_name}", 'w') as file:
     file.write(f"\tepochs:\t\t\t{epochs}\n")
     file.write(f"\tbatch_size:\t\t{batch_size}\n")
     file.write(f"\tdepth_lstm:\t\t{depth_lstm}\n")
-    file.write(f"\tdepth_dense:\t\t{depth_dense}\n")
+    file.write(f"\tdepth_dense:\t{depth_dense}\n")
     file.write(f"\tunits_lstm:\t\t{units_lstm}\n")
     file.write(f"\treg:\t\t\tl2(5e-4)\n")
     file.write(f"\tactivation:\t\t{activation}\n")
     file.write(f"\tbatch_norm:\t\t{str(batch_norm)}\n")
     file.write(f"\tdropout:\t\t{dropout}\n")
-    file.write(f"\tclass_weight:\t\t{str(class_weight)}\n")
+    file.write(f"\tclass_weight:\t{str(class_weight)}\n")
     file.write(f"\tlook_back:\t\t{look_back}\n")
     file.write(f"\tstride:\t\t\t{stride}\n")
     file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
-    file.write(f"\ttarget_steps_ahead:\t\t\t{target_steps_ahead}\n")
+    file.write(f"\ttarget_steps_ahead:\t\t{target_steps_ahead}\n")
     file.write(f"\tsubsampling_factor:\t\t{subsampling_factor}\n\n")
 
     file.write("Model\n")
@@ -174,7 +174,7 @@ with open(f"results/{file_name}", 'w') as file:
     file.write(f"\tX_train shape:\t{X_train.shape}\n")
     file.write(f"\ty_train shape:\t{y_train.shape}\n")
     file.write(f"\tX_test shape: \t{X_test.shape}\n")
-    file.write(f"\ty_test shape: \t{y_test.shape}\n")
+    file.write(f"\ty_test shape: \t{y_test.shape}\n\n")
 
     file.write("Results on train set\n")
     file.write(f"\tLoss:\t\t{loss_train}\n")
