@@ -2,13 +2,14 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from keras.layers import Dense, Dropout, LSTM
+from keras.layers import Dense, Dropout, LSTM, BatchNormalization
 from keras.models import Sequential, load_model
 from keras.regularizers import l2
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
 from keras import callbacks
+from lstm_model import build_lstm_model
 import sys
 sys.path.append("....")
 from utils.utils import add_experiment, save_experiments, generate_indices
@@ -36,15 +37,14 @@ scaler.fit(dataset)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
-""" Reshape data """
+""" Generate sequences """
 look_back = 100
 stride = 1  # Keep this =1 so that you keep all positive samples
 predicted_timestamps = 1
 target_steps_ahead = 0  # starting from the position len(sequence)
 subsampling_factor = 2
 
-""" Generate sequences """
-# Generate sequences by computing indices
+# Generate sequences by computing indices for training data
 inputs_indices_seq, target_indices_seq =  \
     generate_indices([y_train],                              # Targets associated to X_train (same shape[0])
                      look_back,                              # Length of input sequences
@@ -56,6 +56,17 @@ inputs_indices_seq, target_indices_seq =  \
 X_train = X_train[inputs_indices_seq]
 y_train = y_train[target_indices_seq]
 
+# Generate sequences by computing indices for test data
+inputs_indices_seq, target_indices_seq =  \
+    generate_indices([y_test],                              # Targets associated to X_train (same shape[0])
+                     look_back,                              # Length of input sequences
+                     stride=stride,                          # Stride between windows
+                     target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                     )
+X_test = X_test[inputs_indices_seq]
+y_test = y_test[target_indices_seq]
+
+""" Shuffle training data """
 X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
 
 print(X_train.shape, y_train.shape)
@@ -80,11 +91,7 @@ batch_norm = False
 dropout = 0.5
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
-model = Sequential()
-model.add(LSTM(units_lstm, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
-model.add(LSTM(units_lstm, activation=activation, kernel_regularizer=reg))
-model.add(Dropout(dropout))
-model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
+model = build_lstm_model(depth_lstm, depth_dense, units_lstm, reg, activation, batch_norm, dropout)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 """ Fit the model """
