@@ -46,3 +46,6 @@ Results on test set
 	Loss:		0.8681910189428377
 	Accuracy:	0.78948
 	Roc_auc:	0.737186594117647
+
+
+I used back the old intervals to trim the data and it worked better
