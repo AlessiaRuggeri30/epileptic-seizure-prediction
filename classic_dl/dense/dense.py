@@ -43,7 +43,6 @@ X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 
-
 # -----------------------------------------------------------------------------
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
@@ -85,7 +84,6 @@ model.save(f"models/dense_model{num}.h5")
 del model
 model = load_model(f"models/dense_model{num}.h5")
 
-
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
 # -----------------------------------------------------------------------------
@@ -116,7 +114,6 @@ roc_auc_score_test = roc_auc_score(y_test, predictions_test)
 print(f"\tLoss:    \t{loss_test:.4f}")
 print(f"\tAccuracy:\t{accuracy_test:.4f}")
 print(f"\tROC-AUC: \t{roc_auc_score_test:.4f}")
-
 
 # -----------------------------------------------------------------------------
 # EXPERIMENT RESULTS SUMMARY

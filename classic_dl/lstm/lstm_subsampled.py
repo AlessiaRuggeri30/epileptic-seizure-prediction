@@ -5,46 +5,18 @@ import numpy as np
 from keras.layers import Dense, Dropout, LSTM
 from keras.models import Sequential, load_model
 from keras.regularizers import l2
-from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
+from sklearn.utils import shuffle
 from keras import callbacks
-from ...utils.utils import generate_indices
+import sys
+sys.path.append("....")
+from utils.utils import add_experiment, save_experiments, generate_indices
+from utils.load_data import load_data
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
-""" Variables """
-n_clip = 3
-X = {}
-y = {}
-interval = {1: {'start': 1599381, 'end': 1699381},
-            2: {'start': 101013, 'end': 201013},
-            3: {'start': 10699, 'end': 110699}}
-seizure = {1: {'start': 1684381 - interval[1]['start'], 'end': 1699381 - interval[1]['start']},
-           2: {'start': 188013 - interval[2]['start'], 'end': 201013 - interval[2]['start']},
-           3: {'start': 96699 - interval[3]['start'], 'end': 110699 - interval[3]['start']}}
-
-""" Load datasets """
-for c in range(1, n_clip + 1):
-    path = f"/home/phait/datasets/ieeg/TWH056_Day-504_Clip-0-{c}.npz"  # server
-    # path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
-
-    with np.load(path) as data:
-        data = dict(data)
-
-    data['szr_bool'] = data['szr_bool'].astype(int)  # one-hot encoding
-
-    X[c] = data['ieeg'].T[interval[c]['start']:interval[c]['end']]
-    y[c] = data['szr_bool'][interval[c]['start']:interval[c]['end']]
-
-    if c == 1:
-        dataset = X[c]
-    else:
-        dataset = np.concatenate((dataset, X[c]), axis=0)
-
-
-# X[c]      samples from clip c
-# y[c]      targets from clip c
-# dataset   concatenation of samples from all clips (concatenation of all X[c], used for scaling on entire dataset)
+X, y, dataset, seizure = load_data()
 
 # -----------------------------------------------------------------------------
 # DATA PREPROCESSING
@@ -59,7 +31,7 @@ n_positive = np.sum(y_train)
 n_negative = len(y_train) - n_positive
 
 """ Normalize data """
-scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
+scaler = StandardScaler()
 scaler.fit(dataset)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
@@ -68,7 +40,7 @@ X_test = scaler.transform(X_test)
 look_back = 100
 stride = 1  # Keep this =1 so that you keep all positive samples
 predicted_timestamps = 1
-target_steps_ahead = 0  # starting from the position len(sequence) + 1
+target_steps_ahead = 0  # starting from the position len(sequence)
 subsampling_factor = 2
 
 """ Generate sequences """
@@ -84,6 +56,11 @@ inputs_indices_seq, target_indices_seq =  \
 X_train = X_train[inputs_indices_seq]
 y_train = y_train[target_indices_seq]
 
+X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
+
+print(X_train.shape, y_train.shape)
+print(X_test.shape, y_test.shape)
+
 # -----------------------------------------------------------------------------
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
@@ -94,15 +71,19 @@ file_name = exp + "_lstm.txt"
 
 epochs = 10
 batch_size = 64
-units = 128
+depth_lstm = 2
+depth_dense = 1
+units_lstm = 128
 reg = l2(5e-4)
 activation = 'tanh'
+batch_norm = False
+dropout = 0.5
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 model = Sequential()
-model.add(LSTM(units, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
-model.add(LSTM(units, activation=activation, kernel_regularizer=reg))
-model.add(Dropout(0.5))
+model.add(LSTM(units_lstm, activation=activation, kernel_regularizer=reg, input_shape=(look_back, 90), return_sequences=True))
+model.add(LSTM(units_lstm, activation=activation, kernel_regularizer=reg))
+model.add(Dropout(dropout))
 model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -110,7 +91,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 callbacks = [
     callbacks.TensorBoard('plots'),
 ]
-model.fit(X_train, y_train,
+model.fit(X_train_shuffled, y_train_shuffled,
           batch_size=batch_size,
           epochs=epochs,
           class_weight=class_weight,
@@ -118,8 +99,8 @@ model.fit(X_train, y_train,
 
 """ Save and reload the model """
 model.save(f"models/lstm_model{num}.h5")
-# del model
-# model = load_model(f"models/lstm_model{num}.h5")
+del model
+model = load_model(f"models/lstm_model{num}.h5")
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -152,7 +133,6 @@ print(f"\tLoss:    \t{loss_test:.4f}")
 print(f"\tAccuracy:\t{accuracy_test:.4f}")
 print(f"\tROC-AUC: \t{roc_auc_score_test:.4f}")
 
-
 # -----------------------------------------------------------------------------
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
@@ -166,13 +146,19 @@ with open(f"results/{file_name}", 'w') as file:
     file.write("Parameters\n")
     file.write(f"\tepochs:\t\t\t{epochs}\n")
     file.write(f"\tbatch_size:\t\t{batch_size}\n")
+    file.write(f"\tdepth_lstm:\t\t{depth_lstm}\n")
+    file.write(f"\tdepth_dense:\t\t{depth_dense}\n")
+    file.write(f"\tunits_lstm:\t\t{units_lstm}\n")
     file.write(f"\treg:\t\t\tl2(5e-4)\n")
     file.write(f"\tactivation:\t\t{activation}\n")
+    file.write(f"\tbatch_norm:\t\t{str(batch_norm)}\n")
+    file.write(f"\tdropout:\t\t{dropout}\n")
     file.write(f"\tclass_weight:\t\t{str(class_weight)}\n")
     file.write(f"\tlook_back:\t\t{look_back}\n")
     file.write(f"\tstride:\t\t\t{stride}\n")
     file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
-    file.write(f"\tshift:\t\t\t{shift}\n\n")
+    file.write(f"\ttarget_steps_ahead:\t\t\t{target_steps_ahead}\n")
+    file.write(f"\tsubsampling_factor:\t\t{subsampling_factor}\n\n")
 
     file.write("Model\n")
     file.write(f"{summary}\n\n")
@@ -194,10 +180,25 @@ with open(f"results/{file_name}", 'w') as file:
     file.write(f"\tAccuracy:\t{accuracy_test}\n")
     file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
 
+experiments = "experiments_lstm"
+hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'activation',
+            'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
+            'subsampling_factor', 'loss', 'acc', 'roc-auc']
+exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, activation,
+                batch_norm, dropout, look_back, target_steps_ahead,
+                subsampling_factor, loss_test, accuracy_test, roc_auc_score_test]
+df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
+save_experiments(df, experiments)
 
 # -----------------------------------------------------------------------------
 # PLOTS
 # -----------------------------------------------------------------------------
+# predictions_train[predictions_train <= 0.5] = 0
+# predictions_train[predictions_train > 0.5] = 1
+# sigmoid = np.copy(predictions_test)
+# predictions_test[predictions_test <= 0.5] = 0
+# predictions_test[predictions_test > 0.5] = 1
+
 plt.subplot(2, 1, 1)
 plt.plot(y_train)
 plt.subplot(2, 1, 2)
