@@ -76,13 +76,13 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 3
+num = 4
 exp = "exp" + str(num)
 file_name = exp + "_lstm.txt"
 
 epochs = 10
 batch_size = 64
-depth_lstm = 2
+depth_lstm = 1
 depth_dense = 1
 units_lstm = 128
 reg = l2(5e-4)
