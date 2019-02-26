@@ -76,7 +76,7 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 2
+num = 3
 exp = "exp" + str(num)
 file_name = exp + "_lstm.txt"
 
@@ -87,7 +87,7 @@ depth_dense = 1
 units_lstm = 128
 reg = l2(5e-4)
 activation = 'tanh'
-batch_norm = False
+batch_norm = True
 dropout = 0.5
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
