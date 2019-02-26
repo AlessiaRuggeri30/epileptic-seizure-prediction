@@ -1,0 +1,52 @@
+EXPERIMENT 4: LSTM NEURAL NETWORK
+
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_lstm:		1
+	depth_dense:	1
+	units_lstm:		128
+	reg:			l2(5e-4)
+	activation:		tanh
+	batch_norm:		True
+	dropout:		0.5
+	class_weight:	{0: 0.4682080924855491, 1: 3.0}
+	look_back:		100
+	stride:			1
+	predicted_timestamps:	1
+	target_steps_ahead:		0
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_1 (LSTM)                (None, 128)               112128    
+_________________________________________________________________
+batch_normalization_1 (Batch (None, 128)               512       
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 128)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 129       
+=================================================================
+Total params: 112,769
+Trainable params: 112,513
+Non-trainable params: 256
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(81000, 100, 90)
+	y_train shape:	(81000,)
+	X_test shape: 	(99901, 100, 90)
+	y_test shape: 	(99901,)
+
+Results on train set
+	Loss:		0.025180113652705484
+	Accuracy:	0.9917901234567901
+	Roc_auc:	0.9998645305212621
+
+Results on test set
+	Loss_keras:	0.5205105314950866
+	Loss:		0.48064954732147813
+	Accuracy:	0.8755768210528423
+	Roc_auc:	0.8420368998402061
