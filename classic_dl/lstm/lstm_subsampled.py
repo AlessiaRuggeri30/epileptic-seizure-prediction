@@ -2,6 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from itertools import product
 from keras.layers import Dense, Dropout, LSTM, BatchNormalization
 from keras.models import Sequential, load_model
 from keras.regularizers import l2
@@ -72,24 +73,49 @@ X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
 print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 
+
+
 # -----------------------------------------------------------------------------
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 5
-exp = "exp" + str(num)
-file_name = exp + "_lstm.txt"
+# epochs = 10
+# batch_size = 64
+# depth_lstm = 1
+# depth_dense = 1
+# units_lstm = 128
+# reg_n = '5e-2'
+# reg = l2(float(reg_n))
+# activation = 'tanh'
+# batch_norm = True
+# dropout = 0.5
+# class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 epochs = 10
 batch_size = 64
 depth_lstm = 1
 depth_dense = 1
 units_lstm = 128
-reg = l2(5e-2)
+reg_n = '5e-2'
+reg = l2(float(reg_n))
 activation = 'tanh'
 batch_norm = True
 dropout = 0.5
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
+
+# tunables = [depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout]
+# for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout in product(*tunables):
+
+# TODO use only parameters that you need, like dropout and reg_n and depth_lstm
+tunables = [depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout]
+for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout in product(*tunables):
+    pass
+
+# TODO prepare things for experiment
+
+num = 5
+exp = "exp" + str(num)
+file_name = exp + "_lstm.txt"
 
 model = build_lstm_model(depth_lstm, depth_dense, units_lstm, reg, activation, batch_norm, dropout)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -156,7 +182,7 @@ with open(f"results/{file_name}", 'w') as file:
     file.write(f"\tdepth_lstm:\t\t{depth_lstm}\n")
     file.write(f"\tdepth_dense:\t{depth_dense}\n")
     file.write(f"\tunits_lstm:\t\t{units_lstm}\n")
-    file.write(f"\treg:\t\t\tl2(5e-4)\n")
+    file.write(f"\treg:\t\t\tl2({reg_n})\n")
     file.write(f"\tactivation:\t\t{activation}\n")
     file.write(f"\tbatch_norm:\t\t{str(batch_norm)}\n")
     file.write(f"\tdropout:\t\t{dropout}\n")
@@ -189,10 +215,10 @@ with open(f"results/{file_name}", 'w') as file:
 
 experiments = "experiments_lstm"
 hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'activation',
-            'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
+            'l2_reg', 'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
             'subsampling_factor', 'loss', 'acc', 'roc-auc']
 exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, activation,
-                batch_norm, dropout, look_back, target_steps_ahead,
+                reg_n, batch_norm, dropout, look_back, target_steps_ahead,
                 subsampling_factor, loss_test, accuracy_test, roc_auc_score_test]
 df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
 save_experiments(df, experiments)
