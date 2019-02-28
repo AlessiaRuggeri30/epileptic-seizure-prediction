@@ -41,9 +41,9 @@ Data shape
 	y_test shape: 	(99901,)
 
 Results on train set
-	Loss:		0.019123615916990938
-	Accuracy:	0.9954074074074074
-	Roc_auc:	0.9997180994513031
+	Loss:		0.01974490289298976
+	Accuracy:	0.9949876543209877
+	Roc_auc:	0.9996930096021948
 
 Results on test set
 	Loss_keras:	0.45538892716850565
