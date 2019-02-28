@@ -74,22 +74,13 @@ print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 
 
-
 # -----------------------------------------------------------------------------
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-# epochs = 10
-# batch_size = 64
-# depth_lstm = 1
-# depth_dense = 1
-# units_lstm = 128
-# reg_n = '5e-2'
-# reg = l2(float(reg_n))
-# activation = 'tanh'
-# batch_norm = True
-# dropout = 0.5
-# class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
+num = 5
+exp = "exp" + str(num)
+file_name = exp + "_lstm.txt"
 
 epochs = 10
 batch_size = 64
@@ -103,36 +94,22 @@ batch_norm = True
 dropout = 0.5
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
-# tunables = [depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout]
-# for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout in product(*tunables):
-
-# TODO use only parameters that you need, like dropout and reg_n and depth_lstm
-tunables = [depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout]
-for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout in product(*tunables):
-    pass
-
-# TODO prepare things for experiment
-
-num = 5
-exp = "exp" + str(num)
-file_name = exp + "_lstm.txt"
-
-model = build_lstm_model(depth_lstm, depth_dense, units_lstm, reg, activation, batch_norm, dropout)
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-""" Fit the model """
-callbacks = [
-    callbacks.TensorBoard(log_dir=f".logs/{exp}"),
-]
-model.fit(X_train_shuffled, y_train_shuffled,
-          batch_size=batch_size,
-          epochs=epochs,
-          class_weight=class_weight,
-          callbacks=callbacks)
-
-""" Save and reload the model """
-model.save(f"models/lstm_model{num}.h5")
-del model
+# model = build_lstm_model(depth_lstm, depth_dense, units_lstm, reg, activation, batch_norm, dropout)
+# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+#
+# """ Fit the model """
+# callbacks = [
+#     callbacks.TensorBoard(log_dir=f".logs/{exp}"),
+# ]
+# model.fit(X_train_shuffled, y_train_shuffled,
+#           batch_size=batch_size,
+#           epochs=epochs,
+#           class_weight=class_weight,
+#           callbacks=callbacks)
+#
+# """ Save and reload the model """
+# model.save(f"models/lstm_model{num}.h5")
+# del model
 model = load_model(f"models/lstm_model{num}.h5")
 
 # -----------------------------------------------------------------------------
