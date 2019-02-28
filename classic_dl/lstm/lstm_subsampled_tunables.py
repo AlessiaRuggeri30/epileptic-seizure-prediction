@@ -84,18 +84,6 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-# epochs = 10
-# batch_size = 64
-# depth_lstm = 1
-# depth_dense = 1
-# units_lstm = 128
-# reg_n = '5e-2'
-# reg = l2(float(reg_n))
-# activation = 'tanh'
-# batch_norm = True
-# dropout = 0.5
-# class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
-
 num = 6
 
 epochs = 10
