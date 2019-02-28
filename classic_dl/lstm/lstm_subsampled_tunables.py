@@ -110,14 +110,14 @@ for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     """ Fit the model """
-    callbacks = [
+    cb = [
         callbacks.TensorBoard(log_dir=f".logs/{exp}"),
     ]
     model.fit(X_train_shuffled, y_train_shuffled,
               batch_size=batch_size,
               epochs=epochs,
               class_weight=class_weight,
-              callbacks=callbacks)
+              callbacks=cb)
 
     """ Save and reload the model """
     model.save(f"models/lstm_model{num}.h5")
