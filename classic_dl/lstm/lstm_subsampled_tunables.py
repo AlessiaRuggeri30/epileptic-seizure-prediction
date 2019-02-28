@@ -103,6 +103,7 @@ tunables = [depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, 
 for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout in product(*tunables):
     exp = "exp" + str(num)
     file_name = exp + "_lstm.txt"
+    print(f"\n{exp}\n")
 
     reg = l2(float(reg_n))
 
