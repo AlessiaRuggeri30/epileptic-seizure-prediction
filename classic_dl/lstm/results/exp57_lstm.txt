@@ -1,0 +1,52 @@
+EXPERIMENT 57: LSTM NEURAL NETWORK
+
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_lstm:		1
+	depth_dense:	1
+	units_lstm:		256
+	reg:			l2(5e-2)
+	activation:		tanh
+	batch_norm:		True
+	dropout:		0.4
+	class_weight:	{0: 0.4682080924855491, 1: 3.0}
+	look_back:		100
+	stride:			1
+	predicted_timestamps:	1
+	target_steps_ahead:		0
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_52 (LSTM)               (None, 256)               355328    
+_________________________________________________________________
+batch_normalization_25 (Batc (None, 256)               1024      
+_________________________________________________________________
+dropout_52 (Dropout)         (None, 256)               0         
+_________________________________________________________________
+dense_52 (Dense)             (None, 1)                 257       
+=================================================================
+Total params: 356,609
+Trainable params: 356,097
+Non-trainable params: 512
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(81000, 100, 90)
+	y_train shape:	(81000,)
+	X_test shape: 	(99901, 100, 90)
+	y_test shape: 	(99901,)
+
+Results on train set
+	Loss:		0.01372460791957801
+	Accuracy:	0.996358024691358
+	Roc_auc:	0.99996659739369
+
+Results on test set
+	Loss_keras:	0.49758786434472646
+	Loss:		0.46331153094739547
+	Accuracy:	0.9020029829531236
+	Roc_auc:	0.8886494112750929
