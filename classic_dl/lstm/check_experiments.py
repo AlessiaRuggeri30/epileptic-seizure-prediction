@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+pd.set_option('display.max_colums', 15)
+pd.set_option('display.max_rows', 10)
 
 df = pd.read_csv("experiments_lstm.csv")
 
