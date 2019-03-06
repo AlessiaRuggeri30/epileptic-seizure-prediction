@@ -1,0 +1,54 @@
+EXPERIMENT 84: LSTM NEURAL NETWORK
+
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_lstm:		1
+	depth_dense:	2
+	units_lstm:		128
+	reg:			l2(5e-3)
+	activation:		relu
+	batch_norm:		False
+	dropout:		0.4
+	class_weight:	{0: 0.4682080924855491, 1: 3.0}
+	look_back:		100
+	stride:			1
+	predicted_timestamps:	1
+	target_steps_ahead:		0
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_79 (LSTM)               (None, 128)               112128    
+_________________________________________________________________
+dropout_85 (Dropout)         (None, 128)               0         
+_________________________________________________________________
+dense_85 (Dense)             (None, 256)               33024     
+_________________________________________________________________
+dropout_86 (Dropout)         (None, 256)               0         
+_________________________________________________________________
+dense_86 (Dense)             (None, 1)                 257       
+=================================================================
+Total params: 145,409
+Trainable params: 145,409
+Non-trainable params: 0
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(81000, 100, 90)
+	y_train shape:	(81000,)
+	X_test shape: 	(99901, 100, 90)
+	y_test shape: 	(99901,)
+
+Results on train set
+	Loss:		0.007619029938107871
+	Accuracy:	0.9981851851851852
+	Roc_auc:	0.9999772431412894
+
+Results on test set
+	Loss_keras:	0.4722719775891437
+	Loss:		0.37038133618787333
+	Accuracy:	0.9115524369125434
+	Roc_auc:	0.8850112825526201
