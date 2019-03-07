@@ -1,0 +1,58 @@
+EXPERIMENT 129: LSTM NEURAL NETWORK
+
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_lstm:		1
+	depth_dense:	2
+	units_lstm:		256
+	reg:			l2(5e-2)
+	activation:		tanh
+	batch_norm:		True
+	dropout:		0.4
+	class_weight:	{0: 0.4682080924855491, 1: 3.0}
+	look_back:		100
+	stride:			1
+	predicted_timestamps:	1
+	target_steps_ahead:		0
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_124 (LSTM)              (None, 256)               355328    
+_________________________________________________________________
+batch_normalization_85 (Batc (None, 256)               1024      
+_________________________________________________________________
+dropout_175 (Dropout)        (None, 256)               0         
+_________________________________________________________________
+dense_175 (Dense)            (None, 256)               65792     
+_________________________________________________________________
+batch_normalization_86 (Batc (None, 256)               1024      
+_________________________________________________________________
+dropout_176 (Dropout)        (None, 256)               0         
+_________________________________________________________________
+dense_176 (Dense)            (None, 1)                 257       
+=================================================================
+Total params: 423,425
+Trainable params: 422,401
+Non-trainable params: 1,024
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(81000, 100, 90)
+	y_train shape:	(81000,)
+	X_test shape: 	(99901, 100, 90)
+	y_test shape: 	(99901,)
+
+Results on train set
+	Loss:		0.005377088992493667
+	Accuracy:	0.9988395061728395
+	Roc_auc:	0.9999796248285322
+
+Results on test set
+	Loss_keras:	0.5685758674833399
+	Loss:		0.525154538273157
+	Accuracy:	0.8899910911802684
+	Roc_auc:	0.8937226467689818
