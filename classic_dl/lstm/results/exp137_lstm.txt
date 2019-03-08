@@ -1,0 +1,58 @@
+EXPERIMENT 137: LSTM NEURAL NETWORK
+
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_lstm:		1
+	depth_dense:	2
+	units_lstm:		256
+	reg:			l2(5e-2)
+	activation:		relu
+	batch_norm:		True
+	dropout:		0.6
+	class_weight:	{0: 0.4682080924855491, 1: 3.0}
+	look_back:		100
+	stride:			1
+	predicted_timestamps:	1
+	target_steps_ahead:		0
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_132 (LSTM)              (None, 256)               355328    
+_________________________________________________________________
+batch_normalization_95 (Batc (None, 256)               1024      
+_________________________________________________________________
+dropout_191 (Dropout)        (None, 256)               0         
+_________________________________________________________________
+dense_191 (Dense)            (None, 256)               65792     
+_________________________________________________________________
+batch_normalization_96 (Batc (None, 256)               1024      
+_________________________________________________________________
+dropout_192 (Dropout)        (None, 256)               0         
+_________________________________________________________________
+dense_192 (Dense)            (None, 1)                 257       
+=================================================================
+Total params: 423,425
+Trainable params: 422,401
+Non-trainable params: 1,024
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(81000, 100, 90)
+	y_train shape:	(81000,)
+	X_test shape: 	(99901, 100, 90)
+	y_test shape: 	(99901,)
+
+Results on train set
+	Loss:		0.010517000040270005
+	Accuracy:	0.998
+	Roc_auc:	0.9999883168724281
+
+Results on test set
+	Loss_keras:	0.3479465579640911
+	Loss:		0.30076816468036743
+	Accuracy:	0.9164172530805498
+	Roc_auc:	0.9133392429614099
