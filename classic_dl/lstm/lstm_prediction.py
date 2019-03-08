@@ -38,6 +38,8 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
+num = 2
+
 epochs = 10
 batch_size = 64
 depth_lstm = 1
@@ -58,29 +60,34 @@ subsampling_factor = 2
 
 target_steps_ahead = [1, 5, 10, 50, 100]  # starting from the position len(sequence)
 
+original_X_train = X_train
+original_y_train = y_train
+original_X_test = X_test
+original_y_test = y_test
+
 for steps_ahead in target_steps_ahead:
 
     # Generate sequences by computing indices for training data
     inputs_indices_seq, target_indices_seq =  \
-        generate_indices([y_train],                              # Targets associated to X_train (same shape[0])
+        generate_indices([original_y_train],                              # Targets associated to X_train (same shape[0])
                          look_back,                              # Length of input sequences
                          stride=stride,                          # Stride between windows
                          target_steps_ahead=steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
                          subsample=True,                         # Whether to subsample
                          subsampling_factor=subsampling_factor   # Keep this many negative samples w.r.t. to positive ones
                          )
-    X_train = X_train[inputs_indices_seq]
-    y_train = y_train[target_indices_seq]
+    X_train = original_X_train[inputs_indices_seq]
+    y_train = original_y_train[target_indices_seq]
 
     # Generate sequences by computing indices for test data
     inputs_indices_seq, target_indices_seq =  \
-        generate_indices([y_test],                              # Targets associated to X_train (same shape[0])
+        generate_indices([original_y_test],                              # Targets associated to X_train (same shape[0])
                          look_back,                              # Length of input sequences
                          stride=stride,                          # Stride between windows
                          target_steps_ahead=steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
                          )
-    X_test = X_test[inputs_indices_seq]
-    y_test = y_test[target_indices_seq]
+    X_test = original_X_test[inputs_indices_seq]
+    y_test = original_y_test[target_indices_seq]
 
     """ Shuffle training data """
     X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
@@ -92,7 +99,6 @@ for steps_ahead in target_steps_ahead:
     # MODEL BUILDING, TRAINING AND TESTING
     # -----------------------------------------------------------------------------
     """ Build the model """
-    num = 1
     exp = "exp" + str(num)
     file_name = exp + "_lstm_pred.txt"
     print(f"\n{exp}\n")
@@ -170,7 +176,7 @@ for steps_ahead in target_steps_ahead:
         file.write(f"\tlook_back:\t\t{look_back}\n")
         file.write(f"\tstride:\t\t\t{stride}\n")
         file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
-        file.write(f"\ttarget_steps_ahead:\t\t{target_steps_ahead}\n")
+        file.write(f"\ttarget_steps_ahead:\t\t{steps_ahead}\n")
         file.write(f"\tsubsampling_factor:\t\t{subsampling_factor}\n\n")
 
         file.write("Model\n")
@@ -198,7 +204,7 @@ for steps_ahead in target_steps_ahead:
                 'l2_reg', 'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
                 'subsampling_factor', 'loss', 'acc', 'roc-auc']
     exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, activation,
-                    reg_n, batch_norm, dropout, look_back, target_steps_ahead,
+                    reg_n, batch_norm, dropout, look_back, steps_ahead,
                     subsampling_factor, loss_test, accuracy_test, roc_auc_score_test]
     df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
     save_experiments(df, experiments)
