@@ -1,10 +1,9 @@
 import os
 
+import keras.backend as K
 import matplotlib.pyplot as plt
 import numpy as np
 from itertools import product
-from keras.layers import Dense, Dropout, LSTM, BatchNormalization
-from keras.models import Sequential, load_model
 from keras.regularizers import l2
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
@@ -84,7 +83,7 @@ print(X_test.shape, y_test.shape)
 # MODEL BUILDING, TRAINING AND TESTING
 # -----------------------------------------------------------------------------
 """ Build the model """
-num = 6
+num = 170
 
 epochs = 10
 batch_size = 64
@@ -112,7 +111,7 @@ for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout 
 
     """ Fit the model """
     cb = [
-        callbacks.TensorBoard(log_dir=f".logs/{exp}"),
+        callbacks.TensorBoard(log_dir=f".logs/det_logs/{exp}"),
     ]
     model.fit(X_train_shuffled, y_train_shuffled,
               batch_size=batch_size,
@@ -121,9 +120,9 @@ for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout 
               callbacks=cb)
 
     """ Save and reload the model """
-    model.save(f"models/lstm_model{num}.h5")
-    del model
-    model = load_model(f"models/lstm_model{num}.h5")
+    model.save(f"models_detection/lstm_model{num}.h5")
+    # del model
+    # model = load_model(f"models/lstm_model{num}.h5")
 
     # -----------------------------------------------------------------------------
     # RESULTS EVALUATION
@@ -163,7 +162,7 @@ for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout 
     model.summary(print_fn=lambda x: string_list.append(x))
     summary = "\n".join(string_list)
 
-    with open(f"results/{file_name}", 'w') as file:
+    with open(f"results_detection/{file_name}", 'w') as file:
         file.write(f"EXPERIMENT {num}: LSTM NEURAL NETWORK\n\n")
 
         file.write("Parameters\n")
@@ -203,7 +202,7 @@ for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout 
         file.write(f"\tAccuracy:\t{accuracy_test}\n")
         file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
 
-    experiments = "experiments_lstm"
+    experiments = "experiments_lstm_det"
     hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'activation',
                 'l2_reg', 'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
                 'subsampling_factor', 'loss', 'acc', 'roc-auc']
@@ -216,29 +215,20 @@ for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout 
     # -----------------------------------------------------------------------------
     # PLOTS
     # -----------------------------------------------------------------------------
-    # predictions_train[predictions_train <= 0.5] = 0
-    # predictions_train[predictions_train > 0.5] = 1
-    # sigmoid = np.copy(predictions_test)
-    # predictions_test[predictions_test <= 0.5] = 0
-    # predictions_test[predictions_test > 0.5] = 1
 
     plt.subplot(2, 1, 1)
     plt.plot(y_train)
     plt.subplot(2, 1, 2)
     plt.plot(predictions_train)
-    plt.savefig(f"./plots/{exp}-predictions_train.png")
+    plt.savefig(f"./plots_detection/{exp}-predictions_train.png")
     plt.close()
 
     plt.subplot(2, 1, 1)
     plt.plot(y_test)
     plt.subplot(2, 1, 2)
     plt.plot(predictions_test)
-    plt.savefig(f"./plots/{exp}-predictions.png")
+    plt.savefig(f"./plots_detection/{exp}-predictions.png")
     plt.close()
 
-    # plt.figure(figsize=(15.0, 8.0))
-    # plt.plot(sigmoid)
-    # plt.plot(running_mean(sigmoid, 1000))
-    # plt.savefig(f"./plots/{exp}-sigmoid.png", dpi=400)
-
     num += 1
+    K.clear_session()

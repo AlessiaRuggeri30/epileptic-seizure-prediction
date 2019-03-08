@@ -2,9 +2,6 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from itertools import product
-from keras.layers import Dense, Dropout, LSTM, BatchNormalization
-from keras.models import Sequential, load_model
 from keras.regularizers import l2
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
@@ -98,19 +95,19 @@ model = build_lstm_model(depth_lstm, depth_dense, units_lstm, reg, activation, b
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 """ Fit the model """
-callbacks = [
-    callbacks.TensorBoard(log_dir=f".logs/{exp}"),
+cb = [
+    callbacks.TensorBoard(log_dir=f".logs/det_logs/{exp}"),
 ]
 model.fit(X_train_shuffled, y_train_shuffled,
           batch_size=batch_size,
           epochs=epochs,
           class_weight=class_weight,
-          callbacks=callbacks)
+          callbacks=cb)
 
 """ Save and reload the model """
-model.save(f"models/lstm_model{num}.h5")
-del model
-model = load_model(f"models/lstm_model{num}.h5")
+model.save(f"models_detection/lstm_model{num}.h5")
+# del model
+# model = load_model(f"models/lstm_model{num}.h5")
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -150,7 +147,7 @@ string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
-with open(f"results/{file_name}", 'w') as file:
+with open(f"results_detection/{file_name}", 'w') as file:
     file.write(f"EXPERIMENT {num}: LSTM NEURAL NETWORK\n\n")
 
     file.write("Parameters\n")
@@ -190,7 +187,7 @@ with open(f"results/{file_name}", 'w') as file:
     file.write(f"\tAccuracy:\t{accuracy_test}\n")
     file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
 
-experiments = "experiments_lstm"
+experiments = "experiments_lstm_det"
 hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'activation',
             'l2_reg', 'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
             'subsampling_factor', 'loss', 'acc', 'roc-auc']
@@ -213,14 +210,14 @@ plt.subplot(2, 1, 1)
 plt.plot(y_train)
 plt.subplot(2, 1, 2)
 plt.plot(predictions_train)
-plt.savefig(f"./plots/{exp}-predictions_train.png")
+plt.savefig(f"./plots_detection/{exp}-predictions_train.png")
 plt.close()
 
 plt.subplot(2, 1, 1)
 plt.plot(y_test)
 plt.subplot(2, 1, 2)
 plt.plot(predictions_test)
-plt.savefig(f"./plots/{exp}-predictions.png")
+plt.savefig(f"./plots_detection/{exp}-predictions.png")
 plt.close()
 
 
