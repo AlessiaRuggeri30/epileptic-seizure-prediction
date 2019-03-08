@@ -122,7 +122,7 @@ for depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout 
     """ Save and reload the model """
     model.save(f"models_detection/lstm_model{num}.h5")
     # del model
-    # model = load_model(f"models/lstm_model{num}.h5")
+    # model = load_model(f"models_detection/lstm_model{num}.h5")
 
     # -----------------------------------------------------------------------------
     # RESULTS EVALUATION

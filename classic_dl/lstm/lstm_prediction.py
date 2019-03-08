@@ -113,7 +113,7 @@ for steps_ahead in target_steps_ahead:
     """ Save and reload the model """
     model.save(f"models_prediction/lstm_pred_model{num}.h5")
     # del model
-    # model = load_model(f"models/lstm_pred_model{num}.h5")
+    # model = load_model(f"models_prediction/lstm_pred_model{num}.h5")
 
     # -----------------------------------------------------------------------------
     # RESULTS EVALUATION
