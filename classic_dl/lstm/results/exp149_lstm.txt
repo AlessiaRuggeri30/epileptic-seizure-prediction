@@ -1,0 +1,58 @@
+EXPERIMENT 149: LSTM NEURAL NETWORK
+
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_lstm:		1
+	depth_dense:	2
+	units_lstm:		256
+	reg:			l2(5e-1)
+	activation:		relu
+	batch_norm:		True
+	dropout:		0.6
+	class_weight:	{0: 0.4682080924855491, 1: 3.0}
+	look_back:		100
+	stride:			1
+	predicted_timestamps:	1
+	target_steps_ahead:		0
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_144 (LSTM)              (None, 256)               355328    
+_________________________________________________________________
+batch_normalization_107 (Bat (None, 256)               1024      
+_________________________________________________________________
+dropout_215 (Dropout)        (None, 256)               0         
+_________________________________________________________________
+dense_215 (Dense)            (None, 256)               65792     
+_________________________________________________________________
+batch_normalization_108 (Bat (None, 256)               1024      
+_________________________________________________________________
+dropout_216 (Dropout)        (None, 256)               0         
+_________________________________________________________________
+dense_216 (Dense)            (None, 1)                 257       
+=================================================================
+Total params: 423,425
+Trainable params: 422,401
+Non-trainable params: 1,024
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(81000, 100, 90)
+	y_train shape:	(81000,)
+	X_test shape: 	(99901, 100, 90)
+	y_test shape: 	(99901,)
+
+Results on train set
+	Loss:		0.051931254164172755
+	Accuracy:	0.9862098765432099
+	Roc_auc:	0.9985344005486968
+
+Results on test set
+	Loss_keras:	0.37987913935414497
+	Loss:		0.277954397904319
+	Accuracy:	0.9233941602186164
+	Roc_auc:	0.8853677816908321
