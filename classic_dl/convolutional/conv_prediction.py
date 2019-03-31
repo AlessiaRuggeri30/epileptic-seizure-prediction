@@ -38,7 +38,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 2
+num = 5
 
 epochs = 10
 batch_size = 64
@@ -59,7 +59,7 @@ stride = 1  # Keep this =1 so that you keep all positive samples
 predicted_timestamps = 1
 subsampling_factor = 2
 
-target_steps_ahead = [2, 5, 10]  # starting from the position len(sequence)
+target_steps_ahead = [50, 100, 500, 1000, 2000, 5000]  # starting from the position len(sequence)
 
 original_X_train = X_train
 original_y_train = y_train
