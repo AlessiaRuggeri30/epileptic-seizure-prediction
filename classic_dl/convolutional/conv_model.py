@@ -1,4 +1,4 @@
-from keras.layers import Dense, Dropout, Conv1D, BatchNormalization, Flatten, MaxPooling2D
+from keras.layers import Dense, Dropout, Conv1D, BatchNormalization, Flatten, MaxPooling1D
 from keras.models import Sequential
 
 
@@ -22,7 +22,7 @@ def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activat
                                  input_shape=(200, 90)))
             else:
                 model.add(Conv1D(filters, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(MaxPooling1D(pool_size=(2, 2)))
     # dense layers
     for k in range(depth_dense):
         if batch_norm:
