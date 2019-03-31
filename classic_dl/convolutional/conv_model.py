@@ -23,6 +23,7 @@ def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activat
             else:
                 model.add(Conv1D(filters, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
         model.add(MaxPooling1D(pool_size=(2)))
+    model.add(Flatten())
     # dense layers
     for k in range(depth_dense):
         if batch_norm:
