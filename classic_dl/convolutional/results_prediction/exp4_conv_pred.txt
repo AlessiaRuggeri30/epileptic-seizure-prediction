@@ -15,7 +15,7 @@ Parameters
 	look_back:		200
 	stride:			1
 	predicted_timestamps:	1
-	target_steps_ahead:		10
+	target_steps_ahead:		50
 	subsampling_factor:		2
 
 Model
@@ -30,36 +30,36 @@ batch_normalization_1 (Batch (None, 98, 128)           512
 _________________________________________________________________
 dropout_1 (Dropout)          (None, 98, 128)           0         
 _________________________________________________________________
-conv1d_2 (Conv1D)            (None, 35, 128)           1048704   
+conv1d_2 (Conv1D)            (None, 94, 64)            41024     
 _________________________________________________________________
-max_pooling1d_2 (MaxPooling1 (None, 17, 128)           0         
+max_pooling1d_2 (MaxPooling1 (None, 47, 64)            0         
 _________________________________________________________________
-flatten_1 (Flatten)          (None, 2176)              0         
+flatten_1 (Flatten)          (None, 3008)              0         
 _________________________________________________________________
-batch_normalization_2 (Batch (None, 2176)              8704      
+batch_normalization_2 (Batch (None, 3008)              12032     
 _________________________________________________________________
-dropout_2 (Dropout)          (None, 2176)              0         
+dropout_2 (Dropout)          (None, 3008)              0         
 _________________________________________________________________
-dense_1 (Dense)              (None, 1)                 2177      
+dense_1 (Dense)              (None, 1)                 3009      
 =================================================================
-Total params: 1,117,825
-Trainable params: 1,113,217
-Non-trainable params: 4,608
+Total params: 114,305
+Trainable params: 108,033
+Non-trainable params: 6,272
 _________________________________________________________________
 
 Data shape
 	X_train shape:	(81000, 200, 90)
 	y_train shape:	(81000,)
-	X_test shape: 	(99791, 200, 90)
-	y_test shape: 	(99791,)
+	X_test shape: 	(99751, 200, 90)
+	y_test shape: 	(99751,)
 
 Results on train set
-	Loss:		0.024681949759071602
-	Accuracy:	0.9903703703703703
-	Roc_auc:	0.9998381467764061
+	Loss:		0.009111591293704369
+	Accuracy:	0.9970493827160494
+	Roc_auc:	0.9999052705761318
 
 Results on test set
-	Loss_keras:	0.46944218203066285
-	Loss:		0.2854182953093893
-	Accuracy:	0.9352246194546603
-	Roc_auc:	0.9685277509798604
+	Loss_keras:	0.4974178641900384
+	Loss:		0.3556954924525409
+	Accuracy:	0.893635151527303
+	Roc_auc:	0.9482283186432412

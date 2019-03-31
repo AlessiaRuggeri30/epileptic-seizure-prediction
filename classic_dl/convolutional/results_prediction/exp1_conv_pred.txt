@@ -30,21 +30,21 @@ batch_normalization_1 (Batch (None, 98, 128)           512
 _________________________________________________________________
 dropout_1 (Dropout)          (None, 98, 128)           0         
 _________________________________________________________________
-conv1d_2 (Conv1D)            (None, 35, 128)           1048704   
+conv1d_2 (Conv1D)            (None, 94, 64)            41024     
 _________________________________________________________________
-max_pooling1d_2 (MaxPooling1 (None, 17, 128)           0         
+max_pooling1d_2 (MaxPooling1 (None, 47, 64)            0         
 _________________________________________________________________
-flatten_1 (Flatten)          (None, 2176)              0         
+flatten_1 (Flatten)          (None, 3008)              0         
 _________________________________________________________________
-batch_normalization_2 (Batch (None, 2176)              8704      
+batch_normalization_2 (Batch (None, 3008)              12032     
 _________________________________________________________________
-dropout_2 (Dropout)          (None, 2176)              0         
+dropout_2 (Dropout)          (None, 3008)              0         
 _________________________________________________________________
-dense_1 (Dense)              (None, 1)                 2177      
+dense_1 (Dense)              (None, 1)                 3009      
 =================================================================
-Total params: 1,117,825
-Trainable params: 1,113,217
-Non-trainable params: 4,608
+Total params: 114,305
+Trainable params: 108,033
+Non-trainable params: 6,272
 _________________________________________________________________
 
 Data shape
@@ -54,12 +54,12 @@ Data shape
 	y_test shape: 	(99800,)
 
 Results on train set
-	Loss:		0.13175849138964885
-	Accuracy:	0.9634567901234568
-	Roc_auc:	0.9963103412208505
+	Loss:		0.030391292562824124
+	Accuracy:	0.9925802469135803
+	Roc_auc:	0.9987814770233197
 
 Results on test set
-	Loss_keras:	0.7601661092293764
-	Loss:		0.39705351434025554
-	Accuracy:	0.9026653306613226
-	Roc_auc:	0.9595956717767298
+	Loss_keras:	0.5224936195646593
+	Loss:		0.4226320806287871
+	Accuracy:	0.8981663326653306
+	Roc_auc:	0.9419336521226415
