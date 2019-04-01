@@ -12,17 +12,17 @@ def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activat
             model.add(Dropout(dropout))
         if i == (depth_conv-1):
             if i == 0:
-                model.add(Conv1D(filters=64, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,
+                model.add(Conv1D(filters=128, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,
                                  input_shape=(200, 90)))
             else:
-                model.add(Conv1D(filters=64, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
+                model.add(Conv1D(filters=128, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
         else:
             if i == 0:
                 model.add(Conv1D(filters=filters, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,
                                  input_shape=(200, 90)))
             else:
                 model.add(Conv1D(filters=filters, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
-        model.add(MaxPooling1D(pool_size=(2)))
+        model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     # dense layers
     for k in range(depth_dense):
