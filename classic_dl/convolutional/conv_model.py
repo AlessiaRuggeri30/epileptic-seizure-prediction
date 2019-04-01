@@ -19,7 +19,7 @@ def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activat
         else:
             if i == 0:
                 model.add(Conv1D(filters=filters, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,
-                                 input_shape=(200, 90)))
+                                 input_shape=input_shape))
             else:
                 model.add(Conv1D(filters=filters, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
         model.add(MaxPooling1D(pool_size=2))
