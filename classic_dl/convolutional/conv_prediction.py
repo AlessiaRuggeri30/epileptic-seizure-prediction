@@ -104,7 +104,7 @@ for steps_ahead in target_steps_ahead:
     file_name = exp + "_conv_pred.txt"
     print(f"\n{exp}\n")
 
-    input_shape = X_train.shape
+    input_shape = (X_train.shape[-2], X_train.shape[-1])
     model = build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activation, batch_norm, dropout, input_shape)
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
