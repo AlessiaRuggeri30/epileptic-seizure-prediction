@@ -38,12 +38,12 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 1
+num = 11
 
 epochs = 10
 batch_size = 64
 depth_conv = 2
-depth_dense = 1
+depth_dense = 2
 filters = 128
 kernel_size = 5
 reg_n = '5e-1'
