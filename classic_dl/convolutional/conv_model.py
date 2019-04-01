@@ -2,7 +2,7 @@ from keras.layers import Dense, Dropout, Conv1D, BatchNormalization, Flatten, Ma
 from keras.models import Sequential
 
 
-def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activation, batch_norm, dropout):
+def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activation, batch_norm, dropout, input_shape):
     model = Sequential()
     # conv + pooling layers
     for i in range(depth_conv):
@@ -13,7 +13,7 @@ def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activat
         if i == (depth_conv-1):
             if i == 0:
                 model.add(Conv1D(filters=128, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,
-                                 input_shape=(200, 90)))
+                                 input_shape=input_shape))
             else:
                 model.add(Conv1D(filters=128, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
         else:
