@@ -54,7 +54,7 @@ dropout = 0.4
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = 1000
+look_back = 2000
 stride = 1  # Keep this =1 so that you keep all positive samples
 predicted_timestamps = 1
 subsampling_factor = 2
