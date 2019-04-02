@@ -50,7 +50,7 @@ reg_n = '5e-1'
 reg = l2(float(reg_n))
 activation = 'relu'
 batch_norm = True
-dropout = 'no dropout or reg in conv layers'
+dropout = '0.4'
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
@@ -163,6 +163,8 @@ for steps_ahead in target_steps_ahead:
 
     with open(f"results_prediction/{file_name}", 'w') as file:
         file.write(f"EXPERIMENT {num}: CONVOLUTIONAL NEURAL NETWORK\n\n")
+
+        file.write("NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS\n")
 
         file.write("Parameters\n")
         file.write(f"\tepochs:\t\t\t{epochs}\n")
