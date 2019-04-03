@@ -2,4 +2,5 @@ venv/
 .idea/
 dataset/
 classic_dl/lstm/.logs/
+classic_dl/convolutional/.logs/
 aae.py
