@@ -12,10 +12,10 @@ def build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activat
         #     model.add(Dropout(dropout))
         if i == (depth_conv-1):
             if i == 0:
-                model.add(Conv1D(filters=128, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,
+                model.add(Conv1D(filters=256, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,
                                  input_shape=input_shape))
             else:
-                model.add(Conv1D(filters=128, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
+                model.add(Conv1D(filters=256, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg))
         else:
             if i == 0:
                 model.add(Conv1D(filters=filters, kernel_size=kernel_size, activation=activation, kernel_regularizer=reg,

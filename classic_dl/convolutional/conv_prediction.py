@@ -38,13 +38,13 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 21
+num = 31
 
 epochs = 10
 batch_size = 64
 depth_conv = 5
 depth_dense = 2
-filters = 256
+filters = 512
 kernel_size = 5
 reg_n = '5e-1'
 reg = l2(float(reg_n))
@@ -54,7 +54,7 @@ dropout = 0.4
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = 1000
+look_back = 2000
 stride = 1  # Keep this =1 so that you keep all positive samples
 predicted_timestamps = 1
 subsampling_factor = 2
