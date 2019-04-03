@@ -92,6 +92,7 @@ for steps_ahead in target_steps_ahead:
 
     """ Shuffle training data """
     # X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
+    X_train_shuffled, y_train_shuffled = X_train, y_train
 
     print(X_train.shape, y_train.shape)
     print(X_test.shape, y_test.shape)
