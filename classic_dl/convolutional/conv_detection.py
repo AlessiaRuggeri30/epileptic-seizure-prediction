@@ -70,7 +70,7 @@ inputs_indices_seq, target_indices_seq =  \
     generate_indices([original_y_train],                              # Targets associated to X_train (same shape[0])
                      look_back,                              # Length of input sequences
                      stride=stride,                          # Stride between windows
-                     target_steps_ahead=steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                     target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
                      subsample=True,                         # Whether to subsample
                      subsampling_factor=subsampling_factor   # Keep this many negative samples w.r.t. to positive ones
                      )
@@ -82,7 +82,7 @@ inputs_indices_seq, target_indices_seq =  \
     generate_indices([original_y_test],                              # Targets associated to X_train (same shape[0])
                      look_back,                              # Length of input sequences
                      stride=stride,                          # Stride between windows
-                     target_steps_ahead=steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                     target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
                      )
 X_test = original_X_test[inputs_indices_seq]
 y_test = original_y_test[target_indices_seq]
@@ -179,7 +179,7 @@ with open(f"results_detection/{file_name}", 'w') as file:
     file.write(f"\tlook_back:\t\t{look_back}\n")
     file.write(f"\tstride:\t\t\t{stride}\n")
     file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
-    file.write(f"\ttarget_steps_ahead:\t\t{steps_ahead}\n")
+    file.write(f"\ttarget_steps_ahead:\t\t{target_steps_ahead}\n")
     file.write(f"\tsubsampling_factor:\t\t{subsampling_factor}\n\n")
 
     file.write("Model\n")
@@ -207,7 +207,7 @@ hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size',
             'l2_reg', 'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
             'subsampling_factor', 'loss', 'acc', 'roc-auc']
 exp_hyperpar = [epochs, depth_conv, depth_dense, filters, kernel_size, activation,
-                reg_n, batch_norm, dropout, look_back, steps_ahead,
+                reg_n, batch_norm, dropout, look_back, target_steps_ahead,
                 subsampling_factor, loss_test, accuracy_test, roc_auc_score_test]
 df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
 save_experiments(df, experiments)
