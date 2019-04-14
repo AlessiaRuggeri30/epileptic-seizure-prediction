@@ -46,11 +46,11 @@ depth_conv = [5]
 depth_dense = 2
 filters = [512]
 kernel_size = [5]
-reg_n = ['5e-2', '5e-1']
+reg_n = ['5e-1']
 reg = l2(float(reg_n))
 activation = 'relu'
 batch_norm = True
-dropout = [0.4, 0.5]
+dropout = [0.4]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
