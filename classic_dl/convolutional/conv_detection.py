@@ -41,8 +41,8 @@ X_test = scaler.transform(X_test)
 num = 1
 
 epochs = 10
-batch_size = 32
-depth_conv = 5
+batch_size = 64
+depth_conv = 2
 depth_dense = 2
 filters = 512
 kernel_size = 5
