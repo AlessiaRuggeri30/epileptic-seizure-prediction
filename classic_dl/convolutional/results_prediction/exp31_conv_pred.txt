@@ -3,7 +3,7 @@ EXPERIMENT 31: CONVOLUTIONAL NEURAL NETWORK
 NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS
 Parameters
 	epochs:			10
-	batch_size:		64
+	batch_size:		32
 	depth_conv:		5
 	depth_dense:	2
 	filters:		512
@@ -65,12 +65,12 @@ Data shape
 	y_test shape: 	(98000,)
 
 Results on train set
-	Loss:		0.10371331320617119
-	Accuracy:	0.9781111111111112
-	Roc_auc:	0.9999358775720164
+	Loss:		0.19668555029239804
+	Accuracy:	0.9191358024691358
+	Roc_auc:	0.9999427626886145
 
 Results on test set
-	Loss_keras:	0.6273563575160747
-	Loss:		0.3378527306757958
-	Accuracy:	0.901469387755102
-	Roc_auc:	0.960603018875502
+	Loss_keras:	0.6909428761856896
+	Loss:		0.4415729313217586
+	Accuracy:	0.8841734693877551
+	Roc_auc:	0.9710465590361445
