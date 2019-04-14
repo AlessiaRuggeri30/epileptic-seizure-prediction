@@ -1,2 +1,3 @@
 ,epochs,depth_conv,depth_dense,filters,kernel_size,activation,l2_reg,batch_norm,dropout,look_back,target_steps_ahead,subsampling_factor,loss,acc,roc-auc
 exp1,10,2,2,512,5,relu,5e-1,True,0.4,200,0,2,0.4020991544649553,0.9090790673440146,0.9412287767832925
+exp2,10,5,2,512,5,relu,5e-1,True,0.4,1000,0,2,0.15500061393878958,0.937485479944647,0.987021562441717
