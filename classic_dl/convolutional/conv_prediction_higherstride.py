@@ -47,7 +47,6 @@ depth_dense = 2
 filters = [512]
 kernel_size = [5]
 reg_n = ['5e-1']
-reg = l2(float(reg_n))
 activation = 'relu'
 batch_norm = True
 dropout = [0.4]
@@ -68,6 +67,7 @@ original_y_test = y_test
 tunables = [depth_conv, filters, kernel_size, reg_n, dropout, look_back, stride, target_steps_ahead]
 
 for depth_conv, filters, kernel_size, reg_n, dropout, look_back, stride, target_steps_ahead in product(*tunables):
+    reg = l2(float(reg_n))
 
     # Generate sequences by computing indices for training data
     inputs_indices_seq, target_indices_seq =  \
