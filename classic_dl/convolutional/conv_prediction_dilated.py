@@ -58,7 +58,7 @@ class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
 look_back = [5000]
-stride = 1
+stride = 10
 predicted_timestamps = 1
 subsampling_factor = 2
 target_steps_ahead = [2000]  # starting from the position len(sequence)
