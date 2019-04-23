@@ -1,0 +1,64 @@
+EXPERIMENT 1: CONVOLUTIONAL NEURAL NETWORK
+
+NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_conv:		2
+	depth_dense:	2
+	filters:		64
+	kernel_size:	3
+	reg:			l2(5e-4)
+	activation:		relu
+	batch_norm:		True
+	dropout:		0.2
+	class_weight:	{0: 1.1560693641618498, 1: 7.407407407407407}
+	look_back:		500
+	stride:			1
+	predicted_timestamps:	1
+	target_steps_ahead:		200
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d_1 (Conv1D)            (None, 500, 64)           17344     
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 500, 32)           6176      
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 16000)             0         
+_________________________________________________________________
+batch_normalization_1 (Batch (None, 16000)             64000     
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 16000)             0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 256)               4096256   
+_________________________________________________________________
+batch_normalization_2 (Batch (None, 256)               1024      
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 256)               0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 257       
+=================================================================
+Total params: 4,185,057
+Trainable params: 4,152,545
+Non-trainable params: 32,512
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(81000, 500, 90)
+	y_train shape:	(81000,)
+	X_test shape: 	(99301, 500, 90)
+	y_test shape: 	(99301,)
+
+Results on train set
+	Loss:		0.01239393418339554
+	Accuracy:	0.9988518518518519
+	Roc_auc:	0.9997375257201646
+
+Results on test set
+	Loss_keras:	0.8464171075757058
+	Loss:		0.7140225556114419
+	Accuracy:	0.8687525805379603
+	Roc_auc:	0.8167795376092811
