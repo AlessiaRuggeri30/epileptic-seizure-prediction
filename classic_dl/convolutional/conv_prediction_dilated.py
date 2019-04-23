@@ -38,13 +38,13 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 10
+num = 11
 
 epochs = 10
 batch_size = 64
 depth_conv = [2]     # search
 depth_dense = 2
-filters = [64]
+filters = [32]
 kernel_size = [3]    # search
 reg_n = ['5e-2']
 activation = 'relu'
