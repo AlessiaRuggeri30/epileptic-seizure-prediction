@@ -3,5 +3,5 @@ venv/
 dataset/
 classic_dl/lstm/.logs/
 classic_dl/convolutional/.logs/
-classic_dl/convolutional/models_prediction_higherstride/
+classic_dl/convolutional/models/models_prediction_higherstride/
 aae.py
