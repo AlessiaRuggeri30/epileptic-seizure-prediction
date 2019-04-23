@@ -117,9 +117,9 @@ model.fit(X_train_shuffled, y_train_shuffled,
           callbacks=cb)
 
 """ Save and reload the model """
-model.save(f"models_detection/conv_model{num}.h5")
+model.save(f"models/models_detection/conv_model{num}.h5")
 # del model
-# model = load_model(f"models_detection/conv_model{num}.h5")
+# model = load_model(f"models/models_detection/conv_model{num}.h5")
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -159,7 +159,7 @@ string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
-with open(f"results_detection/{file_name}", 'w') as file:
+with open(f"results/results_detection/{file_name}", 'w') as file:
     file.write(f"EXPERIMENT {num}: CONVOLUTIONAL NEURAL NETWORK\n\n")
 
     file.write("NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS\n")
@@ -220,14 +220,14 @@ plt.subplot(2, 1, 1)
 plt.plot(y_train)
 plt.subplot(2, 1, 2)
 plt.plot(predictions_train)
-plt.savefig(f"./plots_detection/{exp}-predictions_train.png")
+plt.savefig(f"./plots/plots_detection/{exp}-predictions_train.png")
 plt.close()
 
 plt.subplot(2, 1, 1)
 plt.plot(y_test)
 plt.subplot(2, 1, 2)
 plt.plot(predictions_test)
-plt.savefig(f"./plots_detection/{exp}-predictions.png")
+plt.savefig(f"./plots/plots_detection/{exp}-predictions.png")
 plt.close()
 
 K.clear_session()

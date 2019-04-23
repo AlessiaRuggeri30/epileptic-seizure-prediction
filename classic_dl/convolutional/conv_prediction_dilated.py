@@ -38,42 +38,47 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 31
+num = 1
 
 epochs = 10
-batch_size = 32
-depth_conv = 5
+batch_size = 64
+depth_conv = [2]     # search
 depth_dense = 2
-filters = 512
-kernel_size = 5
-reg_n = '5e-1'
-reg = l2(float(reg_n))
+filters = [64]
+kernel_size = [3]    # search
+reg_n = ['5e-4']
 activation = 'relu'
 batch_norm = True
-dropout = 0.4
+dropout = [0.2]
+pooling = False
+pool_size = 2
+padding = 'causal'
+dilation_rate = 2
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = 2000
-stride = 1  # Keep this =1 so that you keep all positive samples
+look_back = [500]
+stride = 1
 predicted_timestamps = 1
 subsampling_factor = 2
-
-target_steps_ahead = [1, 5, 10, 50, 100, 200, 500, 1000, 2000, 5000]  # starting from the position len(sequence)
+target_steps_ahead = [200]  # starting from the position len(sequence)
 
 original_X_train = X_train
 original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-for steps_ahead in target_steps_ahead:
+tunables = [depth_conv, filters, kernel_size, reg_n, dropout, look_back, target_steps_ahead]
+
+for depth_conv, filters, kernel_size, reg_n, dropout, look_back, target_steps_ahead in product(*tunables):
+    reg = l2(float(reg_n))
 
     # Generate sequences by computing indices for training data
     inputs_indices_seq, target_indices_seq =  \
         generate_indices([original_y_train],                              # Targets associated to X_train (same shape[0])
                          look_back,                              # Length of input sequences
                          stride=stride,                          # Stride between windows
-                         target_steps_ahead=steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                         target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
                          subsample=True,                         # Whether to subsample
                          subsampling_factor=subsampling_factor   # Keep this many negative samples w.r.t. to positive ones
                          )
@@ -85,14 +90,13 @@ for steps_ahead in target_steps_ahead:
         generate_indices([original_y_test],                              # Targets associated to X_train (same shape[0])
                          look_back,                              # Length of input sequences
                          stride=stride,                          # Stride between windows
-                         target_steps_ahead=steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                         target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
                          )
     X_test = original_X_test[inputs_indices_seq]
     y_test = original_y_test[target_indices_seq]
 
     """ Shuffle training data """
-    # X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
-    X_train_shuffled, y_train_shuffled = X_train, y_train
+    X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
 
     print(X_train.shape, y_train.shape)
     print(X_test.shape, y_test.shape)
@@ -106,12 +110,15 @@ for steps_ahead in target_steps_ahead:
     print(f"\n{exp}\n")
 
     input_shape = (X_train.shape[-2], X_train.shape[-1])
-    model = build_conv_model(depth_conv, depth_dense, filters, kernel_size, reg, activation, batch_norm, dropout, input_shape)
+    model = build_conv_model(depth_conv, depth_dense, filters,
+                             kernel_size, reg, activation,
+                             batch_norm, dropout, input_shape,
+                             pooling, pool_size, padding, dilation_rate)
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     """ Fit the model """
     cb = [
-        callbacks.TensorBoard(log_dir=f".logs/pred_logs/{exp}"),
+        callbacks.TensorBoard(log_dir=f".logs/pred_dilated_logs/{exp}"),
     ]
     model.fit(X_train_shuffled, y_train_shuffled,
               batch_size=batch_size,
@@ -120,9 +127,9 @@ for steps_ahead in target_steps_ahead:
               callbacks=cb)
 
     """ Save and reload the model """
-    model.save(f"models/models_prediction/conv_pred_model{num}.h5")
+    model.save(f"models/models_prediction_dilated/conv_pred_model{num}.h5")
     # del model
-    # model = load_model(f"models/models_prediction/conv_pred_model{num}.h5")
+    # model = load_model(f"models/models_prediction_dilated/conv_pred_model{num}.h5")
 
     # -----------------------------------------------------------------------------
     # RESULTS EVALUATION
@@ -162,7 +169,7 @@ for steps_ahead in target_steps_ahead:
     model.summary(print_fn=lambda x: string_list.append(x))
     summary = "\n".join(string_list)
 
-    with open(f"results/results_prediction/{file_name}", 'w') as file:
+    with open(f"results/results_prediction_dilated/{file_name}", 'w') as file:
         file.write(f"EXPERIMENT {num}: CONVOLUTIONAL NEURAL NETWORK\n\n")
 
         file.write("NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS\n")
@@ -182,7 +189,7 @@ for steps_ahead in target_steps_ahead:
         file.write(f"\tlook_back:\t\t{look_back}\n")
         file.write(f"\tstride:\t\t\t{stride}\n")
         file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
-        file.write(f"\ttarget_steps_ahead:\t\t{steps_ahead}\n")
+        file.write(f"\ttarget_steps_ahead:\t\t{target_steps_ahead}\n")
         file.write(f"\tsubsampling_factor:\t\t{subsampling_factor}\n\n")
 
         file.write("Model\n")
@@ -205,12 +212,12 @@ for steps_ahead in target_steps_ahead:
         file.write(f"\tAccuracy:\t{accuracy_test}\n")
         file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
 
-    experiments = "experiments_conv_pred"
+    experiments = "experiments_conv_pred_dilated"
     hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size', 'activation',
-                'l2_reg', 'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
+                'l2_reg', 'batch_norm', 'dropout', 'look_back', 'stride', 'target_steps_ahead',
                 'subsampling_factor', 'loss', 'acc', 'roc-auc']
     exp_hyperpar = [epochs, depth_conv, depth_dense, filters, kernel_size, activation,
-                    reg_n, batch_norm, dropout, look_back, steps_ahead,
+                    reg_n, batch_norm, dropout, look_back, stride, target_steps_ahead,
                     subsampling_factor, loss_test, accuracy_test, roc_auc_score_test]
     df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
     save_experiments(df, experiments)
@@ -223,14 +230,14 @@ for steps_ahead in target_steps_ahead:
     plt.plot(y_train)
     plt.subplot(2, 1, 2)
     plt.plot(predictions_train)
-    plt.savefig(f"./plots/plots_prediction/{exp}_pred-predictions_train.png")
+    plt.savefig(f"./plots/plots_prediction_dilated/{exp}_pred-predictions_train.png")
     plt.close()
 
     plt.subplot(2, 1, 1)
     plt.plot(y_test)
     plt.subplot(2, 1, 2)
     plt.plot(predictions_test)
-    plt.savefig(f"./plots/plots_prediction/{exp}_pred-predictions.png")
+    plt.savefig(f"./plots/plots_prediction_dilated/{exp}_pred-predictions.png")
     plt.close()
 
     num += 1

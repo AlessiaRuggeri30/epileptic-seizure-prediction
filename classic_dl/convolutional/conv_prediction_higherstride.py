@@ -41,7 +41,7 @@ X_test = scaler.transform(X_test)
 num = 1
 
 epochs = 10
-batch_size = 32
+batch_size = 64
 depth_conv = [5]
 depth_dense = 2
 filters = [512]
@@ -121,9 +121,9 @@ for depth_conv, filters, kernel_size, reg_n, dropout, look_back, stride, target_
               callbacks=cb)
 
     """ Save and reload the model """
-    model.save(f"models_prediction_higherstride/conv_pred_model{num}.h5")
+    model.save(f"models/models_prediction_higherstride/conv_pred_model{num}.h5")
     # del model
-    # model = load_model(f"models_prediction/conv_pred_model{num}.h5")
+    # model = load_model(f"models/models_prediction/conv_pred_model{num}.h5")
 
     # -----------------------------------------------------------------------------
     # RESULTS EVALUATION
@@ -163,7 +163,7 @@ for depth_conv, filters, kernel_size, reg_n, dropout, look_back, stride, target_
     model.summary(print_fn=lambda x: string_list.append(x))
     summary = "\n".join(string_list)
 
-    with open(f"results_prediction_higherstride/{file_name}", 'w') as file:
+    with open(f"results/results_prediction_higherstride/{file_name}", 'w') as file:
         file.write(f"EXPERIMENT {num}: CONVOLUTIONAL NEURAL NETWORK\n\n")
 
         file.write("NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS\n")
@@ -224,14 +224,14 @@ for depth_conv, filters, kernel_size, reg_n, dropout, look_back, stride, target_
     plt.plot(y_train)
     plt.subplot(2, 1, 2)
     plt.plot(predictions_train)
-    plt.savefig(f"./plots_prediction_higherstride/{exp}_pred-predictions_train.png")
+    plt.savefig(f"./plots/plots_prediction_higherstride/{exp}_pred-predictions_train.png")
     plt.close()
 
     plt.subplot(2, 1, 1)
     plt.plot(y_test)
     plt.subplot(2, 1, 2)
     plt.plot(predictions_test)
-    plt.savefig(f"./plots_prediction_higherstride/{exp}_pred-predictions.png")
+    plt.savefig(f"./plots/plots_prediction_higherstride/{exp}_pred-predictions.png")
     plt.close()
 
     num += 1
