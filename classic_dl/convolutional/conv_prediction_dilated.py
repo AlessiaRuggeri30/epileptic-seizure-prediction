@@ -38,7 +38,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 15
+num = 16
 
 epochs = 10
 batch_size = 64
@@ -49,7 +49,7 @@ kernel_size = [3]    # search
 reg_n = ['5e-2']
 activation = 'relu'
 batch_norm = True
-dropout = [0.5]
+dropout = [0.4]
 pooling = True
 pool_size = 2
 padding = 'causal'
@@ -58,7 +58,7 @@ class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
 look_back = [5000]
-stride = [100]
+stride = [10]
 predicted_timestamps = 1
 subsampling_factor = 2
 target_steps_ahead = [2000]  # starting from the position len(sequence)
