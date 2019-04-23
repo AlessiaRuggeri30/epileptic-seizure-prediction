@@ -38,7 +38,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 21
+num = 22
 
 epochs = 10
 batch_size = 64
@@ -50,8 +50,8 @@ reg_n = ['5e-1']
 activation = 'relu'
 batch_norm = True
 dropout = [0.4]
-pooling = False
-pool_size = 2
+pooling = True
+pool_size = 3
 padding = 'causal'
 dilation_rate = 3
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
