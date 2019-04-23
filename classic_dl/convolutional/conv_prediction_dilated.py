@@ -38,7 +38,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 16
+num = 17
 
 epochs = 10
 batch_size = 64
@@ -46,10 +46,10 @@ depth_conv = [2]     # search
 depth_dense = 2
 filters = [64]
 kernel_size = [3]    # search
-reg_n = ['5e-2']
+reg_n = ['5e-2', '5e-1']
 activation = 'relu'
 batch_norm = True
-dropout = [0.4]
+dropout = [0.4, 0.5]
 pooling = True
 pool_size = 2
 padding = 'causal'
