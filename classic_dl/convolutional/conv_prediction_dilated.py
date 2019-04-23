@@ -38,7 +38,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 8
+num = 9
 
 epochs = 10
 batch_size = 64
@@ -57,7 +57,7 @@ dilation_rate = 3
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = [5000]
+look_back = [3000]
 stride = [10]
 predicted_timestamps = 1
 subsampling_factor = 2
