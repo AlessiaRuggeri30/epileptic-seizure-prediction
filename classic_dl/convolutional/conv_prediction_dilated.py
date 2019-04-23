@@ -38,7 +38,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 13
+num = 14
 
 epochs = 10
 batch_size = 64
@@ -53,7 +53,7 @@ dropout = [0.5]
 pooling = True
 pool_size = 2
 padding = 'causal'
-dilation_rate = 2
+dilation_rate = 3
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
