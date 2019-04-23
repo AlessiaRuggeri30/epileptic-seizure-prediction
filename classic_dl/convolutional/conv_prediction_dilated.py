@@ -38,7 +38,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 2
+num = 1
 
 epochs = 10
 batch_size = 64
@@ -58,7 +58,7 @@ class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
 look_back = [5000]
-stride = 10
+stride = [1, 10]
 predicted_timestamps = 1
 subsampling_factor = 2
 target_steps_ahead = [2000]  # starting from the position len(sequence)
@@ -68,9 +68,9 @@ original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-tunables = [depth_conv, filters, kernel_size, reg_n, dropout, look_back, target_steps_ahead]
+tunables = [depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead]
 
-for depth_conv, filters, kernel_size, reg_n, dropout, look_back, target_steps_ahead in product(*tunables):
+for depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead in product(*tunables):
     reg = l2(float(reg_n))
 
     # Generate sequences by computing indices for training data
@@ -214,10 +214,12 @@ for depth_conv, filters, kernel_size, reg_n, dropout, look_back, target_steps_ah
 
     experiments = "experiments_conv_pred_dilated"
     hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size', 'activation',
-                'l2_reg', 'batch_norm', 'dropout', 'look_back', 'stride', 'target_steps_ahead',
+                'l2_reg', 'batch_norm', 'dropout', 'pooling', 'pool_size', 'padding',
+                'dilation_rate', 'stride', 'look_back', 'target_steps_ahead',
                 'subsampling_factor', 'loss', 'acc', 'roc-auc']
     exp_hyperpar = [epochs, depth_conv, depth_dense, filters, kernel_size, activation,
-                    reg_n, batch_norm, dropout, look_back, stride, target_steps_ahead,
+                    reg_n, batch_norm, dropout, pooling, pool_size, padding,
+                    dilation_rate, stride, look_back, target_steps_ahead,
                     subsampling_factor, loss_test, accuracy_test, roc_auc_score_test]
     df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
     save_experiments(df, experiments)
