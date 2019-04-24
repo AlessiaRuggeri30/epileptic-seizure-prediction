@@ -16,6 +16,7 @@ from utils.utils import add_experiment, save_experiments, generate_indices
 from utils.load_data import load_data
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+np.random.seed(0)
 
 X, y, dataset, seizure = load_data()
 
@@ -38,7 +39,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 23
+num = 24
 
 epochs = 10
 batch_size = 64
@@ -46,10 +47,10 @@ depth_conv = [2]     # search
 depth_dense = 2
 filters = [64]
 kernel_size = [3]    # search
-reg_n = ['5e-1']
+reg_n = ['5e-3', '5e-2', '5e-1']
 activation = 'relu'
 batch_norm = True
-dropout = [0.4]
+dropout = [0.5, 0.4, 0.3]
 pooling = True
 pool_size = 2
 padding = 'causal'
@@ -173,6 +174,7 @@ for depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_
         file.write(f"EXPERIMENT {num}: CONVOLUTIONAL NEURAL NETWORK\n\n")
 
         file.write("NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS\n")
+        file.write("Increased number of samples: 150000 instead of 100000\n\n")
 
         file.write("Parameters\n")
         file.write(f"\tepochs:\t\t\t{epochs}\n")
