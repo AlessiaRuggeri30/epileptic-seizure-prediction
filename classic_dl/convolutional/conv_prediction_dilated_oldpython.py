@@ -69,9 +69,9 @@ original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-tunables = [depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead]
+tunables = [depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead, dilation_rate]
 
-for depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead in product(*tunables):
+for depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead, dilation_rate in product(*tunables):
     reg = l2(float(reg_n))
 
     # Generate sequences by computing indices for training data
