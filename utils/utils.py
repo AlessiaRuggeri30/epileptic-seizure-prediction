@@ -143,13 +143,13 @@ def add_experiment(num, exp_hyperpar, filename, hyperpar):
         df = create_experiments(hyperpar=hyperpar)
     else:
         df = pd.read_pickle(filename)
-    df.loc[f"exp{num}"] = exp_hyperpar
+    df.loc["exp{}".format(num)] = exp_hyperpar
     return df
 
 
 def save_experiments(dataframe, filename):
     dataframe.to_pickle(filename)
-    dataframe.to_csv(f"{filename}.csv")
+    dataframe.to_csv("{}.csv".format(filename))
 
 
 if __name__ == '__main__':

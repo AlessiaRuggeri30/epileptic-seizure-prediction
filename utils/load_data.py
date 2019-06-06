@@ -20,7 +20,7 @@ def load_data():
 
     """ Load datasets """
     for c in range(1, n_clip + 1):
-        path = f"/home/phait/datasets/ieeg/TWH056/clips/TWH056_Day-504_Clip-0-{c}.npz"  # server
+        path = "/home/phait/datasets/ieeg/TWH056/clips/TWH056_Day-504_Clip-0-{}.npz".format(c)  # server
         # path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
 
         with np.load(path) as data:
