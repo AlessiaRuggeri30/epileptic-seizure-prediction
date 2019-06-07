@@ -1,0 +1,74 @@
+EXPERIMENT 92: CONVOLUTIONAL NEURAL NETWORK
+
+NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS
+Increased number of samples: 150000 instead of 100000
+
+Parameters
+	epochs:			10
+	batch_size:		64
+	depth_conv:		3
+	depth_dense:	2
+	filters:		128
+	kernel_size:	3
+	reg:			l2(5e-2)
+	activation:		relu
+	batch_norm:		True
+	dropout:		0.4
+	class_weight:	{0: 1.098901098901099, 1: 11.11111111111111}
+	look_back:		5000
+	stride:			10
+	predicted_timestamps:	1
+	target_steps_ahead:		4000
+	subsampling_factor:		2
+
+Model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d_1 (Conv1D)            (None, 5000, 128)         34688     
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 2500, 128)         0         
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 2500, 128)         49280     
+_________________________________________________________________
+max_pooling1d_2 (MaxPooling1 (None, 1250, 128)         0         
+_________________________________________________________________
+conv1d_3 (Conv1D)            (None, 1250, 64)          24640     
+_________________________________________________________________
+max_pooling1d_3 (MaxPooling1 (None, 625, 64)           0         
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 40000)             0         
+_________________________________________________________________
+batch_normalization_1 (Batch (None, 40000)             160000    
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 40000)             0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 256)               10240256  
+_________________________________________________________________
+batch_normalization_2 (Batch (None, 256)               1024      
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 256)               0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 257       
+=================================================================
+Total params: 10,510,145
+Trainable params: 10,429,633
+Non-trainable params: 80,512
+_________________________________________________________________
+
+Data shape
+	X_train shape:	(8100, 5000, 90)
+	y_train shape:	(8100,)
+	X_test shape: 	(14101, 5000, 90)
+	y_test shape: 	(14101,)
+
+Results on train set
+	Loss:		0.44765397606330226
+	Accuracy:	0.8460493827160493
+	Roc_auc:	0.9959767146776405
+
+Results on test set
+	Loss_keras:	1.793055768579754
+	Loss:		1.137386366300008
+	Accuracy:	0.698177434224523
+	Roc_auc:	0.5439799222283946
