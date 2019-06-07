@@ -39,9 +39,9 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 93
+num = 94
 
-epochs = 15
+epochs = 10
 batch_size = 64
 depth_conv = [3]     # search
 depth_dense = 2
@@ -52,7 +52,7 @@ activation = 'relu'
 batch_norm = True
 dropout = [0.4]        #[0.5, 0.4, 0.3]
 pooling = True
-pool_size = 2
+pool_size = 1
 padding = 'causal'
 dilation_rate = [3]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
