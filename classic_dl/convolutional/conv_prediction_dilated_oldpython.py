@@ -39,7 +39,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 57
+num = 66
 
 epochs = 10
 batch_size = 64
