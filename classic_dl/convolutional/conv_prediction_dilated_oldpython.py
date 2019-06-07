@@ -1,6 +1,6 @@
 import os
 
-import keras.backend as K
+import tensorflow.keras.backend as K
 import matplotlib.pyplot as plt
 import numpy as np
 from itertools import product
