@@ -39,13 +39,13 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 84
+num = 89
 
 epochs = 10
 batch_size = 64
 depth_conv = [3]     # search
 depth_dense = 2
-filters = [64]
+filters = [128]
 kernel_size = [3]    # search
 reg_n = ['5e-2']      #['5e-3', '5e-2', '5e-1']
 activation = 'relu'
@@ -62,7 +62,7 @@ look_back = [5000]
 stride = [10]
 predicted_timestamps = 1
 subsampling_factor = 2
-target_steps_ahead = [1000, 2000, 3000, 4000, 5000]  # starting from the position len(sequence)
+target_steps_ahead = [1000, 2000, 3000, 4000]  # starting from the position len(sequence)
 
 original_X_train = X_train
 original_y_train = y_train
