@@ -58,7 +58,7 @@ dilation_rate = [3]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = [2000]
+look_back = [1000]
 stride = [1, 10]
 predicted_timestamps = 1
 subsampling_factor = 2
