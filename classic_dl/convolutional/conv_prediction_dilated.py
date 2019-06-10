@@ -39,9 +39,9 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 118
+num = 121
 
-epochs = 10
+epochs = 15
 batch_size = 64
 depth_conv = [3]     # search
 depth_dense = 2
