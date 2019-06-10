@@ -39,7 +39,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 100
+num = 118
 
 epochs = 10
 batch_size = 64
@@ -58,11 +58,11 @@ dilation_rate = [3]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = [200, 500, 1000]
-stride = [1, 10]
+look_back = [200]
+stride = [10]
 predicted_timestamps = 1
 subsampling_factor = 2
-target_steps_ahead = [2000, 3000, 4000]  # starting from the position len(sequence)
+target_steps_ahead = [2000, 4000, 5000]  # starting from the position len(sequence)
 
 original_X_train = X_train
 original_y_train = y_train
@@ -118,19 +118,19 @@ for depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     """ Fit the model """
-    # cb = [
-    #     callbacks.TensorBoard(log_dir=f".logs/pred_dilated_logs/{exp}"),
-    # ]
-    # model.fit(X_train_shuffled, y_train_shuffled,
-    #           batch_size=batch_size,
-    #           epochs=epochs,
-    #           class_weight=class_weight,
-    #           callbacks=cb)
-
+    cb = [
+        callbacks.TensorBoard(log_dir=f".logs/pred_dilated_logs/{exp}"),
+    ]
     model.fit(X_train_shuffled, y_train_shuffled,
               batch_size=batch_size,
               epochs=epochs,
-              class_weight=class_weight)
+              class_weight=class_weight,
+              callbacks=cb)
+
+    # model.fit(X_train_shuffled, y_train_shuffled,
+    #           batch_size=batch_size,
+    #           epochs=epochs,
+    #           class_weight=class_weight)
 
     """ Save and reload the model """
     model.save(f"models/models_prediction_dilated/conv_pred_model{num}.h5")
