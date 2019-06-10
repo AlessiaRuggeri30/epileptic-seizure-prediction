@@ -118,14 +118,19 @@ for depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     """ Fit the model """
-    cb = [
-        callbacks.TensorBoard(log_dir=f".logs/pred_dilated_logs/{exp}"),
-    ]
+    # cb = [
+    #     callbacks.TensorBoard(log_dir=f".logs/pred_dilated_logs/{exp}"),
+    # ]
+    # model.fit(X_train_shuffled, y_train_shuffled,
+    #           batch_size=batch_size,
+    #           epochs=epochs,
+    #           class_weight=class_weight,
+    #           callbacks=cb)
+
     model.fit(X_train_shuffled, y_train_shuffled,
               batch_size=batch_size,
               epochs=epochs,
-              class_weight=class_weight,
-              callbacks=cb)
+              class_weight=class_weight)
 
     """ Save and reload the model """
     model.save(f"models/models_prediction_dilated/conv_pred_model{num}.h5")
