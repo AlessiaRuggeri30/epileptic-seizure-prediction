@@ -39,9 +39,9 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 121
+num = 124
 
-epochs = 15
+epochs = [10, 15]
 batch_size = 64
 depth_conv = [3]     # search
 depth_dense = 2
@@ -58,7 +58,7 @@ dilation_rate = [3]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = [200]
+look_back = [200, 500]
 stride = [10]
 predicted_timestamps = 1
 subsampling_factor = 2
@@ -69,9 +69,9 @@ original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-tunables = [depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead, dilation_rate]
+tunables = [epochs, depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead, dilation_rate]
 
-for depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead, dilation_rate in product(*tunables):
+for epochs, depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back, target_steps_ahead, dilation_rate in product(*tunables):
     reg = l2(float(reg_n))
 
     # Generate sequences by computing indices for training data
