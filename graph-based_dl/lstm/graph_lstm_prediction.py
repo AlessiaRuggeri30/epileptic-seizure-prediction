@@ -121,8 +121,8 @@ for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
         print(f"Dim of a single sequence: {seq.shape}")
         seq = np.transpose(seq)
         print(f"Single sequence transposed: {seq.shape}")
-        g = get_fc(seq, band_freq, sampling_freq, samples_per_graph, percentiles=percentiles)
-        print(f"Turned into fc graph: {g.shape}")
+        g = get_fc(seq, band_freq, sampling_freq, percentiles=percentiles)
+        print(f"Turned into fc graph: {len(g)}")
         print(g)
 
 
