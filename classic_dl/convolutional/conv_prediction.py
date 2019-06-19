@@ -4,7 +4,7 @@ import keras.backend as K
 import matplotlib.pyplot as plt
 import numpy as np
 from itertools import product
-from keras.regularizers import l2
+from tensorflow.keras.regularizers import l2
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
