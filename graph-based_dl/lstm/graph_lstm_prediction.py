@@ -53,8 +53,8 @@ class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
-sampling_freq = [200.]
-# samples_per_graph = 500
+sampling_freq = [500.]
+samples_per_graph = 500
 # fc_measure = 'corr'
 # link_cutoff = 0.
 percentiles = (40, 60)
@@ -121,7 +121,7 @@ for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
         print(f"Dim of a single sequence: {seq.shape}")
         seq = np.transpose(seq)
         print(f"Single sequence transposed: {seq.shape}")
-        g = get_fc(seq, band_freq, sampling_freq, percentiles=percentiles)
+        g = get_fc(seq, band_freq, sampling_freq, samples_per_graph, percentiles=percentiles)
         print(f"Turned into fc graph: {g.shape}")
         print(g)
 
