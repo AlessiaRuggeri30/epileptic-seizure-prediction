@@ -53,7 +53,7 @@ class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
-sampling_freq = [100.]
+sampling_freq = [200.]
 # samples_per_graph = 500
 # fc_measure = 'corr'
 # link_cutoff = 0.
