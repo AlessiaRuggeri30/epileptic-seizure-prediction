@@ -117,10 +117,10 @@ for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
 
     """ Generate graphs from sequences """
     for i in range(1):
-        seq = X_train_shuffled[i]
-        print(f"Dim of a single sequence: {seq.shape}")
-        seq = np.transpose(seq)
-        print(f"Single sequence transposed: {seq.shape}")
+        seq = X_train_shuffled[0:3]
+        print(f"Dim of 3 sequences: {seq.shape}")
+        seq = np.transpose(seq, [0, 2, 1])
+        print(f"Sequences transposed: {seq.shape}")
         adj, nf, ef = get_fc(seq, band_freq, sampling_freq, percentiles=percentiles)
         print(f"adj: {adj.shape}")
         print(f"nf: {nf.shape}")
