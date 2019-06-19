@@ -125,6 +125,7 @@ for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
         print(f"adj: {adj.shape}")
         print(f"nf: {nf.shape}")
         print(f"ef: {ef.shape}")
+        print(adj[adj > 0])
 
 
     # -----------------------------------------------------------------------------
