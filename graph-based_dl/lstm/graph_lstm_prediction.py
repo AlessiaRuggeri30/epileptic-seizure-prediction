@@ -67,7 +67,7 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [2]
 stride = [10]
-look_back = [5000]
+look_back = [1000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
@@ -116,17 +116,19 @@ for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
     print(X_test.shape, y_test.shape)
 
     """ Generate graphs from sequences """
-    for i in range(1):
-        seq = X_train_shuffled[0:3]
-        print(f"Dim of 3 sequences: {seq.shape}")
-        seq = np.transpose(seq, [0, 2, 1])
-        print(f"Sequences transposed: {seq.shape}")
+    seq = X_train_shuffled[0]
+    l_seq = np.split(seq, 10)
+
+    for i in range(3):
+        seq = l_seq[i]
+        print(f"Dim of a single sequence: {seq.shape}")
+        seq = np.transpose(seq)
+        print(f"Single sequence transposed: {seq.shape}")
         adj, nf, ef = get_fc(seq, band_freq, sampling_freq, percentiles=percentiles)
         print(f"adj: {adj.shape}")
         print(f"nf: {nf.shape}")
         print(f"ef: {ef.shape}")
         print(adj[adj > 0])
-
 
     # -----------------------------------------------------------------------------
     # MODEL BUILDING, TRAINING AND TESTING
