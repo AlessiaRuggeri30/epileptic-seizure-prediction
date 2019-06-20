@@ -71,20 +71,16 @@ look_back = [1000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
+""" Set tunables """
+tunables_sequences = [sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead]
+tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout]
+
 original_X_train = X_train
 original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-tunables = [epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,
-            batch_norm, dropout, sampling_freq,
-            subsampling_factor, stride, look_back, target_steps_ahead]
-
-for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
-    batch_norm, dropout, sampling_freq, subsampling_factor, stride, look_back,\
-    target_steps_ahead in product(*tunables):
-
-    reg = l2(float(reg_n))
+for sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in product(*tunables_sequences):
 
     """ Generate subsampled sequences """
     # Generate sequences by computing indices for training data
@@ -116,26 +112,54 @@ for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
     print(X_test.shape, y_test.shape)
 
     """ Generate graphs from sequences """
-    seq = X_train_shuffled[0]
-    l_seq = np.split(seq, 10)
+    seq = X_train_shuffled[0:5]
+    seq = np.transpose(seq, (0, 2, 1))
 
-    for i in range(3):
-        seq = l_seq[i]
-        print(f"Dim of a single sequence: {seq.shape}")
-        seq = np.transpose(seq)
-        print(f"Single sequence transposed: {seq.shape}")
-        adj, nf, ef = get_fc(seq, band_freq, sampling_freq, percentiles=percentiles)
-        print(f"adj: {adj.shape}")
-        print(f"nf: {nf.shape}")
-        print(f"ef: {ef.shape}")
-        print(adj[adj > 0])
+    X = []
+    A = []
+    E = []
+    for i in range(seq.shape[0]):
+        l_seq = np.split(seq[i], 10)
+        for subseq in l_seq:
+            print(f"Single sequence: {subseq.shape}")
+            adj, nf, ef = get_fc(subseq, band_freq, sampling_freq, percentiles=percentiles)
+            print(f"adj: {adj.shape}")
+            print(f"nf: {nf.shape}")
+            print(f"ef: {ef.shape}")
+            print(adj[adj > 0])
+            X.append(nf)
+            A.append(adj)
+            E.append(ef)
+    print()
+    X = np.asarray(X)
+    A = np.asarray(A)
+    E = np.asarray(E)
+    print(f"X: {X.shape}")
+    print(f"A: {A.shape}")
+    print(f"E: {E.shape}")
 
-    # -----------------------------------------------------------------------------
-    # MODEL BUILDING, TRAINING AND TESTING
-    # -----------------------------------------------------------------------------
-    """ Build the model """
-    # exp = "exp" + str(num)
-    # file_name = exp + "_conv_pred.txt"
-    # print(f"\n{exp}\n")
+    # for i in range(3):
+    #     seq = l_seq[i]
+    #     print(f"Dim of a single sequence: {seq.shape}")
+    #     seq = np.transpose(seq)
+    #     print(f"Single sequence transposed: {seq.shape}")
+    #     adj, nf, ef = get_fc(seq, band_freq, sampling_freq, percentiles=percentiles)
+    #     print(f"adj: {adj.shape}")
+    #     print(f"nf: {nf.shape}")
+    #     print(f"ef: {ef.shape}")
+    #     print(adj[adj > 0])
+
+    # for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
+    #     batch_norm, dropout in product(*tunables_network):
+    #
+    #     reg = l2(float(reg_n))
+
+        # -----------------------------------------------------------------------------
+        # MODEL BUILDING, TRAINING AND TESTING
+        # -----------------------------------------------------------------------------
+        # """ Build the model """
+        # exp = "exp" + str(num)
+        # file_name = exp + "_conv_pred.txt"
+        # print(f"\n{exp}\n")
 
 
