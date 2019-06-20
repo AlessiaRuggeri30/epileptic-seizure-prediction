@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os.path
+from spektral.brain import get_fc
 
 
 def generate_sequences(inputs, targets, length, target_steps_ahead=0,
@@ -128,6 +129,38 @@ def generate_indices(targets, length, target_steps_ahead=0,
         target_indices_seq = target_indices_seq[total_meta_idxs_keep]
 
     return inputs_indices_seq, target_indices_seq
+
+
+def generate_graphs(seq, band_freq, sampling_freq, percentiles):
+    seq = np.transpose(seq, (0, 2, 1))
+
+    X = []
+    A = []
+    E = []
+    for i in range(seq.shape[0]):
+        l_seq = np.split(seq[i], 10, axis=-1)
+        x = []
+        a = []
+        e = []
+        for subseq in l_seq:
+            # print(f"Single sequence: {subseq.shape}")
+            adj, nf, ef = get_fc(subseq, band_freq, sampling_freq, percentiles=percentiles)
+            # print(f"adj: {adj.shape}")
+            # print(f"nf: {nf.shape}")
+            # print(f"ef: {ef.shape}")
+            # print(adj[adj > 0])
+            x.append(np.squeeze(nf, axis=0))
+            a.append(np.squeeze(adj, axis=0))
+            e.append(np.squeeze(ef, axis=0))
+        X.append(x)
+        A.append(a)
+        E.append(e)
+    print()
+    X = np.asarray(X)
+    A = np.asarray(A)
+    E = np.asarray(E)
+
+    return X, A, E
 
 
 def create_experiments(hyperpar):

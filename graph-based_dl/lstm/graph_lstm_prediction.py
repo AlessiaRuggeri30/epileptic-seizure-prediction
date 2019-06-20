@@ -1,4 +1,5 @@
 import os
+import time
 
 import tensorflow.keras.backend as K
 import matplotlib.pyplot as plt
@@ -8,10 +9,9 @@ from tensorflow.keras.regularizers import l2
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
-from spektral.brain import get_fc
 import sys
 sys.path.append("....")
-from utils.utils import add_experiment, save_experiments, generate_indices
+from utils.utils import add_experiment, save_experiments, generate_indices, generate_graphs
 from utils.load_data import load_data
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
@@ -113,36 +113,14 @@ for sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in 
 
     """ Generate graphs from sequences """
     seq = X_train_shuffled[0:5]
-    seq = np.transpose(seq, (0, 2, 1))
-
-    X = []
-    A = []
-    E = []
-    for i in range(seq.shape[0]):
-        l_seq = np.split(seq[i], 10, axis=-1)
-        x = []
-        a = []
-        e = []
-        for subseq in l_seq:
-            print(f"Single sequence: {subseq.shape}")
-            adj, nf, ef = get_fc(subseq, band_freq, sampling_freq, percentiles=percentiles)
-            print(f"adj: {adj.shape}")
-            print(f"nf: {nf.shape}")
-            print(f"ef: {ef.shape}")
-            print(adj[adj > 0])
-            x.append(nf)
-            a.append(adj)
-            e.append(ef)
-        X.append(x)
-        A.append(a)
-        E.append(e)
-    print()
-    X = np.asarray(X)
-    A = np.asarray(A)
-    E = np.asarray(E)
+    start = time.time()
+    X, A, E = generate_graphs(seq, band_freq, sampling_freq, percentiles)
+    end = time.time()
     print(f"X: {X.shape}")
     print(f"A: {A.shape}")
     print(f"E: {E.shape}")
+    print(end - start)
+
 
     # for i in range(3):
     #     seq = l_seq[i]
