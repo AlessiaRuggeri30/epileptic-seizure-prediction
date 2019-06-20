@@ -119,7 +119,7 @@ for sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in 
     A = []
     E = []
     for i in range(seq.shape[0]):
-        l_seq = np.dsplit(seq[i], 10)
+        l_seq = np.split(seq[i], 10, axis=-1)
         for subseq in l_seq:
             print(f"Single sequence: {subseq.shape}")
             adj, nf, ef = get_fc(subseq, band_freq, sampling_freq, percentiles=percentiles)
