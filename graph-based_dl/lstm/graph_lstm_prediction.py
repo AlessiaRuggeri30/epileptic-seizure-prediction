@@ -120,6 +120,9 @@ for sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in 
     E = []
     for i in range(seq.shape[0]):
         l_seq = np.split(seq[i], 10, axis=-1)
+        x = []
+        a = []
+        e = []
         for subseq in l_seq:
             print(f"Single sequence: {subseq.shape}")
             adj, nf, ef = get_fc(subseq, band_freq, sampling_freq, percentiles=percentiles)
@@ -127,9 +130,12 @@ for sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in 
             print(f"nf: {nf.shape}")
             print(f"ef: {ef.shape}")
             print(adj[adj > 0])
-            X.append(nf)
-            A.append(adj)
-            E.append(ef)
+            x.append(nf)
+            a.append(adj)
+            e.append(ef)
+        X.append(x)
+        A.append(a)
+        E.append(e)
     print()
     X = np.asarray(X)
     A = np.asarray(A)
