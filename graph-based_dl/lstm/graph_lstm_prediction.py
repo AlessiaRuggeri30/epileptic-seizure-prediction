@@ -13,6 +13,8 @@ import sys
 sys.path.append("....")
 from utils.utils import add_experiment, save_experiments, generate_indices, generate_graphs
 from utils.load_data import load_data
+sys.path.append("..")
+from graph_model import build_graph_based_lstm
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(0)
@@ -45,6 +47,7 @@ batch_size = 64
 depth_lstm = [1]     # search
 depth_dense = [2]
 units_lstm = [256]
+g_filters = [32]
 reg_n = ['5e-1']      #['5e-3', '5e-2', '5e-1']
 activation = ['relu']
 batch_norm = [True]
@@ -52,6 +55,7 @@ dropout = [0.4]        #[0.5, 0.4, 0.3]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Functional connectivity hyperparameters """
+seq_length = [10]
 band_freq = (70., 100.)
 sampling_freq = [500.]
 # samples_per_graph = 500
@@ -72,15 +76,17 @@ target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
-tunables_sequences = [sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead]
-tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation, batch_norm, dropout]
+tunables_sequences = [seq_length, sampling_freq, subsampling_factor, stride,
+                      look_back, target_steps_ahead]
+tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n,
+                    activation, batch_norm, dropout]
 
 original_X_train = X_train
 original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-for sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in product(*tunables_sequences):
+for seq_length, sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in product(*tunables_sequences):
 
     """ Generate subsampled sequences """
     # Generate sequences by computing indices for training data
@@ -114,36 +120,32 @@ for sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in 
     """ Generate graphs from sequences """
     seq = X_train_shuffled[0:5]
     start = time.time()
-    X, A, E = generate_graphs(seq, band_freq, sampling_freq, percentiles)
+    X, A, E = generate_graphs(seq, seq_length, band_freq, sampling_freq, percentiles)
     end = time.time()
     print(f"X: {X.shape}")
     print(f"A: {A.shape}")
     print(f"E: {E.shape}")
     print(end - start)
 
+    for epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n, activation,\
+        batch_norm, dropout in product(*tunables_network):
 
-    # for i in range(3):
-    #     seq = l_seq[i]
-    #     print(f"Dim of a single sequence: {seq.shape}")
-    #     seq = np.transpose(seq)
-    #     print(f"Single sequence transposed: {seq.shape}")
-    #     adj, nf, ef = get_fc(seq, band_freq, sampling_freq, percentiles=percentiles)
-    #     print(f"adj: {adj.shape}")
-    #     print(f"nf: {nf.shape}")
-    #     print(f"ef: {ef.shape}")
-    #     print(adj[adj > 0])
-
-    # for epochs, depth_lstm, depth_dense, units_lstm, reg_n, activation,\
-    #     batch_norm, dropout in product(*tunables_network):
-    #
-    #     reg = l2(float(reg_n))
+        reg = l2(float(reg_n))
 
         # -----------------------------------------------------------------------------
         # MODEL BUILDING, TRAINING AND TESTING
         # -----------------------------------------------------------------------------
-        # """ Build the model """
-        # exp = "exp" + str(num)
-        # file_name = exp + "_conv_pred.txt"
-        # print(f"\n{exp}\n")
+        """ Build the model """
+        exp = "exp" + str(num)
+        file_name = exp + "_conv_pred.txt"
+        print(f"\n{exp}\n")
+
+        F = X.shape[-1]
+        N = A.shape[-1]
+        S = E.shape[-1]
+
+        model = build_graph_based_lstm(F, N, S, seq_length,
+                           depth_lstm, depth_dense, units_lstm, g_filters,
+                           reg, activation, batch_norm, dropout)
 
 

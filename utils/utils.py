@@ -131,14 +131,14 @@ def generate_indices(targets, length, target_steps_ahead=0,
     return inputs_indices_seq, target_indices_seq
 
 
-def generate_graphs(seq, band_freq, sampling_freq, percentiles):
+def generate_graphs(seq, seq_length, band_freq, sampling_freq, percentiles):
     seq = np.transpose(seq, (0, 2, 1))
 
     X = []
     A = []
     E = []
     for i in range(seq.shape[0]):
-        l_seq = np.split(seq[i], 10, axis=-1)
+        l_seq = np.split(seq[i], seq_length, axis=-1)
         x = []
         a = []
         e = []
@@ -149,7 +149,7 @@ def generate_graphs(seq, band_freq, sampling_freq, percentiles):
             # print(f"nf: {nf.shape}")
             # print(f"ef: {ef.shape}")
             # print(adj[adj > 0])
-            x.append(np.squeeze(nf, axis=0))
+            x.append(np.expand_dims(np.squeeze(nf, axis=0), axis=-1))
             a.append(np.squeeze(adj, axis=0))
             e.append(np.squeeze(ef, axis=0))
         X.append(x)
