@@ -131,30 +131,22 @@ def generate_indices(targets, length, target_steps_ahead=0,
     return inputs_indices_seq, target_indices_seq
 
 
-def generate_graphs(seq, seq_length, band_freq, sampling_freq, percentiles):
+def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentiles):
     seq = np.transpose(seq, (0, 2, 1))
 
     X = []
     A = []
     E = []
     for i in range(seq.shape[0]):
-        l_seq = np.split(seq[i], seq_length, axis=-1)
-        x = []
-        a = []
-        e = []
-        for subseq in l_seq:
-            # print(f"Single sequence: {subseq.shape}")
-            adj, nf, ef = get_fc(subseq, band_freq, sampling_freq, percentiles=percentiles)
-            # print(f"adj: {adj.shape}")
-            # print(f"nf: {nf.shape}")
-            # print(f"ef: {ef.shape}")
-            # print(adj[adj > 0])
-            x.append(np.expand_dims(np.squeeze(nf, axis=0), axis=-1))
-            a.append(np.squeeze(adj, axis=0))
-            e.append(np.squeeze(ef, axis=0))
-        X.append(x)
-        A.append(a)
-        E.append(e)
+        # print(f"Single sequence: {seq[i].shape}")
+        adj, nf, ef = get_fc(seq[i], band_freq, sampling_freq, samples_per_graph, percentiles=percentiles)
+        # print(f"adj: {adj.shape}")
+        # print(f"nf: {nf.shape}")
+        # print(f"ef: {ef.shape}")
+        # print(adj[adj > 0])
+        X.append(np.expand_dims(nf, axis=-1))
+        A.append(adj)
+        E.append(ef)
     print()
     X = np.asarray(X)
     A = np.asarray(A)

@@ -58,7 +58,7 @@ class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 seq_length = [10]
 band_freq = (70., 100.)
 sampling_freq = [500.]
-# samples_per_graph = 500
+samples_per_graph = [500]
 # fc_measure = 'corr'
 # link_cutoff = 0.
 percentiles = (40, 60)
@@ -71,13 +71,13 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [2]
 stride = [10]
-look_back = [1000]
+look_back = [2000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
-tunables_sequences = [seq_length, sampling_freq, subsampling_factor, stride,
-                      look_back, target_steps_ahead]
+tunables_sequences = [seq_length, sampling_freq, samples_per_graph, subsampling_factor,
+                      stride, look_back, target_steps_ahead]
 tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n,
                     activation, batch_norm, dropout]
 
@@ -86,7 +86,8 @@ original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-for seq_length, sampling_freq, subsampling_factor, stride, look_back, target_steps_ahead in product(*tunables_sequences):
+for seq_length, sampling_freq, samples_per_graph, subsampling_factor,\
+    stride, look_back, target_steps_ahead in product(*tunables_sequences):
 
     """ Generate subsampled sequences """
     # Generate sequences by computing indices for training data
@@ -118,9 +119,9 @@ for seq_length, sampling_freq, subsampling_factor, stride, look_back, target_ste
     print(X_test.shape, y_test.shape)
 
     """ Generate graphs from sequences """
-    seq = X_train_shuffled[0:5]
+    seq = X_train_shuffled[0:10]
     start = time.time()
-    X, A, E = generate_graphs(seq, seq_length, band_freq, sampling_freq, percentiles)
+    X, A, E = generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentiles)
     end = time.time()
     print(f"X: {X.shape}")
     print(f"A: {A.shape}")
@@ -144,8 +145,8 @@ for seq_length, sampling_freq, subsampling_factor, stride, look_back, target_ste
         N = A.shape[-1]
         S = E.shape[-1]
 
-        model = build_graph_based_lstm(F, N, S, seq_length,
-                           depth_lstm, depth_dense, units_lstm, g_filters,
-                           reg, activation, batch_norm, dropout)
+        # model = build_graph_based_lstm(F, N, S, seq_length,
+        #                    depth_lstm, depth_dense, units_lstm, g_filters,
+        #                    reg, activation, batch_norm, dropout)
 
 
