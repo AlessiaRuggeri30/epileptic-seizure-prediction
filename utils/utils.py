@@ -139,7 +139,8 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
     E = []
     for i in range(seq.shape[0]):
         # print(f"Single sequence: {seq[i].shape}")
-        adj, nf, ef = get_fc(seq[i], band_freq, sampling_freq, samples_per_graph, percentiles=percentiles)
+        adj, nf, ef = get_fc(seq[i], band_freq, sampling_freq, samples_per_graph,
+                             percentiles=percentiles)
         # print(f"adj: {adj.shape}")
         # print(f"nf: {nf.shape}")
         # print(f"ef: {ef.shape}")

@@ -19,13 +19,13 @@ def build_graph_based_lstm(F, N, S, seq_length,
     E_td = Lambda(lambda x: K.reshape(x, (-1, N, N, S)))(E_in)
 
     """ Graph Convolution-Pooling block """
-    ecc = EdgeConditionedConv(g_filters,
-                              kernel_network=[32, 32],
-                              activation='relu',
-                              kernel_regularizer=reg,
-                              use_bias=True)
+    ecc = TimeDistributed(EdgeConditionedConv(g_filters,
+                                              kernel_network=[32, 32],
+                                              activation='relu',
+                                              kernel_regularizer=reg,
+                                              use_bias=True))
 
-    td = TimeDistributed(ecc)([X_td, A_td, E_td])
+    td = ecc([X_td, A_td, E_td])
     pool = GlobalAvgPool()(td)
 
     """ LSTM block """

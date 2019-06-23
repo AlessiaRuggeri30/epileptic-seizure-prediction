@@ -55,7 +55,6 @@ dropout = [0.4]        #[0.5, 0.4, 0.3]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Functional connectivity hyperparameters """
-seq_length = [10]
 band_freq = (70., 100.)
 sampling_freq = [500.]
 samples_per_graph = [500]
@@ -76,7 +75,7 @@ target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
-tunables_sequences = [seq_length, sampling_freq, samples_per_graph, subsampling_factor,
+tunables_sequences = [sampling_freq, samples_per_graph, subsampling_factor,
                       stride, look_back, target_steps_ahead]
 tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n,
                     activation, batch_norm, dropout]
@@ -86,7 +85,7 @@ original_y_train = y_train
 original_X_test = X_test
 original_y_test = y_test
 
-for seq_length, sampling_freq, samples_per_graph, subsampling_factor,\
+for sampling_freq, samples_per_graph, subsampling_factor,\
     stride, look_back, target_steps_ahead in product(*tunables_sequences):
 
     """ Generate subsampled sequences """
@@ -144,9 +143,10 @@ for seq_length, sampling_freq, samples_per_graph, subsampling_factor,\
         F = X.shape[-1]
         N = A.shape[-1]
         S = E.shape[-1]
+        seq_length = int(look_back/samples_per_graph)
 
-        # model = build_graph_based_lstm(F, N, S, seq_length,
-        #                    depth_lstm, depth_dense, units_lstm, g_filters,
-        #                    reg, activation, batch_norm, dropout)
+        model = build_graph_based_lstm(F, N, S, seq_length,
+                           depth_lstm, depth_dense, units_lstm, g_filters,
+                           reg, activation, batch_norm, dropout)
 
 
