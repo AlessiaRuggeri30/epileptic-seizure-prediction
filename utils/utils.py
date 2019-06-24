@@ -164,33 +164,73 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
     return X, A, E
 
 
-def apply_generate_sequences(X, y, look_back, target_steps_ahead=0,
+def apply_generate_sequences(X_train, y_train, X_test, y_test, look_back, target_steps_ahead=0,
                              stride=1, subsampling_factor=1.):
-    X_seq = []
-    y_seq = []
-    for i in range(X.shape[0]):
-        inputs_indices_seq, target_indices_seq = \
-            generate_indices([y[i]],  # Targets associated to X_train (same shape[0])
-                             look_back,  # Length of input sequences
-                             stride=stride,  # Stride between windows
-                             target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
-                             subsample=True,  # Whether to subsample
-                             subsampling_factor=subsampling_factor  # Keep this many negative samples w.r.t. to positive ones
-                             )
-        X_seq.append(X[i][inputs_indices_seq])
-        y_seq.append(y[i][target_indices_seq])
-    X_seq = np.asarray(X_seq)
-    y_seq = np.asarray(y_seq)
+    # Generate sequences by computing indices for training data
+    inputs_indices_seq, target_indices_seq = \
+        generate_indices([y_train],  # Targets associated to X_train (same shape[0])
+                         look_back,  # Length of input sequences
+                         stride=stride,  # Stride between windows
+                         target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                         subsample=True,  # Whether to subsample
+                         subsampling_factor=subsampling_factor  # Keep this many negative samples w.r.t. to positive ones
+                         )
+    X_train = X_train[inputs_indices_seq]
+    y_train = y_train[target_indices_seq]
 
-    return X_seq, y_seq
+    # Generate sequences by computing indices for test data
+    inputs_indices_seq, target_indices_seq = \
+        generate_indices([y_test],  # Targets associated to X_train (same shape[0])
+                         look_back,  # Length of input sequences
+                         stride=stride,  # Stride between windows
+                         target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                         )
+    X_test = X_test[inputs_indices_seq]
+    y_test = y_test[target_indices_seq]
+
+    return X_train, y_train, X_test, y_test
 
 
-def data_preprocessing(X, dataset):
-    """ Normalize data """
+def data_standardization(X_train, X_test):
     scaler = StandardScaler()
-    scaler.fit(dataset)
-    X = scaler.transform(X)
-    return X
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    return X_train, X_test
+
+
+def compute_class_weight(y_train):
+    n_positive = np.sum(y_train)
+    n_negative = len(y_train) - n_positive
+    class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
+    return class_weight
+
+
+def train_test_split(X, y, cross_val=False):
+    if not cross_val:
+        X_train = [np.concatenate((X[2], X[3]), axis=0)]
+        y_train = [np.concatenate((y[2], y[3]), axis=0)]
+        X_test = [X[1]]
+        y_test = [y[1]]
+    else:
+        X_train1 = np.concatenate((X[2], X[3]), axis=0)
+        y_train1 = np.concatenate((y[2], y[3]), axis=0)
+        X_test1 = X[1]
+        y_test1 = y[1]
+        X_train2 = np.concatenate((X[1], X[3]), axis=0)
+        y_train2 = np.concatenate((y[1], y[3]), axis=0)
+        X_test2 = X[2]
+        y_test2 = y[2]
+        X_train3 = np.concatenate((X[1], X[2]), axis=0)
+        y_train3 = np.concatenate((y[1], y[2]), axis=0)
+        X_test3 = X[3]
+        y_test3 = y[3]
+        X_train = [X_train1, X_train2, X_train3]
+        y_train = [y_train1, y_train2, y_train3]
+        X_test = [X_test1, X_test2, X_test3]
+        y_test = [y_test1, y_test2, y_test3]
+    return X_train, y_train, X_test, y_test
 
 
 # -----------------------------------------------------------------------------
@@ -292,19 +332,13 @@ if __name__ == '__main__':
     # save_experiments(df, filename)
 
     import sys
-    sys.path.append("....")
-    from utils.load_data import load_data
+    from load_data import load_data
 
-    subsampling_factor = [2]
-    stride = [10]
-    look_back = [2000]
-    target_steps_ahead = [2000]
+    subsampling_factor = 2
+    stride = 10
+    look_back = 2000
+    target_steps_ahead = 2000
 
     X, y, dataset, seizure = load_data()
-    X = data_preprocessing(X, dataset)
+    print(X[1].shape)
 
-    X_seq, y_seq = apply_generate_sequences(X, y, look_back, target_steps_ahead=0,
-                             stride=1, subsampling_factor=1.)
-
-    print(X_seq.shape)
-    print(y_seq.shape)
