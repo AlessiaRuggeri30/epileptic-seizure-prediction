@@ -126,6 +126,7 @@ shapes = {
 parameters = {
     "epochs": epochs,
     "batch_size": batch_size,
+    "units": units,
     "reg_n": "l2(5e-4)",
     "activation": activation,
     "class_weight": str(class_weight),
