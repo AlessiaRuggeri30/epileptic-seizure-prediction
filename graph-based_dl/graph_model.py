@@ -1,5 +1,3 @@
-# TODO: implement the graph-based model both for the conv and the lstm
-
 import tensorflow.keras.backend as K
 from tensorflow.keras.layers import Input, Lambda, TimeDistributed, LSTM, BatchNormalization, Dropout, Dense
 from tensorflow.keras.models import Model

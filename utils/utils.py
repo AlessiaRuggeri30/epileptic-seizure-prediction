@@ -3,6 +3,8 @@ import pandas as pd
 import os.path
 from spektral.brain import get_fc
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score, recall_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 
@@ -162,6 +164,35 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
     return X, A, E
 
 
+def apply_generate_sequences(X, y, look_back, target_steps_ahead=0,
+                             stride=1, subsampling_factor=1.):
+    X_seq = []
+    y_seq = []
+    for i in range(X.shape[0]):
+        inputs_indices_seq, target_indices_seq = \
+            generate_indices([y[i]],  # Targets associated to X_train (same shape[0])
+                             look_back,  # Length of input sequences
+                             stride=stride,  # Stride between windows
+                             target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
+                             subsample=True,  # Whether to subsample
+                             subsampling_factor=subsampling_factor  # Keep this many negative samples w.r.t. to positive ones
+                             )
+        X_seq.append(X[i][inputs_indices_seq])
+        y_seq.append(y[i][target_indices_seq])
+    X_seq = np.asarray(X_seq)
+    y_seq = np.asarray(y_seq)
+
+    return X_seq, y_seq
+
+
+def data_preprocessing(X, dataset):
+    """ Normalize data """
+    scaler = StandardScaler()
+    scaler.fit(dataset)
+    X = scaler.transform(X)
+    return X
+
+
 # -----------------------------------------------------------------------------
 # STORING EXPERIMENTS RESULTS
 # -----------------------------------------------------------------------------
@@ -252,13 +283,28 @@ if __name__ == '__main__':
     #     print(y_1_)
     #     # print(y_2_)
 
-    filename = "experiments"
-    hyperpar = ['', 'par1', 'par2', 'par3', 'par4']
-    num = 5
-    exp_hyperpar = [10, 11, 12, 13]
-    df = add_experiment(num, exp_hyperpar, filename, hyperpar)
+    # filename = "experiments"
+    # hyperpar = ['', 'par1', 'par2', 'par3', 'par4']
+    # num = 5
+    # exp_hyperpar = [10, 11, 12, 13]
+    # df = add_experiment(num, exp_hyperpar, filename, hyperpar)
+    # print(df)
+    # save_experiments(df, filename)
 
-    print(df)
+    import sys
+    sys.path.append("....")
+    from utils.load_data import load_data
 
-    save_experiments(df, filename)
+    subsampling_factor = [2]
+    stride = [10]
+    look_back = [2000]
+    target_steps_ahead = [2000]
 
+    X, y, dataset, seizure = load_data()
+    X = data_preprocessing(X, dataset)
+
+    X_seq, y_seq = apply_generate_sequences(X, y, look_back, target_steps_ahead=0,
+                             stride=1, subsampling_factor=1.)
+
+    print(X_seq.shape)
+    print(y_seq.shape)
