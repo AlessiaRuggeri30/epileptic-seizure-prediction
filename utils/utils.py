@@ -204,22 +204,22 @@ def experiment_results_summary(path, num, title, summary, shapes, parameters, re
         file.write("Parameters\n")
         for key, value in parameters.items():
             file.write(f"\t{key}:   {value}\n")
-        print()
+        file.write("\n")
         file.write("Model\n")
         file.write(f"{summary}\n")
-        print()
+        file.write("\n")
         file.write("Data shape\n")
         for key, value in shapes.items():
             file.write(f"\t{key}:   {value}\n")
-        print()
+        file.write("\n")
         file.write("Results on train set\n")
         for key, value in results_train.items():
             file.write(f"\t{key}:   {value}\n")
-        print()
+        file.write("\n")
         file.write("Results on test set\n")
         for key, value in results_test.items():
             file.write(f"\t{key}:   {value}\n")
-        print()
+        file.write("\n")
 
 
 def generate_prediction_plots(filename, predictions, y):

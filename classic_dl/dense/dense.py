@@ -1,21 +1,23 @@
 import os
 
+import tensorflow.keras.backend as K
 import matplotlib.pyplot as plt
 import numpy as np
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout
 from keras.regularizers import l2
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
 from keras import callbacks
 import sys
 sys.path.append("....")
-from utils.utils import add_experiment, save_experiments
 from utils.load_data import load_data
+from utils.utils import add_experiment, save_experiments, generate_indices, model_evaluation,\
+                        experiment_results_summary, generate_prediction_plots
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+np.random.seed(0)
 
 X, y, dataset, seizure = load_data()
 
@@ -80,9 +82,10 @@ model.fit(X_train_shuffled, y_train_shuffled,
           callbacks=callbacks)
 
 """ Save and reload the model """
-model.save(f"models/dense_model{num}.h5")
-del model
-model = load_model(f"models/dense_model{num}.h5")
+MODEL_PATH = "models/"
+model.save(f"{MODEL_PATH}dense_model{num}.h5")
+# del model
+# model = load_model(f"{MODEL_PATH}dense_model{num}.h5")
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -90,73 +93,66 @@ model = load_model(f"models/dense_model{num}.h5")
 """ Predictions on training data """
 print("Predicting values on training data...")
 predictions_train = model.predict(X_train, batch_size=batch_size).flatten()
-
+loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
+                                                                           y=y_train)
 print("Results on training data")
-loss_train = log_loss(y_train, predictions_train, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
-accuracy_train = accuracy_score(y_train, np.round(predictions_train))
-roc_auc_score_train = roc_auc_score(y_train, predictions_train)
 print(f"\tLoss:    \t{loss_train:.4f}")
 print(f"\tAccuracy:\t{accuracy_train:.4f}")
-print(f"\tROC-AUC: \t{roc_auc_score_train:.4f}")
+print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
+print(f"\tRecall:  \t{recall_train:.4f}")
 
 """ Predictions on test data """
-loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size, verbose=1)
-print(f"\tLoss:    \t{loss_keras:.4f}")
-print(f"\tAccuracy:\t{metrics:.4f}")
-
 print("Predicting values on test data...")
 predictions_test = model.predict(X_test, batch_size=batch_size).flatten()
-
+loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
+                                                                       y=y_test)
 print("Results on test data")
-loss_test = log_loss(y_test, predictions_test, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
-accuracy_test = accuracy_score(y_test, np.round(predictions_test))
-roc_auc_score_test = roc_auc_score(y_test, predictions_test)
 print(f"\tLoss:    \t{loss_test:.4f}")
 print(f"\tAccuracy:\t{accuracy_test:.4f}")
-print(f"\tROC-AUC: \t{roc_auc_score_test:.4f}")
+print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
+print(f"\tRecall:  \t{recall_test:.4f}")
 
 # -----------------------------------------------------------------------------
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
+RESULTS_PATH = f"results/{file_name}"
+title = "DENSE NEURAL NETWORK"
+shapes = {
+    "X_train": X_train.shape,
+    "y_train": y_train.shape,
+    "X_test": X_test.shape,
+    "y_test": y_test.shape
+}
+parameters = {
+    "epochs": epochs,
+    "batch_size": batch_size,
+    "reg_n": "l2(5e-4)",
+    "activation": activation,
+    "class_weight": str(class_weight),
+}
+results_train = {
+    "loss_train": loss_train,
+    "accuracy_train": accuracy_train,
+    "roc_auc_train": roc_auc_train,
+    "recall_train": recall_train
+}
+results_test = {
+    "loss_test": loss_test,
+    "accuracy_test": accuracy_test,
+    "roc_auc_test": roc_auc_test,
+    "recall_test": recall_test
+}
 string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
-with open(f"results/{file_name}", 'w') as file:
-    file.write(f"EXPERIMENT {num}: DENSE NEURAL NETWORK\n\n")
+experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
-    file.write("Parameters\n")
-    file.write(f"\tepochs:\t\t\t{epochs}\n")
-    file.write(f"\tbatch_size:\t\t{batch_size}\n")
-    file.write(f"\treg:\t\t\tl2(5e-4)\n")
-    file.write(f"\tactivation:\t\t{activation}\n")
-    file.write(f"\tclass_weight:\t{str(class_weight)}\n\n")
-
-    file.write("Model\n")
-    file.write(f"{summary}\n\n")
-
-    file.write("Data shape\n")
-    file.write(f"\tX_train shape:\t{X_train.shape}\n")
-    file.write(f"\ty_train shape:\t{y_train.shape}\n")
-    file.write(f"\tX_test shape:\t{X_test.shape}\n")
-    file.write(f"\ty_test shape:\t{y_test.shape}\n\n")
-
-    file.write("Results on train set\n")
-    file.write(f"\tLoss:\t\t{loss_train}\n")
-    file.write(f"\tAccuracy:\t{accuracy_train}\n")
-    file.write(f"\tRoc_auc:\t{roc_auc_score_train}\n\n")
-
-    file.write("Results on test set\n")
-    file.write(f"\tLoss_keras:\t{loss_keras}\n")
-    file.write(f"\tLoss:\t\t{loss_test}\n")
-    file.write(f"\tAccuracy:\t{accuracy_test}\n")
-    file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
-
-experiments = "experiments_dense"
+EXP_FILENAME = "experiments_dense"
 hyperpar = ['', 'epochs', 'units', 'activation', 'loss', 'acc', 'roc-auc']
-exp_hyperpar = [epochs, units, activation, loss_test, accuracy_test, roc_auc_score_test]
-df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
-save_experiments(df, experiments)
+exp_hyperpar = [epochs, units, activation, loss_test, accuracy_test, roc_auc_test]
+df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
+save_experiments(EXP_FILENAME, df)
 
 # -----------------------------------------------------------------------------
 # PLOTS
@@ -197,3 +193,5 @@ plt.plot(running_mean(sigmoid, 1000))
 plt.axvline(x=seizure[1]['start'], color="orange", linewidth=0.5)
 plt.axvline(x=seizure[1]['end'], color="orange", linewidth=0.5)
 plt.savefig(f"./plots/{exp}-sigmoid.png", dpi=400)
+
+K.clear_session()

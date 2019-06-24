@@ -39,7 +39,7 @@ X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
 """ Neural network hyperparameters """
-num = 157
+num = 159
 
 epochs = [10]
 batch_size = 64
@@ -58,7 +58,7 @@ dilation_rate = [3]
 class_weight = {0: (len(y_train) / n_negative), 1: (len(y_train) / n_positive)}
 
 """ Generate sequences """
-look_back = [200]
+look_back = [200, 500]
 stride = [10]
 predicted_timestamps = 1
 subsampling_factor = 2
@@ -150,7 +150,7 @@ for epochs, depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back,
     print(f"\tLoss:    \t{loss_train:.4f}")
     print(f"\tAccuracy:\t{accuracy_train:.4f}")
     print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
-    print(f"\tRecall:\t{recall_train:.4f}")
+    print(f"\tRecall:  \t{recall_train:.4f}")
 
     """ Predictions on test data """
     print("Predicting values on test data...")
@@ -161,7 +161,7 @@ for epochs, depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back,
     print(f"\tLoss:    \t{loss_test:.4f}")
     print(f"\tAccuracy:\t{accuracy_test:.4f}")
     print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
-    print(f"\tRecall:\t{recall_test:.4f}")
+    print(f"\tRecall:  \t{recall_test:.4f}")
 
     # -----------------------------------------------------------------------------
     # EXPERIMENT RESULTS SUMMARY
@@ -229,7 +229,6 @@ for epochs, depth_conv, filters, kernel_size, reg_n, dropout, stride, look_back,
     # -----------------------------------------------------------------------------
     # PLOTS
     # -----------------------------------------------------------------------------
-
     PLOTS_PATH = "./plots/plots_prediction_dilated/"
 
     PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions_train.png"

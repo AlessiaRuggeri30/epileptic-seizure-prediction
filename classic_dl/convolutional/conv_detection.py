@@ -6,16 +6,17 @@ import numpy as np
 from itertools import product
 from tensorflow.keras.regularizers import l2
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
 from sklearn.utils import shuffle
 from keras import callbacks
 from conv_model import build_conv_model
 import sys
 sys.path.append("....")
-from utils.utils import add_experiment, save_experiments, generate_indices
 from utils.load_data import load_data
+from utils.utils import add_experiment, save_experiments, generate_indices, model_evaluation,\
+                        experiment_results_summary, generate_prediction_plots
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+np.random.seed(0)
 
 X, y, dataset, seizure = load_data()
 
@@ -117,9 +118,10 @@ model.fit(X_train_shuffled, y_train_shuffled,
           callbacks=cb)
 
 """ Save and reload the model """
-model.save(f"models/models_detection/conv_model{num}.h5")
+MODEL_PATH = "models/models_detection/"
+model.save(f"{MODEL_PATH}conv_model{num}.h5")
 # del model
-# model = load_model(f"models/models_detection/conv_model{num}.h5")
+# model = load_model(f"{MODEL_PATH}conv_model{num}.h5")
 
 # -----------------------------------------------------------------------------
 # RESULTS EVALUATION
@@ -127,107 +129,91 @@ model.save(f"models/models_detection/conv_model{num}.h5")
 """ Predictions on training data """
 print("Predicting values on training data...")
 predictions_train = model.predict(X_train, batch_size=batch_size).flatten()
-
+loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
+                                                                           y=y_train)
 print("Results on training data")
-loss_train = log_loss(y_train, predictions_train, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
-accuracy_train = accuracy_score(y_train, np.round(predictions_train))
-roc_auc_score_train = roc_auc_score(y_train, predictions_train)
 print(f"\tLoss:    \t{loss_train:.4f}")
 print(f"\tAccuracy:\t{accuracy_train:.4f}")
-print(f"\tROC-AUC: \t{roc_auc_score_train:.4f}")
+print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
+print(f"\tRecall:  \t{recall_train:.4f}")
 
 """ Predictions on test data """
-loss_keras, metrics = model.evaluate(X_test, y_test, batch_size=batch_size, verbose=1)
-print(f"\tLoss:    \t{loss_keras:.4f}")
-print(f"\tAccuracy:\t{metrics:.4f}")
-
 print("Predicting values on test data...")
 predictions_test = model.predict(X_test, batch_size=batch_size).flatten()
-
+loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
+                                                                       y=y_test)
 print("Results on test data")
-loss_test = log_loss(y_test, predictions_test, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
-accuracy_test = accuracy_score(y_test, np.round(predictions_test))
-roc_auc_score_test = roc_auc_score(y_test, predictions_test)
 print(f"\tLoss:    \t{loss_test:.4f}")
 print(f"\tAccuracy:\t{accuracy_test:.4f}")
-print(f"\tROC-AUC: \t{roc_auc_score_test:.4f}")
+print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
+print(f"\tRecall:  \t{recall_test:.4f}")
 
 # -----------------------------------------------------------------------------
 # EXPERIMENT RESULTS SUMMARY
 # -----------------------------------------------------------------------------
+RESULTS_PATH = f"results/results_detection/{file_name}"
+title = "CONVOLUTIONAL NEURAL NETWORK"
+shapes = {
+    "X_train": X_train.shape,
+    "y_train": y_train.shape,
+    "X_test": X_test.shape,
+    "y_test": y_test.shape
+}
+parameters = {
+    "epochs": epochs,
+    "batch_size": batch_size,
+    "depth_conv": depth_conv,
+    "depth_dense": depth_dense,
+    "filters": filters,
+    "kernel_size": kernel_size,
+    "reg_n": reg_n,
+    "activation": activation,
+    "batch_norm": str(batch_norm),
+    "dropout": dropout,
+    "class_weight": str(class_weight),
+    "look_back": look_back,
+    "stride": stride,
+    "predicted_timestamps": predicted_timestamps,
+    "target_steps_ahead": target_steps_ahead,
+    "subsampling_factor": subsampling_factor
+}
+results_train = {
+    "loss_train": loss_train,
+    "accuracy_train": accuracy_train,
+    "roc_auc_train": roc_auc_train,
+    "recall_train": recall_train
+}
+results_test = {
+    "loss_test": loss_test,
+    "accuracy_test": accuracy_test,
+    "roc_auc_test": roc_auc_test,
+    "recall_test": recall_test
+}
 string_list = []
 model.summary(print_fn=lambda x: string_list.append(x))
 summary = "\n".join(string_list)
 
-with open(f"results/results_detection/{file_name}", 'w') as file:
-    file.write(f"EXPERIMENT {num}: CONVOLUTIONAL NEURAL NETWORK\n\n")
+experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
-    file.write("NO DROPOUT OR KERNEL REGULARIZATION BETWEEN CONVOLUTIONAL LAYERS\n")
-
-    file.write("Parameters\n")
-    file.write(f"\tepochs:\t\t\t{epochs}\n")
-    file.write(f"\tbatch_size:\t\t{batch_size}\n")
-    file.write(f"\tdepth_conv:\t\t{depth_conv}\n")
-    file.write(f"\tdepth_dense:\t{depth_dense}\n")
-    file.write(f"\tfilters:\t\t{filters}\n")
-    file.write(f"\tkernel_size:\t{kernel_size}\n")
-    file.write(f"\treg:\t\t\tl2({reg_n})\n")
-    file.write(f"\tactivation:\t\t{activation}\n")
-    file.write(f"\tbatch_norm:\t\t{str(batch_norm)}\n")
-    file.write(f"\tdropout:\t\t{dropout}\n")
-    file.write(f"\tclass_weight:\t{str(class_weight)}\n")
-    file.write(f"\tlook_back:\t\t{look_back}\n")
-    file.write(f"\tstride:\t\t\t{stride}\n")
-    file.write(f"\tpredicted_timestamps:\t{predicted_timestamps}\n")
-    file.write(f"\ttarget_steps_ahead:\t\t{target_steps_ahead}\n")
-    file.write(f"\tsubsampling_factor:\t\t{subsampling_factor}\n\n")
-
-    file.write("Model\n")
-    file.write(f"{summary}\n\n")
-
-    file.write("Data shape\n")
-    file.write(f"\tX_train shape:\t{X_train.shape}\n")
-    file.write(f"\ty_train shape:\t{y_train.shape}\n")
-    file.write(f"\tX_test shape: \t{X_test.shape}\n")
-    file.write(f"\ty_test shape: \t{y_test.shape}\n\n")
-
-    file.write("Results on train set\n")
-    file.write(f"\tLoss:\t\t{loss_train}\n")
-    file.write(f"\tAccuracy:\t{accuracy_train}\n")
-    file.write(f"\tRoc_auc:\t{roc_auc_score_train}\n\n")
-
-    file.write("Results on test set\n")
-    file.write(f"\tLoss_keras:\t{loss_keras}\n")
-    file.write(f"\tLoss:\t\t{loss_test}\n")
-    file.write(f"\tAccuracy:\t{accuracy_test}\n")
-    file.write(f"\tRoc_auc:\t{roc_auc_score_test}\n")
-
-experiments = "experiments_conv_det"
+EXP_FILENAME = "experiments_conv_det"
 hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size', 'activation',
             'l2_reg', 'batch_norm', 'dropout', 'look_back', 'target_steps_ahead',
             'subsampling_factor', 'loss', 'acc', 'roc-auc']
 exp_hyperpar = [epochs, depth_conv, depth_dense, filters, kernel_size, activation,
                 reg_n, batch_norm, dropout, look_back, target_steps_ahead,
-                subsampling_factor, loss_test, accuracy_test, roc_auc_score_test]
-df = add_experiment(num, exp_hyperpar, experiments, hyperpar)
-save_experiments(df, experiments)
+                subsampling_factor, loss_test, accuracy_test, roc_auc_test]
+df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
+save_experiments(EXP_FILENAME, df)
 
 # -----------------------------------------------------------------------------
 # PLOTS
 # -----------------------------------------------------------------------------
+PLOTS_PATH = "./plots/plots_detection/"
 
-plt.subplot(2, 1, 1)
-plt.plot(y_train)
-plt.subplot(2, 1, 2)
-plt.plot(predictions_train)
-plt.savefig(f"./plots/plots_detection/{exp}-predictions_train.png")
-plt.close()
+PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions_train.png"
+generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_train, y=y_train)
 
-plt.subplot(2, 1, 1)
-plt.plot(y_test)
-plt.subplot(2, 1, 2)
-plt.plot(predictions_test)
-plt.savefig(f"./plots/plots_detection/{exp}-predictions.png")
-plt.close()
+PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions.png"
+generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_test, y=y_test)
 
 K.clear_session()
