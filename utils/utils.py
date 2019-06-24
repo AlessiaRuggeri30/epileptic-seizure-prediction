@@ -2,7 +2,13 @@ import numpy as np
 import pandas as pd
 import os.path
 from spektral.brain import get_fc
+from sklearn.metrics import log_loss, accuracy_score, roc_auc_score, recall_score
+import matplotlib.pyplot as plt
 
+
+# -----------------------------------------------------------------------------
+# DATA PROCESSING
+# -----------------------------------------------------------------------------
 
 def generate_sequences(inputs, targets, length, target_steps_ahead=0,
                        sampling_rate=1, stride=1, start_index=0, shuffle=False,
@@ -156,6 +162,10 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
     return X, A, E
 
 
+# -----------------------------------------------------------------------------
+# STORING EXPERIMENTS RESULTS
+# -----------------------------------------------------------------------------
+
 def create_experiments(hyperpar):
     data = np.array([hyperpar])
     df = pd.DataFrame(data=data[1:, 1:],
@@ -164,7 +174,7 @@ def create_experiments(hyperpar):
     return df
 
 
-def add_experiment(num, exp_hyperpar, filename, hyperpar):
+def add_experiment(filename, num, hyperpar, exp_hyperpar):
     if not os.path.isfile(filename):
         df = create_experiments(hyperpar=hyperpar)
     else:
@@ -173,10 +183,57 @@ def add_experiment(num, exp_hyperpar, filename, hyperpar):
     return df
 
 
-def save_experiments(dataframe, filename):
+def save_experiments(filename, dataframe):
     dataframe.to_pickle(filename)
     dataframe.to_csv("{}.csv".format(filename))
 
+
+def model_evaluation(predictions, y):
+    loss = log_loss(y, predictions, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
+    accuracy = accuracy_score(y, np.round(predictions))
+    roc_auc = roc_auc_score(y, predictions)
+    recall = recall_score(y, np.round(predictions))
+
+    return loss, accuracy, roc_auc, recall
+
+
+def experiment_results_summary(path, num, title, summary, shapes, parameters, results_train, results_test):
+    with open(path, 'w') as file:
+        file.write(f"EXPERIMENT {num}: {title}\n\n")
+
+        file.write("Parameters\n")
+        for key, value in parameters.items():
+            file.write(f"\t{key}:   {value}\n")
+        print()
+        file.write("Model\n")
+        file.write(f"{summary}\n")
+        print()
+        file.write("Data shape\n")
+        for key, value in shapes.items():
+            file.write(f"\t{key}:   {value}\n")
+        print()
+        file.write("Results on train set\n")
+        for key, value in results_train.items():
+            file.write(f"\t{key}:   {value}\n")
+        print()
+        file.write("Results on test set\n")
+        for key, value in results_test.items():
+            file.write(f"\t{key}:   {value}\n")
+        print()
+
+
+def generate_prediction_plots(filename, predictions, y):
+    plt.subplot(2, 1, 1)
+    plt.plot(y)
+    plt.subplot(2, 1, 2)
+    plt.plot(predictions)
+    plt.savefig(filename)
+    plt.close()
+
+
+# -----------------------------------------------------------------------------
+# TEST CODE
+# -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
     # pass
