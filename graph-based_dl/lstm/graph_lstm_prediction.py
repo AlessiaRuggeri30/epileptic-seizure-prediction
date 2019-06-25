@@ -22,17 +22,12 @@ from graph_model import build_graph_based_lstm
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(42)
 
-""" Import dataset """
-X, y, dataset, seizure = load_data()
+""" Global parameters """
 cross_val = False
-
-""" Select training set and test set """
-X_train_fold, y_train_fold, X_test_fold, y_test_fold = train_test_split(X, y, cross_val=cross_val)
-n_folds = len(X_train_fold)
-
-""" Neural network hyperparameters """
+saving = False
 num = 1
 
+""" Neural network hyperparameters """
 epochs = [10]
 batch_size = 64
 depth_lstm = [1]     # search
@@ -50,7 +45,7 @@ band_freq = (70., 100.)
 sampling_freq = [500.]
 samples_per_graph = [500]
 # fc_measure = 'corr'
-# link_cutoff = 0.
+link_cutoff = 0.
 percentiles = (40, 60)
 # band_freq_hi = (20., 45.)
 # nfft = 128
@@ -71,12 +66,21 @@ tunables_sequences = [sampling_freq, samples_per_graph, subsampling_factor,
 tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n,
                     activation, batch_norm, dropout, learning_rate]
 
+# -----------------------------------------------------------------------------
+# DATA PREPROCESSING
+# -----------------------------------------------------------------------------
+""" Import dataset """
+X, y, dataset, seizure = load_data()
+
+""" Select training set and test set """
+X_train_fold, y_train_fold, X_test_fold, y_test_fold = train_test_split(X, y, cross_val=cross_val)
+n_folds = len(X_train_fold)
+
 """ Iterate through fold-sets """
 for fold in range(n_folds):
     fold_set = fold if cross_val else '/'
-    # -----------------------------------------------------------------------------
-    # DATA PREPROCESSING
-    # -----------------------------------------------------------------------------
+    if cross_val: print(f"Fold set: {fold_set}")
+
     X_train = X_train_fold[fold]
     y_train = y_train_fold[fold]
     X_test = X_test_fold[fold]
@@ -98,24 +102,32 @@ for fold in range(n_folds):
 
         """ Generate subsampled sequences """
         X_train, y_train, X_test, Y_test = \
-            apply_generate_sequences(X_train, y_train, X_test, y_test, look_back, target_steps_ahead,
+            apply_generate_sequences(original_X_train, original_y_train,
+                                     original_X_test, original_y_test,
+                                     look_back, target_steps_ahead,
                                      stride, subsampling_factor)
 
         """ Shuffle training data """
-        X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
+        X_train, y_train = shuffle(X_train, y_train)
 
         print(X_train.shape, y_train.shape)
         print(X_test.shape, y_test.shape)
 
         """ Generate graphs from sequences """
-        seq = X_train_shuffled[0:10]
-        y_train_shuffled = y_train_shuffled[0:10]
+        slice_n = 100       # TODO: remove slice and apply on whole dataset
+        X_train = X_train[0:slice_n]
+        y_train = y_train[0:slice_n]
+        X_test = X_test[0:slice_n]
+        y_test = y_test[0:slice_n]
+
         start = time.time()
-        X, A, E = generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentiles)
+        X_train, A_train, E_train = generate_graphs(X_train, band_freq, sampling_freq, samples_per_graph, percentiles)
+        X_test, A_test, E_test = generate_graphs(X_test, band_freq, sampling_freq, samples_per_graph, percentiles)
         end = time.time()
-        print(f"X: {X.shape}")
-        print(f"A: {A.shape}")
-        print(f"E: {E.shape}")
+
+        print(f"X_train: {X_train.shape}\t\tX_test: {X_test.shape}")
+        print(f"A_train: {A_train.shape}\t\tA_test: {A_test.shape}")
+        print(f"E_train: {E_train.shape}\t\tE_test: {E_test.shape}")
         print(end - start)
 
         """ Iterate through network parameters """
@@ -130,9 +142,9 @@ for fold in range(n_folds):
 
             reg = l2(float(reg_n))
 
-            F = X.shape[-1]
-            N = A.shape[-1]
-            S = E.shape[-1]
+            F = X_train.shape[-1]
+            N = A_train.shape[-1]
+            S = E_train.shape[-1]
             seq_length = int(look_back/samples_per_graph)
 
             """ Build the model """
@@ -142,41 +154,123 @@ for fold in range(n_folds):
             optimizer = Adam(learning_rate)
             model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
-            model.fit([X, A, E], y_train_shuffled,
+            model.fit([X_train, A_train, E_train], y_train,
                       batch_size=batch_size,
                       epochs=epochs,
                       class_weight=class_weight)
 
-            # """ Save and reload the model """
-            # MODEL_PATH = "models/models_prediction/"
-            # model.save(f"{MODEL_PATH}graph_lstm_pred_model{num}.h5")
-            # # del model
-            # # model = load_model(f"{MODEL_PATH}conv_pred_model{num}.h5")
+            if saving:
+                """ Save and reload the model """
+                MODEL_PATH = "models/models_prediction/"
+                model.save(f"{MODEL_PATH}graph_lstm_pred_model{num}.h5")
+                # del model
+                # model = load_model(f"{MODEL_PATH}conv_pred_model{num}.h5")
 
             # -----------------------------------------------------------------------------
             # RESULTS EVALUATION
             # -----------------------------------------------------------------------------
             """ Predictions on training data """
             print("Predicting values on training data...")
-            predictions_train = model.predict([X, A, E], batch_size=batch_size).flatten()
+            predictions_train = model.predict([X_train, A_train, E_train], batch_size=batch_size).flatten()
             loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
-                                                                                       y=y_train_shuffled)
+                                                                                       y=y_train)
             print("Results on training data")
             print(f"\tLoss:    \t{loss_train:.4f}")
             print(f"\tAccuracy:\t{accuracy_train:.4f}")
             print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
             print(f"\tRecall:  \t{recall_train:.4f}")
 
-            # """ Predictions on test data """
-            # print("Predicting values on test data...")
-            # predictions_test = model.predict(X_test, batch_size=batch_size).flatten()
-            # loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
-            #                                                                        y=y_test)
-            # print("Results on test data")
-            # print(f"\tLoss:    \t{loss_test:.4f}")
-            # print(f"\tAccuracy:\t{accuracy_test:.4f}")
-            # print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
-            # print(f"\tRecall:  \t{recall_test:.4f}")
+            """ Predictions on test data """
+            print("Predicting values on test data...")
+            predictions_test = model.predict([X_test, A_test, E_test], batch_size=batch_size).flatten()
+            loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
+                                                                                   y=y_test)
+            print("Results on test data")
+            print(f"\tLoss:    \t{loss_test:.4f}")
+            print(f"\tAccuracy:\t{accuracy_test:.4f}")
+            print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
+            print(f"\tRecall:  \t{recall_test:.4f}")
 
-#     TODO: insert fold_set to experiment values in the table
+            # -----------------------------------------------------------------------------
+            # EXPERIMENT RESULTS SUMMARY
+            # -----------------------------------------------------------------------------
+            if saving:
+                RESULTS_PATH = f"results/results_prediction/{file_name}"
+                title = "LSTM NEURAL NETWORK"
+                shapes = {
+                    "X_train": X_train.shape,
+                    "y_train": y_train.shape,
+                    "X_test": X_test.shape,
+                    "y_test": y_test.shape
+                }
+                parameters = {
+                    "epochs": epochs,
+                    "batch_size": batch_size,
+                    "depth_lstm": depth_lstm,
+                    "depth_dense": depth_dense,
+                    "units_lstm": units_lstm,
+                    "g_filters": g_filters,
+                    "reg_n": f"l2({reg_n})",
+                    "activation": activation,
+                    "batch_norm": str(batch_norm),
+                    "dropout": dropout,
+                    "learning_rate": learning_rate,
+                    "class_weight": str(class_weight),
+                    "look_back": look_back,
+                    "stride": stride,
+                    "predicted_timestamps": predicted_timestamps,
+                    "target_steps_ahead": target_steps_ahead,
+                    "subsampling_factor": subsampling_factor,
+                    "band_freq": band_freq,
+                    "sampling_freq": sampling_freq,
+                    "samples_per_graph": samples_per_graph,
+                    "link_cutoff": link_cutoff,
+                    "percentiles": percentiles
+                }
+                results_train = {
+                    "loss_train": loss_train,
+                    "accuracy_train": accuracy_train,
+                    "roc_auc_train": roc_auc_train,
+                    "recall_train": recall_train
+                }
+                results_test = {
+                    "loss_test": loss_test,
+                    "accuracy_test": accuracy_test,
+                    "roc_auc_test": roc_auc_test,
+                    "recall_test": recall_test
+                }
+                string_list = []
+                model.summary(print_fn=lambda x: string_list.append(x))
+                summary = "\n".join(string_list)
+
+                experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
+
+                EXP_FILENAME = "experiments_lstm_pred"
+                hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'g_filters',
+                            'activation', 'l2_reg', 'batch_norm', 'dropout', 'subsampling_factor',
+                            'samples_per_graph', 'look_back', 'target_steps_ahead', 'fold_set',
+                            'loss', 'acc', 'roc-auc']
+                exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, g_filters,
+                                activation, reg_n, batch_norm, dropout, subsampling_factor,
+                                samples_per_graph, look_back, target_steps_ahead, fold_set,
+                                loss_test, accuracy_test, roc_auc_test, recall_test]
+                df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
+                save_experiments(EXP_FILENAME, df)
+
+                # -----------------------------------------------------------------------------
+                # PLOTS
+                # -----------------------------------------------------------------------------
+                PLOTS_PATH = "./plots/plots_prediction/"
+
+                PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions_train.png"
+                generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_train, y=y_train)
+
+                PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions.png"
+                generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_test, y=y_test)
+
+            num += 1
+            K.clear_session()
+
+
+
 #     TODO: mean of results of model applied to 3 folds
