@@ -260,7 +260,7 @@ def save_experiments(filename, dataframe):
 
 
 def model_evaluation(predictions, y):
-    loss = log_loss(y, predictions, eps=1e-7)  # for the clip part, eps=1e-15 is too small for float32
+    loss = log_loss(y, predictions, eps=1e-7, labels=[0, 1])  # for the clip part, eps=1e-15 is too small for float32
     accuracy = accuracy_score(y, np.round(predictions))
     roc_auc = roc_auc_score(y, predictions)
     recall = recall_score(y, np.round(predictions))
