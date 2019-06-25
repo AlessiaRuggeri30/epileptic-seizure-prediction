@@ -114,11 +114,11 @@ for fold in range(n_folds):
         print(X_test.shape, y_test.shape)
 
         """ Generate graphs from sequences """
-        slice_n = 100       # TODO: remove slice and apply on whole dataset
-        X_train = X_train[0:slice_n]
-        y_train = y_train[0:slice_n]
-        X_test = X_test[0:slice_n]
-        y_test = y_test[0:slice_n]
+        # slice_n = 100       # TODO: remove slice and apply on whole dataset
+        # X_train = X_train[0:slice_n]
+        # y_train = y_train[0:slice_n]
+        # X_test = X_test[0:slice_n]
+        # y_test = y_test[0:slice_n]
 
         start = time.time()
         X_train, A_train, E_train = generate_graphs(X_train, band_freq, sampling_freq, samples_per_graph, percentiles)
