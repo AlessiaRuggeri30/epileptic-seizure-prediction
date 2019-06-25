@@ -101,7 +101,7 @@ for fold in range(n_folds):
         stride, look_back, target_steps_ahead in product(*tunables_sequences):
 
         """ Generate subsampled sequences """
-        X_train, y_train, X_test, Y_test = \
+        X_train, y_train, X_test, y_test = \
             apply_generate_sequences(original_X_train, original_y_train,
                                      original_X_test, original_y_test,
                                      look_back, target_steps_ahead,
