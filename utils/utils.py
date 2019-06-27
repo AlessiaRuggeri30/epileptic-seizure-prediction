@@ -146,6 +146,8 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
     A = []
     E = []
     for i in range(seq.shape[0]):
+        if (i) % 100 == 0:
+            print(f"Sequences converted:   {i}/{seq.shape[0]}")
         # print(f"Single sequence: {seq[i].shape}")
         adj, nf, ef = get_fc(seq[i], band_freq, sampling_freq, samples_per_graph,
                              percentiles=percentiles)

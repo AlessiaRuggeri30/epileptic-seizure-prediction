@@ -124,11 +124,11 @@ for fold in range(n_folds):
         X_train, A_train, E_train = generate_graphs(X_train, band_freq, sampling_freq, samples_per_graph, percentiles)
         X_test, A_test, E_test = generate_graphs(X_test, band_freq, sampling_freq, samples_per_graph, percentiles)
         end = time.time()
+        print(f"All sequences converted. Spent time:   {end} sec (~{round(end/60)} min)\n")
 
         print(f"X_train: {X_train.shape}\t\tX_test: {X_test.shape}")
         print(f"A_train: {A_train.shape}\t\tA_test: {A_test.shape}")
         print(f"E_train: {E_train.shape}\t\tE_test: {E_test.shape}")
-        print(end - start)
 
         """ Iterate through network parameters """
         for epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n, activation,\
