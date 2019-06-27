@@ -54,7 +54,7 @@ percentiles = (40, 60)
 # self_loops = True
 
 """ Sequences hyperparameters """
-subsampling_factor = [2]
+subsampling_factor = [10]
 stride = [10]
 look_back = [5000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
