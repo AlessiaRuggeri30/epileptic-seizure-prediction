@@ -24,13 +24,13 @@ np.random.seed(42)
 
 """ Global parameters """
 cross_val = False
-saving = False
+saving = True
 num = 1
 
 """ Neural network hyperparameters """
-epochs = [10]
+epochs = [1000]
 batch_size = 64
-depth_lstm = [1]     # search
+depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
 g_filters = [32]
