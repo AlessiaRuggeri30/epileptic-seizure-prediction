@@ -29,7 +29,7 @@ num = 1
 
 """ Neural network hyperparameters """
 epochs = [1000]
-batch_size = 64
+batch_size = 32
 depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
