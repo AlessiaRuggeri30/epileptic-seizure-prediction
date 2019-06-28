@@ -55,7 +55,7 @@ percentiles = (40, 60)
 
 """ Sequences hyperparameters """
 subsampling_factor = [2]
-stride = [50]
+stride = [10]
 look_back = [5000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
@@ -250,7 +250,7 @@ for fold in range(n_folds):
                 hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'g_filters',
                             'activation', 'l2_reg', 'batch_norm', 'dropout', 'stride', 'subsampling_factor',
                             'samples_per_graph', 'look_back', 'target_steps_ahead', 'fold_set',
-                            'loss', 'acc', 'roc-auc']
+                            'loss', 'acc', 'roc-auc', 'recall']
                 exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, g_filters,
                                 activation, reg_n, batch_norm, dropout, stride, subsampling_factor,
                                 samples_per_graph, look_back, target_steps_ahead, fold_set,
