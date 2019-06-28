@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os.path
+from joblib import Parallel, delayed
 from spektral.brain import get_fc
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score, recall_score
 from sklearn.model_selection import StratifiedKFold
@@ -149,8 +150,10 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
         if (i) % 100 == 0:
             print(f"Sequences converted:   {i}/{seq.shape[0]}")
         # print(f"Single sequence: {seq[i].shape}")
-        adj, nf, ef = get_fc(seq[i], band_freq, sampling_freq, samples_per_graph,
+        adj, nf, ef = Parallel(n_jobs=-1)(
+            delayed(get_fc)(seq[i], band_freq, sampling_freq, samples_per_graph,
                              percentiles=percentiles)
+        )
         # print(f"adj: {adj.shape}")
         # print(f"nf: {nf.shape}")
         # print(f"ef: {ef.shape}")

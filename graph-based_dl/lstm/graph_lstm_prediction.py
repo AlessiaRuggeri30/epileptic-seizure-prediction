@@ -28,8 +28,8 @@ saving = True
 num = 1
 
 """ Neural network hyperparameters """
-epochs = [1000]
-batch_size = 32
+epochs = [100]
+batch_size = 64
 depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
@@ -247,11 +247,11 @@ for fold in range(n_folds):
 
                 EXP_FILENAME = "experiments_lstm_pred"
                 hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'g_filters',
-                            'activation', 'l2_reg', 'batch_norm', 'dropout', 'subsampling_factor',
+                            'activation', 'l2_reg', 'batch_norm', 'dropout', 'stride', 'subsampling_factor',
                             'samples_per_graph', 'look_back', 'target_steps_ahead', 'fold_set',
                             'loss', 'acc', 'roc-auc']
                 exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, g_filters,
-                                activation, reg_n, batch_norm, dropout, subsampling_factor,
+                                activation, reg_n, batch_norm, dropout, stride, subsampling_factor,
                                 samples_per_graph, look_back, target_steps_ahead, fold_set,
                                 loss_test, accuracy_test, roc_auc_test, recall_test]
                 df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
