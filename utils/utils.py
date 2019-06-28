@@ -146,27 +146,19 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
     X = []
     A = []
     E = []
-    for i in range(seq.shape[0]):
-        if (i) % 100 == 0:
-            print(f"Sequences converted:   {i}/{seq.shape[0]}")
-        # print(f"Single sequence: {seq[i].shape}")
-        adj, nf, ef = Parallel(n_jobs=-1)(
-            delayed(get_fc)(seq[i], band_freq, sampling_freq, samples_per_graph,
-                             percentiles=percentiles)
-        )
-        # print(f"adj: {adj.shape}")
-        # print(f"nf: {nf.shape}")
-        # print(f"ef: {ef.shape}")
-        # print(adj[adj > 0])
-        X.append(np.expand_dims(nf, axis=-1))
-        A.append(adj)
-        E.append(ef)
-    print()
-    X = np.asarray(X)
-    A = np.asarray(A)
-    E = np.asarray(E)
+    adj, nf, ef = Parallel(n_jobs=-1)(
+        delayed(get_fc)(x, band_freq, sampling_freq, samples_per_graph, percentiles=percentiles)
+        for x in seq)
+    # X.append(np.expand_dims(nf, axis=-1))
+    # A.append(adj)
+    # E.append(ef)
+    # print()
+    # X = np.asarray(X)
+    # A = np.asarray(A)
+    # E = np.asarray(E)
 
-    return X, A, E
+    # return X, A, E
+    return adj, nf, ef
 
 
 def apply_generate_sequences(X_train, y_train, X_test, y_test, look_back, target_steps_ahead=0,
