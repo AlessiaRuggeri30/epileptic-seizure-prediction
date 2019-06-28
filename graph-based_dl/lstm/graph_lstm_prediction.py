@@ -24,7 +24,7 @@ np.random.seed(42)
 
 """ Global parameters """
 cross_val = False
-saving = False
+saving = True
 num = 1
 
 """ Neural network hyperparameters """
@@ -114,17 +114,18 @@ for fold in range(n_folds):
         print(X_test.shape, y_test.shape)
 
         """ Generate graphs from sequences """
-        slice_n = 100       # TODO: remove slice and apply on whole dataset
-        X_train = X_train[0:slice_n]
-        y_train = y_train[0:slice_n]
-        X_test = X_test[0:slice_n]
-        y_test = y_test[0:slice_n]
+        # slice_n = 100       # TODO: remove slice and apply on whole dataset
+        # X_train = X_train[0:slice_n]
+        # y_train = y_train[0:slice_n]
+        # X_test = X_test[0:slice_n]
+        # y_test = y_test[0:slice_n]
 
         start = time.time()
         X_train, A_train, E_train = generate_graphs(X_train, band_freq, sampling_freq, samples_per_graph, percentiles)
         X_test, A_test, E_test = generate_graphs(X_test, band_freq, sampling_freq, samples_per_graph, percentiles)
         end = time.time()
-        print(f"All sequences converted. Spent time:   {end} sec (~{round(end/60)} min)\n")
+        interval = end - start
+        print(f"All sequences converted. Spent time:   {int(interval)} sec (~{round(interval/60)} min)\n")
 
         print(f"X_train: {X_train.shape}\t\tX_test: {X_test.shape}")
         print(f"A_train: {A_train.shape}\t\tA_test: {A_test.shape}")
@@ -147,49 +148,49 @@ for fold in range(n_folds):
             S = E_train.shape[-1]
             seq_length = int(look_back/samples_per_graph)
 
-            # """ Build the model """
-            # model = build_graph_based_lstm(F, N, S, seq_length,
-            #                    depth_lstm, depth_dense, units_lstm, g_filters,
-            #                    reg, activation, batch_norm, dropout)
-            # optimizer = Adam(learning_rate)
-            # model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-            #
-            # model.fit([X_train, A_train, E_train], y_train,
-            #           batch_size=batch_size,
-            #           epochs=epochs,
-            #           class_weight=class_weight)
-            #
-            # if saving:
-            #     """ Save and reload the model """
-            #     MODEL_PATH = "models/models_prediction/"
-            #     model.save(f"{MODEL_PATH}graph_lstm_pred_model{num}.h5")
-            #     # del model
-            #     # model = load_model(f"{MODEL_PATH}conv_pred_model{num}.h5")
+            """ Build the model """
+            model = build_graph_based_lstm(F, N, S, seq_length,
+                               depth_lstm, depth_dense, units_lstm, g_filters,
+                               reg, activation, batch_norm, dropout)
+            optimizer = Adam(learning_rate)
+            model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+
+            model.fit([X_train, A_train, E_train], y_train,
+                      batch_size=batch_size,
+                      epochs=epochs,
+                      class_weight=class_weight)
+
+            if saving:
+                """ Save and reload the model """
+                MODEL_PATH = "models/models_prediction/"
+                model.save(f"{MODEL_PATH}graph_lstm_pred_model{num}.h5")
+                # del model
+                # model = load_model(f"{MODEL_PATH}conv_pred_model{num}.h5")
 
             # -----------------------------------------------------------------------------
             # RESULTS EVALUATION
             # -----------------------------------------------------------------------------
-            # """ Predictions on training data """
-            # print("Predicting values on training data...")
-            # predictions_train = model.predict([X_train, A_train, E_train], batch_size=batch_size).flatten()
-            # loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
-            #                                                                            y=y_train)
-            # print("Results on training data")
-            # print(f"\tLoss:    \t{loss_train:.4f}")
-            # print(f"\tAccuracy:\t{accuracy_train:.4f}")
-            # print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
-            # print(f"\tRecall:  \t{recall_train:.4f}")
-            #
-            # """ Predictions on test data """
-            # print("Predicting values on test data...")
-            # predictions_test = model.predict([X_test, A_test, E_test], batch_size=batch_size).flatten()
-            # loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
-            #                                                                        y=y_test)
-            # print("Results on test data")
-            # print(f"\tLoss:    \t{loss_test:.4f}")
-            # print(f"\tAccuracy:\t{accuracy_test:.4f}")
-            # print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
-            # print(f"\tRecall:  \t{recall_test:.4f}")
+            """ Predictions on training data """
+            print("Predicting values on training data...")
+            predictions_train = model.predict([X_train, A_train, E_train], batch_size=batch_size).flatten()
+            loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
+                                                                                       y=y_train)
+            print("Results on training data")
+            print(f"\tLoss:    \t{loss_train:.4f}")
+            print(f"\tAccuracy:\t{accuracy_train:.4f}")
+            print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
+            print(f"\tRecall:  \t{recall_train:.4f}")
+
+            """ Predictions on test data """
+            print("Predicting values on test data...")
+            predictions_test = model.predict([X_test, A_test, E_test], batch_size=batch_size).flatten()
+            loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
+                                                                                   y=y_test)
+            print("Results on test data")
+            print(f"\tLoss:    \t{loss_test:.4f}")
+            print(f"\tAccuracy:\t{accuracy_test:.4f}")
+            print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
+            print(f"\tRecall:  \t{recall_test:.4f}")
 
             # -----------------------------------------------------------------------------
             # EXPERIMENT RESULTS SUMMARY
