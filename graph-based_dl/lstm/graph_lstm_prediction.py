@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 1
+num = 2
 
 """ Neural network hyperparameters """
 epochs = [100]
@@ -108,7 +108,7 @@ for fold in range(n_folds):
                                      stride, subsampling_factor)
 
         """ Shuffle training data """
-        X_train, y_train = shuffle(X_train, y_train)
+        # X_train, y_train = shuffle(X_train, y_train)
 
         print(X_train.shape, y_train.shape)
         print(X_test.shape, y_test.shape)
