@@ -141,6 +141,7 @@ def generate_indices(targets, length, target_steps_ahead=0,
 
 
 def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentiles):
+    print("Starting sequence conversion...")
     seq = np.transpose(seq, (0, 2, 1))
 
     X = []
@@ -195,9 +196,22 @@ def apply_generate_sequences(X_train, y_train, X_test, y_test, look_back, target
 
 def data_standardization(X_train, X_test):
     scaler = StandardScaler()
-    scaler.fit(X_train)
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
+    if X_train.ndim == 4:       # StandardScaler doesn't work if matrix dim > 2
+        # Training set
+        n_sequences, n_graphs, n_electrodes, n_features = X_train.shape
+        X_train = np.reshape(X_train, newshape=[-1, n_features])
+        scaler.fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_train = np.reshape(X_train, newshape=[n_sequences, n_graphs, n_electrodes, n_features])
+        # Test set
+        n_sequences, n_graphs, n_electrodes, n_features = X_test.shape
+        X_test = np.reshape(X_test, newshape=[-1, n_features])
+        X_test = scaler.transform(X_test)
+        X_test = np.reshape(X_test, newshape=[n_sequences, n_graphs, n_electrodes, n_features])
+    else:
+        scaler.fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
 
     return X_train, X_test
 

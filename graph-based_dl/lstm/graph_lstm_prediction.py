@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 2
+num = 3
 
 """ Neural network hyperparameters """
 epochs = [100]
@@ -88,9 +88,6 @@ for fold in range(n_folds):
 
     class_weight = compute_class_weight(y_train)
 
-    """ Standardize data """
-    X_train, X_test = data_standardization(X_train, X_test)
-
     original_X_train = X_train
     original_y_train = y_train
     original_X_test = X_test
@@ -106,9 +103,6 @@ for fold in range(n_folds):
                                      original_X_test, original_y_test,
                                      look_back, target_steps_ahead,
                                      stride, subsampling_factor)
-
-        """ Shuffle training data """
-        # X_train, y_train = shuffle(X_train, y_train)
 
         print(X_train.shape, y_train.shape)
         print(X_test.shape, y_test.shape)
@@ -126,6 +120,9 @@ for fold in range(n_folds):
         end = time.time()
         interval = end - start
         print(f"All sequences converted. Spent time:   {int(interval)} sec (~{round(interval/60)} min)\n")
+
+        """ Standardize data """
+        X_train, X_test = data_standardization(X_train, X_test)
 
         print(f"X_train: {X_train.shape}\t\tX_test: {X_test.shape}")
         print(f"A_train: {A_train.shape}\t\tA_test: {A_test.shape}")
