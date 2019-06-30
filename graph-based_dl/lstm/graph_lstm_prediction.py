@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 4
+num = 5
 
 """ Neural network hyperparameters """
 epochs = [100]
@@ -34,10 +34,10 @@ depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
 g_filters = [32]
-reg_n = ['5e-1']      #['5e-3', '5e-2', '5e-1']
+reg_n = ['5e-4', '5e-3', '5e-2', '5e-1']
 activation = ['relu']
 batch_norm = [True]
-dropout = [0.4]        #[0.5, 0.4, 0.3]
+dropout = [0.5, 0.4, 0.3]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
@@ -56,7 +56,7 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [2]
 stride = [10]
-look_back = [3000]
+look_back = [5000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
