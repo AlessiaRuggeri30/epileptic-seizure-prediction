@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 5
+num = 17
 
 """ Neural network hyperparameters """
 epochs = [100]
@@ -34,10 +34,10 @@ depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
 g_filters = [32]
-reg_n = ['5e-4', '5e-3', '5e-2', '5e-1']
+reg_n = ['5e-5', '5e-4']
 activation = ['relu']
 batch_norm = [True]
-dropout = [0.5, 0.4, 0.3]
+dropout = [0.3, 0.2, 0.1]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
@@ -251,7 +251,7 @@ for fold in range(n_folds):
                 exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, g_filters,
                                 activation, reg_n, batch_norm, dropout, stride, subsampling_factor,
                                 samples_per_graph, look_back, target_steps_ahead, fold_set,
-                                loss_test, accuracy_test, roc_auc_test, recall_test]
+                                f"{loss_test:.5f}", f"{accuracy_test:.5f}", f"{roc_auc_test:.5f}", f"{recall_test:.5f}"]
                 df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
                 save_experiments(EXP_FILENAME, df)
 
@@ -268,7 +268,6 @@ for fold in range(n_folds):
 
             num += 1
             K.clear_session()
-
 
 
 #     TODO: mean of results of model applied to 3 folds
