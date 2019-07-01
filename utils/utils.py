@@ -310,10 +310,16 @@ def experiment_results_summary(path, num, title, summary, shapes, parameters, re
 
 
 def generate_prediction_plots(filename, predictions, y):
+    Y1 = -0.1
+    Y2 = 1.1
     plt.subplot(2, 1, 1)
     plt.plot(y)
+    x1, x2, y1, y2 = plt.axis()
+    plt.axis((x1, x2, Y1, Y2))
     plt.subplot(2, 1, 2)
     plt.plot(predictions)
+    x1, x2, y1, y2 = plt.axis()
+    plt.axis((x1, x2, Y1, Y2))
     plt.savefig(filename)
     plt.close()
 
