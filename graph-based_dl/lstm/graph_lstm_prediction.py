@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 17
+num = 23
 
 """ Neural network hyperparameters """
 epochs = [100]
@@ -34,10 +34,10 @@ depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
 g_filters = [32]
-reg_n = ['5e-5', '5e-4']
+reg_n = ['5e-5']
 activation = ['relu']
 batch_norm = [True]
-dropout = [0.3, 0.2, 0.1]
+dropout = [0.1]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
@@ -147,8 +147,8 @@ for fold in range(n_folds):
 
             """ Build the model """
             model = build_graph_based_lstm(F, N, S, seq_length,
-                               depth_lstm, depth_dense, units_lstm, g_filters,
-                               reg, activation, batch_norm, dropout)
+                                           depth_lstm, depth_dense, units_lstm, g_filters,
+                                           reg, activation, batch_norm, dropout)
             optimizer = Adam(learning_rate)
             model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
@@ -169,10 +169,13 @@ for fold in range(n_folds):
             # -----------------------------------------------------------------------------
             """ Predictions on training data """
             print("Predicting values on training data...")
+            loss_train_keras, accuracy_train_keras = model.evaluate([X_train, A_train, E_train], y_train, batch_size=batch_size)
             predictions_train = model.predict([X_train, A_train, E_train], batch_size=batch_size).flatten()
             loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
                                                                                        y=y_train)
             print("Results on training data")
+            print(f"\tLoss keras:     \t{loss_train_keras:.4f}")
+            print(f"\tAccuracy keras: \t{accuracy_train_keras:.4f}")
             print(f"\tLoss:    \t{loss_train:.4f}")
             print(f"\tAccuracy:\t{accuracy_train:.4f}")
             print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
@@ -180,10 +183,13 @@ for fold in range(n_folds):
 
             """ Predictions on test data """
             print("Predicting values on test data...")
+            loss_test_keras, accuracy_test_keras = model.evaluate([X_test, A_test, E_test], y_test, batch_size=batch_size)
             predictions_test = model.predict([X_test, A_test, E_test], batch_size=batch_size).flatten()
             loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
                                                                                    y=y_test)
             print("Results on test data")
+            print(f"\tLoss keras:     \t{loss_test_keras:.4f}")
+            print(f"\tAccuracy keras: \t{accuracy_test_keras:.4f}")
             print(f"\tLoss:    \t{loss_test:.4f}")
             print(f"\tAccuracy:\t{accuracy_test:.4f}")
             print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
