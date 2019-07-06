@@ -34,10 +34,10 @@ depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
 g_filters = [32]
-reg_n = ['5e-5']
+reg_n = ['0'] #['5e-5']
 activation = ['relu']
 batch_norm = [True]
-dropout = [0.1]
+dropout = [0] #[0.1]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
@@ -174,8 +174,6 @@ for fold in range(n_folds):
             loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
                                                                                        y=y_train)
             print("Results on training data")
-            print(f"\tLoss keras:     \t{loss_train_keras:.4f}")
-            print(f"\tAccuracy keras: \t{accuracy_train_keras:.4f}")
             print(f"\tLoss:    \t{loss_train:.4f}")
             print(f"\tAccuracy:\t{accuracy_train:.4f}")
             print(f"\tROC-AUC: \t{roc_auc_train:.4f}")
@@ -188,8 +186,6 @@ for fold in range(n_folds):
             loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
                                                                                    y=y_test)
             print("Results on test data")
-            print(f"\tLoss keras:     \t{loss_test_keras:.4f}")
-            print(f"\tAccuracy keras: \t{accuracy_test_keras:.4f}")
             print(f"\tLoss:    \t{loss_test:.4f}")
             print(f"\tAccuracy:\t{accuracy_test:.4f}")
             print(f"\tROC-AUC: \t{roc_auc_test:.4f}")
