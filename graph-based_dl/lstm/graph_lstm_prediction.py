@@ -37,7 +37,7 @@ g_filters = [32]
 reg_n = ['0'] #['5e-5']
 activation = ['relu']
 batch_norm = [True]
-dropout = [0] #[0.1]
+dropout = [0.1] #[0.1]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
