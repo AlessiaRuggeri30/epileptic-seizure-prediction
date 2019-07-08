@@ -1,3 +1,4 @@
 ,epochs,depth_lstm,depth_dense,units_lstm,g_filters,activation,l2_reg,batch_norm,dropout,stride,subsampling_factor,samples_per_graph,look_back,target_steps_ahead,fold_set,loss,acc,roc-auc,recall
 exp1,100,1,2,256,32,relu,5e-5,[False],0.1,10,2,500,5000,2000,/,1.69059,0.89511,0.50000,0.00000
 exp2,100,1,2,256,32,relu,5e-5,False,0.1,10,2,500,5000,2000,/,1.13779,0.86190,0.65274,0.21800
+exp3,100,1,2,256,32,relu,5e-4,False,0.5,10,2,500,5000,2000,/,0.98813,0.83777,0.68632,0.24200
