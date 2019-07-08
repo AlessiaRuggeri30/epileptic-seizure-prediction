@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 24
+num = 1
 
 """ Neural network hyperparameters """
 epochs = [100]
@@ -36,7 +36,7 @@ units_lstm = [256]
 g_filters = [32]
 reg_n = ['5e-5']
 activation = ['relu']
-batch_norm = [False]
+batch_norm = [False]    # Keep it always False, since adding it leads to inconsistent results
 dropout = [0.1]
 learning_rate = [1e-3]
 
@@ -64,7 +64,7 @@ predicted_timestamps = 1
 tunables_sequences = [sampling_freq, samples_per_graph, subsampling_factor,
                       stride, look_back, target_steps_ahead]
 tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n,
-                    activation, batch_norm, dropout, learning_rate]
+                    activation, dropout, learning_rate]
 
 # -----------------------------------------------------------------------------
 # DATA PREPROCESSING
@@ -130,7 +130,7 @@ for fold in range(n_folds):
 
         """ Iterate through network parameters """
         for epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n, activation,\
-            batch_norm, dropout, learning_rate in product(*tunables_network):
+            dropout, learning_rate in product(*tunables_network):
             # -----------------------------------------------------------------------------
             # MODEL BUILDING, TRAINING AND TESTING
             # -----------------------------------------------------------------------------
