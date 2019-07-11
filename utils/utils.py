@@ -94,9 +94,10 @@ def generate_indices(targets, length, target_steps_ahead=0,
                      subsample=False, subsampling_cutoff_threshold=0.5,
                      subsampling_factor=1.):
     len_data = targets[0].shape[0]
-    start_index = start_index + length
+    start_index = start_index + length      # length == look_back
     number_of_sequences = (len_data - start_index - target_steps_ahead) // stride
     end_index = start_index + number_of_sequences * stride + target_steps_ahead
+    # if the division by stride for number_of_sequence has modulo = 0, then end_index == len_data
 
     if start_index > end_index:
         raise ValueError('`start_index+length=%i > end_index=%i` '
@@ -354,13 +355,29 @@ if __name__ == '__main__':
     # save_experiments(df, filename)
 
     import sys
-    from load_data import load_data
+    # from load_data import load_data
+    #
+    # subsampling_factor = 2
+    # stride = 10
+    # look_back = 2000
+    # target_steps_ahead = 2000
+    #
+    # X, y, dataset, seizure = load_data()
+    # print(X[1].shape)
 
-    subsampling_factor = 2
-    stride = 10
-    look_back = 2000
-    target_steps_ahead = 2000
+    # targets = np.random.randint(2, size=100)
+    targets = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
+               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1])
+    length = 10
 
-    X, y, dataset, seizure = load_data()
-    print(X[1].shape)
+    inputs_indices_seq, target_indices_seq = generate_indices([targets], length, target_steps_ahead=5,
+                                                              sampling_rate=1, stride=5, start_index=0,
+                                                              subsample=True, subsampling_cutoff_threshold=0.5,
+                                                              subsampling_factor=2.)
+
+    print(f"Targets: \n{targets} \t len: {len(targets)}\n")
+    print(f"inputs_indices_seq: \n{inputs_indices_seq} \t len: {len(inputs_indices_seq)}\n")
+    print(f"target_indices_seq: \n{target_indices_seq} \t len: {len(target_indices_seq)}\n")
+
 

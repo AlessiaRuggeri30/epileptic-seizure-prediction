@@ -29,16 +29,16 @@ num = 18
 
 """ Neural network hyperparameters """
 epochs = [150]
-batch_size = 64
-depth_lstm = [2]
+batch_size = 48
+depth_lstm = [1]
 depth_dense = [2]
 units_lstm = [256]
 g_filters = [32]
-reg_n = ['5e-2']
+reg_n = ['5e-3']
 activation = ['relu']
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
-dropout = [0.3, 0.4, 0.5]
-learning_rate = [1e-3]
+dropout = [0.4]
+learning_rate = [1e-4]
 
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
