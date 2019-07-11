@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 18
+num = 21
 
 """ Neural network hyperparameters """
 epochs = [150]
