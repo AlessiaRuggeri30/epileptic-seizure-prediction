@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 25
+num = 31
 
 """ Neural network hyperparameters """
 epochs = [150]
@@ -37,7 +37,7 @@ g_filters = [32]
 reg_n = ['5e-4', '5e-3']
 activation = ['relu']
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
-dropout = [0.3, 0.4, 0.5]
+dropout = [0.2]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
@@ -263,10 +263,10 @@ for fold in range(n_folds):
                 PLOTS_PATH = "./plots/plots_prediction/"
 
                 PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions_train.png"
-                generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_train, y=y_train)
+                generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_train, y=y_train, moving_a=100)
 
                 PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions.png"
-                generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_test, y=y_test)
+                generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_test, y=y_test, moving_a=100)
 
             num += 1
             K.clear_session()

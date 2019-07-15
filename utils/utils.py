@@ -310,7 +310,12 @@ def experiment_results_summary(path, num, title, summary, shapes, parameters, re
         file.write("\n")
 
 
-def generate_prediction_plots(filename, predictions, y):
+def running_mean(x, N):
+    cumsum = np.cumsum(np.insert(x, 0, 0))
+    return (cumsum[N:] - cumsum[:-N]) / float(N)
+
+
+def generate_prediction_plots(filename, predictions, y, moving_a=0):
     Y1 = -0.1
     Y2 = 1.1
     plt.subplot(2, 1, 1)
@@ -319,6 +324,8 @@ def generate_prediction_plots(filename, predictions, y):
     plt.axis((x1, x2, Y1, Y2))
     plt.subplot(2, 1, 2)
     plt.plot(predictions)
+    if moving_a != 0:
+        plt.plot(running_mean(predictions, moving_a))
     x1, x2, y1, y2 = plt.axis()
     plt.axis((x1, x2, Y1, Y2))
     plt.savefig(filename)
