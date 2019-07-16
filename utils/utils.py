@@ -167,7 +167,6 @@ def generate_graphs(seq, band_freq, sampling_freq, samples_per_graph, percentile
     return X, A, E
 
 
-
 def apply_generate_sequences(X_train, y_train, X_test, y_test, look_back, target_steps_ahead=0,
                              stride=1, subsampling_factor=1.):
     # Generate sequences by computing indices for training data
