@@ -185,7 +185,7 @@ def apply_generate_sequences(X_train, y_train, X_test, y_test, look_back, target
     inputs_indices_seq, target_indices_seq = \
         generate_indices([y_test],  # Targets associated to X_train (same shape[0])
                          look_back,  # Length of input sequences
-                         stride=stride,  # Stride between windows
+                         stride=10,  # Stride between windows
                          target_steps_ahead=target_steps_ahead,  # How many steps ahead to predict (x[t], ..., x[t+T] -> y[t+T+k])
                          )
     X_test = X_test[inputs_indices_seq]
