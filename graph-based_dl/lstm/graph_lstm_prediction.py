@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 43
+num = 44
 
 """ Neural network hyperparameters """
 epochs = [150]
@@ -34,10 +34,10 @@ depth_lstm = [1]
 depth_dense = [1]
 units_lstm = [256]
 g_filters = [32]
-reg_n = ['5e-4']
+reg_n = ['5e-3', '5e-2']
 activation = ['relu']
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
-dropout = [0.4]
+dropout = [0.3, 0.4, 0.5]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
