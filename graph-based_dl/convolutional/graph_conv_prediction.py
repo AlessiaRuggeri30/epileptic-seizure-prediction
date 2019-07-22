@@ -25,20 +25,20 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 1
+num = 2
 
 """ Neural network hyperparameters """
-epochs = [100]
+epochs = [200]
 batch_size = 32
 depth_conv = [3]
 depth_dense = [2]
 filters = [64]
 kernel_size = [3]
 g_filters = [32]
-reg_n = ['5e-3']
+reg_n = ['5e-4', '5e-3', '5e-2', '5e-1']
 activation = 'relu'
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
-dropout = [0.4]
+dropout = [0.3, 0.4, 0.5]
 pooling = True
 pool_size = 2
 padding = 'causal'
