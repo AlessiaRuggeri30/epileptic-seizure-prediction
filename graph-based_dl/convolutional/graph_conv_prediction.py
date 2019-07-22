@@ -17,7 +17,7 @@ from utils.utils import add_experiment, save_experiments, generate_indices, mode
                         apply_generate_sequences, data_standardization, compute_class_weight,\
                         generate_graphs
 sys.path.append("..")
-from graph_model import build_graph_based_lstm
+from graph_model import build_graph_based_conv
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(42)
@@ -25,19 +25,24 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 50
+num = 1
 
 """ Neural network hyperparameters """
-epochs = [150]
+epochs = [100]
 batch_size = 32
-depth_lstm = [1]
-depth_dense = [1]
-units_lstm = [256]
+depth_conv = [3]
+depth_dense = [2]
+filters = [64]
+kernel_size = [3]
 g_filters = [32]
-reg_n = ['5e-4', '5e-3']
-activation = ['relu']
+reg_n = ['5e-3']
+activation = 'relu'
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
-dropout = [0.4, 0.5]
+dropout = [0.4]
+pooling = True
+pool_size = 2
+padding = 'causal'
+dilation_rate = [3]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
@@ -63,8 +68,8 @@ predicted_timestamps = 1
 """ Set tunables """
 tunables_sequences = [sampling_freq, samples_per_graph, subsampling_factor,
                       stride, look_back, target_steps_ahead]
-tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n,
-                    activation, dropout, learning_rate]
+tunables_network = [epochs, depth_conv, depth_dense, filters, kernel_size, g_filters, reg_n,
+                    dropout, dilation_rate, learning_rate]
 
 # -----------------------------------------------------------------------------
 # DATA PREPROCESSING
@@ -129,8 +134,8 @@ for fold in range(n_folds):
         print(f"E_train: {E_train.shape}\t\tE_test: {E_test.shape}")
 
         """ Iterate through network parameters """
-        for epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n, activation,\
-            dropout, learning_rate in product(*tunables_network):
+        for epochs, depth_conv, depth_dense, filters, kernel_size, g_filters, reg_n,\
+            dropout, dilation_rate, learning_rate in product(*tunables_network):
             # -----------------------------------------------------------------------------
             # MODEL BUILDING, TRAINING AND TESTING
             # -----------------------------------------------------------------------------
@@ -146,9 +151,12 @@ for fold in range(n_folds):
             seq_length = int(look_back/samples_per_graph)
 
             """ Build the model """
-            model = build_graph_based_lstm(F, N, S, seq_length,
-                                           depth_lstm, depth_dense, units_lstm, g_filters,
-                                           reg, activation, batch_norm, dropout)
+            model = build_graph_based_conv(F, N, S, seq_length,
+                                           depth_conv, depth_dense, filters, kernel_size,
+                                           g_filters, reg, activation,
+                                           batch_norm, dropout,
+                                           pooling, pool_size,
+                                           padding, dilation_rate)
             optimizer = Adam(learning_rate)
             model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
@@ -160,9 +168,9 @@ for fold in range(n_folds):
             if saving:
                 """ Save and reload the model """
                 MODEL_PATH = "models/models_prediction/"
-                model.save(f"{MODEL_PATH}graph_lstm_pred_model{num}.h5")
+                model.save(f"{MODEL_PATH}graph_conv_pred_model{num}.h5")
                 # del model
-                # model = load_model(f"{MODEL_PATH}graph_lstm_pred_model{num}.h5")
+                # model = load_model(f"{MODEL_PATH}graph_conv_pred_model{num}.h5")
 
             # -----------------------------------------------------------------------------
             # RESULTS EVALUATION
@@ -196,7 +204,7 @@ for fold in range(n_folds):
             # -----------------------------------------------------------------------------
             if saving:
                 RESULTS_PATH = f"results/results_prediction/{file_name}"
-                title = "LSTM NEURAL NETWORK"
+                title = "CONVOLUTIONAL NEURAL NETWORK"
                 shapes = {
                     "X_train": X_train.shape,
                     "y_train": y_train.shape,
@@ -206,14 +214,19 @@ for fold in range(n_folds):
                 parameters = {
                     "epochs": epochs,
                     "batch_size": batch_size,
-                    "depth_lstm": depth_lstm,
+                    "depth_conv": depth_conv,
                     "depth_dense": depth_dense,
-                    "units_lstm": units_lstm,
+                    "filters": filters,
+                    "kernel_size": kernel_size,
                     "g_filters": g_filters,
                     "reg_n": f"l2({reg_n})",
                     "activation": activation,
                     "batch_norm": str(batch_norm),
                     "dropout": dropout,
+                    "pooling": pooling,
+                    "pool_size": pool_size,
+                    "padding": padding,
+                    "dilation_rate": dilation_rate,
                     "learning_rate": learning_rate,
                     "class_weight": str(class_weight),
                     "look_back": look_back,
@@ -246,13 +259,14 @@ for fold in range(n_folds):
                 experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
                 EXP_FILENAME = "experiments_lstm_pred"
-                hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'g_filters',
-                            'activation', 'l2_reg', 'batch_norm', 'dropout', 'stride', 'subsampling_factor',
-                            'samples_per_graph', 'look_back', 'target_steps_ahead', 'fold_set',
-                            'loss', 'acc', 'roc-auc', 'recall']
-                exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, g_filters,
-                                activation, reg_n, batch_norm, dropout, stride, subsampling_factor,
-                                samples_per_graph, look_back, target_steps_ahead, fold_set,
+                hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size', 'g_filters',
+                            'activation', 'l2_reg', 'batch_norm', 'dropout', 'pooling', 'pool_size', 'padding',
+                            'dilation_rate', 'stride', 'subsampling_factor', 'samples_per_graph', 'look_back',
+                            'target_steps_ahead', 'fold_set', 'loss', 'acc', 'roc-auc', 'recall']
+                exp_hyperpar = [epochs, depth_conv, depth_dense, filters, kernel_size, g_filters,
+                                activation, reg_n, batch_norm, dropout, pooling, pool_size, padding,
+                                dilation_rate, stride, subsampling_factor, samples_per_graph, look_back,
+                                target_steps_ahead, fold_set,
                                 f"{loss_test:.5f}", f"{accuracy_test:.5f}", f"{roc_auc_test:.5f}", f"{recall_test:.5f}"]
                 df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
                 save_experiments(EXP_FILENAME, df)
