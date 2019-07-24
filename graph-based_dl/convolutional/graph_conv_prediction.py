@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 2
+num = 9
 
 """ Neural network hyperparameters """
 epochs = [200]
@@ -35,10 +35,10 @@ depth_dense = [2]
 filters = [64]
 kernel_size = [3]
 g_filters = [32]
-reg_n = ['5e-4', '5e-3', '5e-2', '5e-1']
+reg_n = ['5e-3']
 activation = 'relu'
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
-dropout = [0.3, 0.4, 0.5]
+dropout = [0.4, 0.5]
 pooling = True
 pool_size = 2
 padding = 'causal'
@@ -60,8 +60,8 @@ percentiles = (40, 60)
 
 """ Sequences hyperparameters """
 subsampling_factor = [1]
-stride = [2]
-look_back = [5000]
+stride = [1]
+look_back = [2000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
@@ -177,7 +177,7 @@ for fold in range(n_folds):
             # -----------------------------------------------------------------------------
             """ Predictions on training data """
             print("Predicting values on training data...")
-            loss_train_keras, accuracy_train_keras = model.evaluate([X_train, A_train, E_train], y_train, batch_size=batch_size)
+            # loss_train_keras, accuracy_train_keras = model.evaluate([X_train, A_train, E_train], y_train, batch_size=batch_size)
             predictions_train = model.predict([X_train, A_train, E_train], batch_size=batch_size).flatten()
             loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
                                                                                        y=y_train)
@@ -189,7 +189,7 @@ for fold in range(n_folds):
 
             """ Predictions on test data """
             print("Predicting values on test data...")
-            loss_test_keras, accuracy_test_keras = model.evaluate([X_test, A_test, E_test], y_test, batch_size=batch_size)
+            # loss_test_keras, accuracy_test_keras = model.evaluate([X_test, A_test, E_test], y_test, batch_size=batch_size)
             predictions_test = model.predict([X_test, A_test, E_test], batch_size=batch_size).flatten()
             loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
                                                                                    y=y_test)
@@ -258,7 +258,7 @@ for fold in range(n_folds):
 
                 experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
-                EXP_FILENAME = "experiments_lstm_pred"
+                EXP_FILENAME = "experiments_conv_pred"
                 hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size', 'g_filters',
                             'activation', 'l2_reg', 'batch_norm', 'dropout', 'pooling', 'pool_size', 'padding',
                             'dilation_rate', 'stride', 'subsampling_factor', 'samples_per_graph', 'look_back',
