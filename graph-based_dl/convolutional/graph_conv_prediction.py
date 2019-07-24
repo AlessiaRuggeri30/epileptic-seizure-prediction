@@ -28,7 +28,7 @@ saving = True
 num = 9
 
 """ Neural network hyperparameters """
-epochs = [200]
+epochs = [150]
 batch_size = 32
 depth_conv = [3]
 depth_dense = [2]
@@ -62,7 +62,7 @@ percentiles = (40, 60)
 subsampling_factor = [1]
 stride = [2]
 look_back = [5000]
-target_steps_ahead = [2000]  # starting from the position len(sequence)
+target_steps_ahead = [1000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
