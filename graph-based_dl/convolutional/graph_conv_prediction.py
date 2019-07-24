@@ -41,8 +41,8 @@ batch_norm = False    # Keep it always False, since adding it leads to inconsist
 dropout = [0.4, 0.5]
 pooling = True
 pool_size = 2
-padding = 'causal'
-dilation_rate = [3]
+padding = 'valid'   #'causal'
+dilation_rate = [1]
 learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
@@ -61,7 +61,7 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [1]
 stride = [1]
-look_back = [2500]
+look_back = [2000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
