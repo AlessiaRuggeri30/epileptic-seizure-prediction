@@ -42,7 +42,7 @@ learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
-sampling_freq = [500.]
+sampling_freq = 500.
 samples_per_graph = [500]
 # fc_measure = 'corr'
 link_cutoff = 0.
@@ -61,7 +61,7 @@ target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
-tunables_sequences = [sampling_freq, samples_per_graph, subsampling_factor,
+tunables_sequences = [samples_per_graph, subsampling_factor,
                       stride, look_back, target_steps_ahead]
 tunables_network = [epochs, depth_lstm, depth_dense, units_lstm, g_filters, reg_n,
                     activation, dropout, learning_rate]
@@ -94,7 +94,7 @@ for fold in range(n_folds):
     original_y_test = y_test
 
     """ Iterate through sequences/graphs parameters """
-    for sampling_freq, samples_per_graph, subsampling_factor,\
+    for samples_per_graph, subsampling_factor,\
         stride, look_back, target_steps_ahead in product(*tunables_sequences):
 
         """ Generate subsampled sequences """
