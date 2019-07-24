@@ -32,13 +32,13 @@ epochs = [200]
 batch_size = 32
 depth_conv = [3]
 depth_dense = [2]
-filters = [64]
+filters = [32]
 kernel_size = [3]
 g_filters = [32]
 reg_n = ['5e-3']
 activation = 'relu'
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
-dropout = [0.4, 0.5]
+dropout = [0.4]
 pooling = True
 pool_size = 2
 padding = 'causal'   #'causal'
@@ -61,7 +61,7 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [1]
 stride = [2]
-look_back = [3000]
+look_back = [5000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
