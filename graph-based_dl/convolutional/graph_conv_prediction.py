@@ -48,7 +48,7 @@ learning_rate = [1e-3]
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
 sampling_freq = 500.
-samples_per_graph = [100]
+samples_per_graph = [200]
 # fc_measure = 'corr'
 link_cutoff = 0.
 percentiles = (40, 60)
@@ -61,7 +61,7 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [1]
 stride = [2]
-look_back = [1000]
+look_back = [2000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
