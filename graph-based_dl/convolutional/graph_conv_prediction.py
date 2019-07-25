@@ -25,10 +25,10 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 10
+num = 11
 
 """ Neural network hyperparameters """
-epochs = [150]
+epochs = [300]
 batch_size = 32
 depth_conv = [2]
 depth_dense = [2]
@@ -48,7 +48,7 @@ learning_rate = [1e-3]
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
 sampling_freq = 500.
-samples_per_graph = [200]
+samples_per_graph = [100]
 # fc_measure = 'corr'
 link_cutoff = 0.
 percentiles = (40, 60)
@@ -60,8 +60,8 @@ percentiles = (40, 60)
 
 """ Sequences hyperparameters """
 subsampling_factor = [1]
-stride = [2]
-look_back = [2000]
+stride = [1]
+look_back = [1000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
