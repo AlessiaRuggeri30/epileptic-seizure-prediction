@@ -35,7 +35,7 @@ depth_dense = [2]
 filters = [64]
 kernel_size = [3]
 g_filters = [32]
-reg_n = ['5e-3']
+reg_n = ['5e-4']
 activation = 'relu'
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
 dropout = [0.4]
@@ -43,7 +43,7 @@ pooling = True
 pool_size = 2
 padding = 'causal'   #'causal'
 dilation_rate = [3]
-learning_rate = [1e-3]
+learning_rate = [1e-4]
 
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
@@ -61,7 +61,7 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [1]
 stride = [2]
-look_back = [2000]
+look_back = [1000]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
