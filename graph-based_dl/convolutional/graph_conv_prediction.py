@@ -25,17 +25,17 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 11
+num = 12
 
 """ Neural network hyperparameters """
-epochs = [300]
+epochs = [400]
 batch_size = 32
 depth_conv = [2]
 depth_dense = [2]
 filters = [64]
 kernel_size = [3]
 g_filters = [32]
-reg_n = ['5e-4']
+reg_n = ['5e-3']
 activation = 'relu'
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
 dropout = [0.4]
@@ -43,7 +43,7 @@ pooling = True
 pool_size = 2
 padding = 'causal'   #'causal'
 dilation_rate = [3]
-learning_rate = [1e-4]
+learning_rate = [1e-3]
 
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
