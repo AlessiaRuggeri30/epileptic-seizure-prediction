@@ -2,74 +2,53 @@ import os
 import time
 
 import tensorflow.keras.backend as K
-import matplotlib.pyplot as plt
 import numpy as np
 from itertools import product
 from tensorflow.keras.regularizers import l2
-from tensorflow.keras.optimizers import Adam
-from sklearn.preprocessing import StandardScaler
 from sklearn.utils import shuffle
+from conv_model import build_conv_model
 import sys
 sys.path.append("....")
 from utils.load_data import load_data
-from utils.utils import add_experiment, save_experiments, generate_indices, model_evaluation,\
+from utils.utils import add_experiment, save_experiments, model_evaluation,\
                         experiment_results_summary, generate_prediction_plots, train_test_split,\
-                        apply_generate_sequences, data_standardization, compute_class_weight,\
-                        generate_graphs
-sys.path.append("..")
-from graph_model import build_graph_based_conv
+                        apply_generate_sequences, data_standardization, compute_class_weight
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(42)
 
 """ Global parameters """
-cross_val = False
+cross_val = True
 saving = True
-num = 13
+num = 1
 
 """ Neural network hyperparameters """
-epochs = [400]
-batch_size = 32
-depth_conv = [2]
+epochs = [10]
+batch_size = 64
+depth_conv = [3]
 depth_dense = [2]
 filters = [64]
 kernel_size = [3]
-g_filters = [32]
-reg_n = ['5e-4']
+reg_n = ['5e-1']
 activation = 'relu'
-batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
+batch_norm = True
 dropout = [0.4]
 pooling = True
 pool_size = 2
-padding = 'causal'   #'causal'
+padding = 'causal'
 dilation_rate = [3]
-learning_rate = [1e-3]
-
-""" Functional connectivity hyperparameters """
-band_freq = (70., 100.)
-sampling_freq = 500.
-samples_per_graph = [100]
-# fc_measure = 'corr'
-link_cutoff = 0.
-percentiles = (40, 60)
-# band_freq_hi = (20., 45.)
-# nfft = 128
-# n_overlap = 64
-# nf_mode = 'mean'
-# self_loops = True
 
 """ Sequences hyperparameters """
-subsampling_factor = [1]
-stride = [2]
-look_back = [500]
+subsampling_factor = [2]
+stride = [10]
+look_back = [500, 200]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
-tunables_sequences = [samples_per_graph, subsampling_factor,
-                      stride, look_back, target_steps_ahead]
-tunables_network = [epochs, depth_conv, depth_dense, filters, kernel_size, g_filters, reg_n,
-                    dropout, dilation_rate, learning_rate]
+tunables_sequences = [subsampling_factor, stride, look_back, target_steps_ahead]
+tunables_network = [epochs, depth_conv, depth_dense, filters, kernel_size, reg_n,
+                    dropout, dilation_rate]
 
 # -----------------------------------------------------------------------------
 # DATA PREPROCESSING
@@ -93,14 +72,16 @@ for fold in range(n_folds):
 
     class_weight = compute_class_weight(y_train)
 
+    """ Standardize data """
+    X_train, X_test = data_standardization(X_train, X_test)
+
     original_X_train = X_train
     original_y_train = y_train
     original_X_test = X_test
     original_y_test = y_test
 
-    """ Iterate through sequences/graphs parameters """
-    for samples_per_graph, subsampling_factor,\
-        stride, look_back, target_steps_ahead in product(*tunables_sequences):
+    """ Iterate through sequences parameters """
+    for subsampling_factor, stride, look_back, target_steps_ahead in product(*tunables_sequences):
 
         """ Generate subsampled sequences """
         X_train, y_train, X_test, y_test = \
@@ -109,33 +90,15 @@ for fold in range(n_folds):
                                      look_back, target_steps_ahead,
                                      stride, subsampling_factor)
 
+        """ Shuffle training data """
+        X_train_shuffled, y_train_shuffled = shuffle(X_train, y_train)
+
         print(X_train.shape, y_train.shape)
         print(X_test.shape, y_test.shape)
 
-        """ Generate graphs from sequences """
-        # slice_n = 100       # TODO: remove slice and apply on whole dataset
-        # X_train = X_train[0:slice_n]
-        # y_train = y_train[0:slice_n]
-        # X_test = X_test[0:slice_n]
-        # y_test = y_test[0:slice_n]
-
-        start = time.time()
-        X_train, A_train, E_train = generate_graphs(X_train, band_freq, sampling_freq, samples_per_graph, percentiles)
-        X_test, A_test, E_test = generate_graphs(X_test, band_freq, sampling_freq, samples_per_graph, percentiles)
-        end = time.time()
-        interval = end - start
-        print(f"All sequences converted. Spent time:   {int(interval)} sec (~{round(interval/60)} min)\n")
-
-        """ Standardize data """
-        X_train, X_test = data_standardization(X_train, X_test)
-
-        print(f"X_train: {X_train.shape}\t\tX_test: {X_test.shape}")
-        print(f"A_train: {A_train.shape}\t\tA_test: {A_test.shape}")
-        print(f"E_train: {E_train.shape}\t\tE_test: {E_test.shape}")
-
         """ Iterate through network parameters """
-        for epochs, depth_conv, depth_dense, filters, kernel_size, g_filters, reg_n,\
-            dropout, dilation_rate, learning_rate in product(*tunables_network):
+        for epochs, depth_conv, depth_dense, filters, kernel_size, reg_n,\
+            dropout, dilation_rate in product(*tunables_network):
             # -----------------------------------------------------------------------------
             # MODEL BUILDING, TRAINING AND TESTING
             # -----------------------------------------------------------------------------
@@ -145,40 +108,32 @@ for fold in range(n_folds):
 
             reg = l2(float(reg_n))
 
-            F = X_train.shape[-1]
-            N = A_train.shape[-1]
-            S = E_train.shape[-1]
-            seq_length = int(look_back/samples_per_graph)
-
             """ Build the model """
-            model = build_graph_based_conv(F, N, S, seq_length,
-                                           depth_conv, depth_dense, filters, kernel_size,
-                                           g_filters, reg, activation,
-                                           batch_norm, dropout,
-                                           pooling, pool_size,
-                                           padding, dilation_rate)
-            optimizer = Adam(learning_rate)
-            model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+            input_shape = (X_train.shape[-2], X_train.shape[-1])
+            model = build_conv_model(depth_conv, depth_dense, filters,
+                                     kernel_size, reg, activation,
+                                     batch_norm, dropout, input_shape,
+                                     pooling, pool_size, padding, dilation_rate)
+            model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-            model.fit([X_train, A_train, E_train], y_train,
+            model.fit(X_train_shuffled, y_train_shuffled,
                       batch_size=batch_size,
                       epochs=epochs,
                       class_weight=class_weight)
 
             if saving:
                 """ Save and reload the model """
-                MODEL_PATH = "models/models_prediction/"
-                model.save(f"{MODEL_PATH}graph_conv_pred_model{num}.h5")
+                MODEL_PATH = "models/models_prediction_final/"
+                model.save(f"{MODEL_PATH}conv_pred_model{num}.h5")
                 # del model
-                # model = load_model(f"{MODEL_PATH}graph_conv_pred_model{num}.h5")
+                # model = load_model(f"{MODEL_PATH}conv_pred_model{num}.h5")
 
             # -----------------------------------------------------------------------------
             # RESULTS EVALUATION
             # -----------------------------------------------------------------------------
             """ Predictions on training data """
             print("Predicting values on training data...")
-            # loss_train_keras, accuracy_train_keras = model.evaluate([X_train, A_train, E_train], y_train, batch_size=batch_size)
-            predictions_train = model.predict([X_train, A_train, E_train], batch_size=batch_size).flatten()
+            predictions_train = model.predict(X_train, batch_size=batch_size).flatten()
             loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
                                                                                        y=y_train)
             print("Results on training data")
@@ -189,8 +144,7 @@ for fold in range(n_folds):
 
             """ Predictions on test data """
             print("Predicting values on test data...")
-            # loss_test_keras, accuracy_test_keras = model.evaluate([X_test, A_test, E_test], y_test, batch_size=batch_size)
-            predictions_test = model.predict([X_test, A_test, E_test], batch_size=batch_size).flatten()
+            predictions_test = model.predict(X_test, batch_size=batch_size).flatten()
             loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
                                                                                    y=y_test)
             print("Results on test data")
@@ -203,7 +157,7 @@ for fold in range(n_folds):
             # EXPERIMENT RESULTS SUMMARY
             # -----------------------------------------------------------------------------
             if saving:
-                RESULTS_PATH = f"results/results_prediction/{file_name}"
+                RESULTS_PATH = f"results/results_prediction_final/{file_name}"
                 title = "CONVOLUTIONAL NEURAL NETWORK"
                 shapes = {
                     "X_train": X_train.shape,
@@ -218,7 +172,6 @@ for fold in range(n_folds):
                     "depth_dense": depth_dense,
                     "filters": filters,
                     "kernel_size": kernel_size,
-                    "g_filters": g_filters,
                     "reg_n": f"l2({reg_n})",
                     "activation": activation,
                     "batch_norm": str(batch_norm),
@@ -227,18 +180,12 @@ for fold in range(n_folds):
                     "pool_size": pool_size,
                     "padding": padding,
                     "dilation_rate": dilation_rate,
-                    "learning_rate": learning_rate,
                     "class_weight": str(class_weight),
                     "look_back": look_back,
                     "stride": stride,
                     "predicted_timestamps": predicted_timestamps,
                     "target_steps_ahead": target_steps_ahead,
-                    "subsampling_factor": subsampling_factor,
-                    "band_freq": band_freq,
-                    "sampling_freq": sampling_freq,
-                    "samples_per_graph": samples_per_graph,
-                    "link_cutoff": link_cutoff,
-                    "percentiles": percentiles
+                    "subsampling_factor": subsampling_factor
                 }
                 results_train = {
                     "loss_train": loss_train,
@@ -258,14 +205,14 @@ for fold in range(n_folds):
 
                 experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
-                EXP_FILENAME = "experiments_conv_pred"
-                hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size', 'g_filters',
+                EXP_FILENAME = "experiments_conv_pred_final"
+                hyperpar = ['', 'epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size',
                             'activation', 'l2_reg', 'batch_norm', 'dropout', 'pooling', 'pool_size', 'padding',
-                            'dilation_rate', 'stride', 'subsampling_factor', 'samples_per_graph', 'look_back',
+                            'dilation_rate', 'stride', 'subsampling_factor', 'look_back',
                             'target_steps_ahead', 'fold_set', 'loss', 'acc', 'roc-auc', 'recall']
-                exp_hyperpar = [epochs, depth_conv, depth_dense, filters, kernel_size, g_filters,
+                exp_hyperpar = [epochs, depth_conv, depth_dense, filters, kernel_size,
                                 activation, reg_n, batch_norm, dropout, pooling, pool_size, padding,
-                                dilation_rate, stride, subsampling_factor, samples_per_graph, look_back,
+                                dilation_rate, stride, subsampling_factor, look_back,
                                 target_steps_ahead, fold_set,
                                 f"{loss_test:.5f}", f"{accuracy_test:.5f}", f"{roc_auc_test:.5f}", f"{recall_test:.5f}"]
                 df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
@@ -274,7 +221,7 @@ for fold in range(n_folds):
                 # -----------------------------------------------------------------------------
                 # PLOTS
                 # -----------------------------------------------------------------------------
-                PLOTS_PATH = "./plots/plots_prediction/"
+                PLOTS_PATH = "./plots/plots_prediction_final/"
 
                 PLOTS_FILENAME = f"{PLOTS_PATH}{exp}_pred-predictions_train.png"
                 generate_prediction_plots(PLOTS_FILENAME, predictions=predictions_train, y=y_train, moving_a=100)

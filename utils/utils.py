@@ -4,7 +4,6 @@ import os.path
 from joblib import Parallel, delayed
 from spektral.brain import get_fc
 from sklearn.metrics import log_loss, accuracy_score, roc_auc_score, recall_score
-from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
