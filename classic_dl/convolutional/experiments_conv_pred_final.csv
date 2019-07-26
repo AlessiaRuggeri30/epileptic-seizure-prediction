@@ -1,0 +1,7 @@
+,epochs,depth_conv,depth_dense,filters,kernel_size,activation,l2_reg,batch_norm,dropout,pooling,pool_size,padding,dilation_rate,stride,subsampling_factor,look_back,target_steps_ahead,fold_set,loss,acc,roc-auc,recall
+exp1,10,3,2,64,3,relu,5e-1,True,0.4,True,2,causal,3,10,2,500,2000,0,0.21766,0.94156,0.92295,0.76867
+exp2,10,3,2,64,3,relu,5e-1,True,0.4,True,2,causal,3,10,2,200,2000,0,0.19682,0.93316,0.90311,0.42600
+exp3,10,3,2,64,3,relu,5e-1,True,0.4,True,2,causal,3,10,2,500,2000,1,0.20902,0.91614,0.96651,0.04846
+exp4,10,3,2,64,3,relu,5e-1,True,0.4,True,2,causal,3,10,2,200,2000,1,0.18726,0.93532,0.94168,0.36923
+exp5,10,3,2,64,3,relu,5e-1,True,0.4,True,2,causal,3,10,2,500,2000,2,0.13395,0.96143,0.93800,0.61857
+exp6,10,3,2,64,3,relu,5e-1,True,0.4,True,2,causal,3,10,2,200,2000,2,0.18424,0.94459,0.90655,0.62071
