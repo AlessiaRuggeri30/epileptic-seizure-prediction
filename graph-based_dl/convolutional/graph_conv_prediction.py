@@ -25,7 +25,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = False
 saving = True
-num = 12
+num = 13
 
 """ Neural network hyperparameters """
 epochs = [400]
@@ -48,7 +48,7 @@ learning_rate = [1e-3]
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
 sampling_freq = 500.
-samples_per_graph = [200]
+samples_per_graph = [100]
 # fc_measure = 'corr'
 link_cutoff = 0.
 percentiles = (40, 60)
@@ -61,7 +61,7 @@ percentiles = (40, 60)
 """ Sequences hyperparameters """
 subsampling_factor = [1]
 stride = [2]
-look_back = [1000]
+look_back = [500]
 target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
@@ -161,6 +161,7 @@ for fold in range(n_folds):
             model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
             model.fit([X_train, A_train, E_train], y_train,
+                      validation_data=([X_test, A_test, E_test], y_test),
                       batch_size=batch_size,
                       epochs=epochs,
                       class_weight=class_weight)
