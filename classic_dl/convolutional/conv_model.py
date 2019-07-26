@@ -42,5 +42,5 @@ def build_conv_model(depth_conv, depth_dense, filters,
         if k == (depth_dense-1):
             model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
         else:
-            model.add(Dense(256, activation=activation, kernel_regularizer=reg))
+            model.add(Dense(128, activation=activation, kernel_regularizer=reg))
     return model
