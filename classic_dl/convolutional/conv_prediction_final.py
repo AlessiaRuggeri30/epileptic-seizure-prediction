@@ -20,14 +20,14 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 19
+num = 25
 
 """ Neural network hyperparameters """
 epochs = [10]
 batch_size = 64
 depth_conv = [2]
 depth_dense = [2]
-filters = [64]
+filters = [32]
 kernel_size = [3]
 reg_n = ['5e-1']
 activation = 'relu'
