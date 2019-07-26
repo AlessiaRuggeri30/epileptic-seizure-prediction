@@ -23,7 +23,7 @@ saving = True
 num = 7
 
 """ Neural network hyperparameters """
-epochs = [20]
+epochs = [10]
 batch_size = 64
 depth_conv = [3]
 depth_dense = [2]
