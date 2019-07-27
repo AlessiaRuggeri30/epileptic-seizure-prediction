@@ -20,14 +20,14 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 43
+num = 49
 
 """ Neural network hyperparameters """
 epochs = [10]
 batch_size = 64
 depth_conv = [2]
 depth_dense = [2]
-filters = [64]
+filters = [32]
 kernel_size = [3]
 reg_n = ['5e-1']
 activation = 'relu'
@@ -41,7 +41,7 @@ dilation_rate = [3]
 """ Sequences hyperparameters """
 subsampling_factor = [2]
 stride = [1]
-look_back = [500, 200]
+look_back = [200]
 target_steps_ahead = [1000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
