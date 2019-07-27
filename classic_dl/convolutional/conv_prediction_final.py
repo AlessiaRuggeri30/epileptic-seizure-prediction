@@ -20,7 +20,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 55
+num = 67
 
 """ Neural network hyperparameters """
 epochs = [10]
@@ -40,9 +40,9 @@ dilation_rate = [3]
 
 """ Sequences hyperparameters """
 subsampling_factor = [2]
-stride = [5]
+stride = [1, 5]
 look_back = [200, 500]
-target_steps_ahead = [1000]  # starting from the position len(sequence)
+target_steps_ahead = [1000, 2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
