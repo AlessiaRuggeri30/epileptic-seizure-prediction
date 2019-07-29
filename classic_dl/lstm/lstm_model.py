@@ -1,5 +1,5 @@
-from keras.layers import Dense, Dropout, LSTM, BatchNormalization
-from keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, LSTM, BatchNormalization
+from tensorflow.keras.models import Sequential
 
 
 def build_lstm_model(depth_lstm, depth_dense, units_lstm, reg, activation, batch_norm, dropout):
