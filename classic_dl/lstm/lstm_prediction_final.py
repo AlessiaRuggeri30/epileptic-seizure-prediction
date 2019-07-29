@@ -194,10 +194,10 @@ for fold in range(n_folds):
 
                 EXP_FILENAME = "experiments_lstm_pred_final"
                 hyperpar = ['', 'epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'activation',
-                            'l2_reg', 'batch_norm', 'dropout', 'subsampling_factor', 'look_back',
+                            'l2_reg', 'batch_norm', 'dropout', 'stride', 'subsampling_factor', 'look_back',
                             'target_steps_ahead', 'fold_set', 'loss', 'acc', 'roc-auc', 'recall']
                 exp_hyperpar = [epochs, depth_lstm, depth_dense, units_lstm, activation,
-                                reg_n, batch_norm, dropout, subsampling_factor, look_back,
+                                reg_n, batch_norm, dropout, stride, subsampling_factor, look_back,
                                 target_steps_ahead, fold_set,
                                 f"{loss_test:.5f}", f"{accuracy_test:.5f}", f"{roc_auc_test:.5f}", f"{recall_test:.5f}"]
                 df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
