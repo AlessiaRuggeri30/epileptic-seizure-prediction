@@ -1,0 +1,61 @@
+EXPERIMENT 10: LSTM NEURAL NETWORK
+
+Parameters
+	epochs:   10
+	batch_size:   64
+	depth_lstm:   1
+	depth_dense:   2
+	units_lstm:   256
+	reg_n:   l2(5e-1)
+	activation:   relu
+	batch_norm:   True
+	dropout:   0.4
+	class_weight:   {0: 1.098901098901099, 1: 11.11111111111111}
+	look_back:   100
+	stride:   5
+	predicted_timestamps:   1
+	target_steps_ahead:   500
+	subsampling_factor:   2
+
+Model
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+unified_lstm (UnifiedLSTM)   multiple                  355328    
+_________________________________________________________________
+batch_normalization_v2 (Batc multiple                  1024      
+_________________________________________________________________
+dropout (Dropout)            multiple                  0         
+_________________________________________________________________
+dense (Dense)                multiple                  65792     
+_________________________________________________________________
+batch_normalization_v2_1 (Ba multiple                  1024      
+_________________________________________________________________
+dropout_1 (Dropout)          multiple                  0         
+_________________________________________________________________
+dense_1 (Dense)              multiple                  257       
+=================================================================
+Total params: 423,425
+Trainable params: 422,401
+Non-trainable params: 1,024
+_________________________________________________________________
+
+Data shape
+	X_train:   (16200, 100, 90)
+	y_train:   (16200,)
+	X_test:   (14941, 100, 90)
+	y_test:   (14941,)
+
+Results on train set
+	loss_train:   0.27346767169833525
+	accuracy_train:   0.938641975308642
+	roc_auc_train:   0.996827074759945
+	recall_train:   0.9985185185185185
+
+Results on test set
+	loss_test:   0.3801174735792778
+	accuracy_test:   0.9011445017067131
+	roc_auc_test:   0.871956203655482
+	recall_test:   0.602
+
