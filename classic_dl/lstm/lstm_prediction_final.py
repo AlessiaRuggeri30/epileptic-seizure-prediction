@@ -20,10 +20,10 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 1
+num = 55
 
 """ Neural network hyperparameters """
-epochs = [10]
+epochs = [15]
 batch_size = 64
 depth_lstm = [1]
 depth_dense = [2]
