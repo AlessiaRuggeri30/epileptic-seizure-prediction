@@ -3,7 +3,8 @@ from joblib import dump, load
 
 import numpy as np
 from itertools import product
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+import xgboost as xgb
 from sklearn.metrics import brier_score_loss
 from sklearn.utils import shuffle
 import sys
@@ -51,9 +52,11 @@ for fold in range(n_folds):
     y_test = y_test_fold[fold]
 
     if weighted:
-        class_weight = compute_class_weight(y_train)
+        n_positive = np.sum(y_train)
+        n_negative = len(y_train) - n_positive
+        class_weight = n_negative/n_positive
     else:
-        class_weight = None
+        class_weight = 1
 
     original_X_train = X_train
     original_y_train = y_train
@@ -72,20 +75,21 @@ for fold in range(n_folds):
         # MODEL BUILDING, TRAINING AND TESTING
         # -----------------------------------------------------------------------------
         exp = "exp" + str(num)
-        file_name = exp + "_randomforest.txt"
+        file_name = exp + "_gradientboosting.txt"
         print(f"\n{exp}\n")
 
         """ Build the model """
-        clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                                     random_state=random_state, n_jobs=-1, class_weight=class_weight)
+        clf = xgb.XGBClassifier(n_estimators=n_estimators, max_depth=max_depth,
+                                random_state=random_state, n_jobs=-1,
+                                scale_pos_weight=class_weight)
 
         clf.fit(X_train_shuffled, y_train_shuffled)
 
         if saving:
             """ Save and reload the model """
             MODEL_PATH = "models_final/"
-            dump(clf, f"{MODEL_PATH}randomforest_model{num}.joblib")
-            # clf = load(f"randomforest_model{num}.joblib")
+            dump(clf, f"{MODEL_PATH}gradientboosting_model{num}.joblib")
+            # clf = load(f"gradientboosting_model{num}.joblib")
 
         # -----------------------------------------------------------------------------
         # RESULTS EVALUATION
@@ -121,7 +125,7 @@ for fold in range(n_folds):
         # -----------------------------------------------------------------------------
         if saving:
             RESULTS_PATH = f"results_final/{file_name}"
-            title = "RANDOM FOREST"
+            title = "GRADIENT BOOSTING"
             shapes = {
                 "X_train": X_train.shape,
                 "y_train": y_train.shape,
@@ -133,7 +137,7 @@ for fold in range(n_folds):
                 "max_depth": max_depth,
                 "random_state": random_state,
                 "weighted": weighted,
-                "class_weight": str(class_weight)
+                "scale_pos_weight": str(class_weight)
             }
             results_train = {
                 "brier_loss_train": brier_loss_train,
@@ -153,7 +157,7 @@ for fold in range(n_folds):
             summary = f"Features importance: {str(clf.feature_importances_)}"
             experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
-            EXP_FILENAME = "experiments_randomforest"
+            EXP_FILENAME = "experiments_gradientboosting"
             hyperpar = ['', 'n_estimators', 'max_depth', 'weighted', 'fold_set'
                         'brier_loss_test', 'loss', 'acc', 'roc-auc', 'recall']
             exp_hyperpar = [n_estimators, max_depth, weighted, fold_set, f"{brier_loss_test:.5f}"
