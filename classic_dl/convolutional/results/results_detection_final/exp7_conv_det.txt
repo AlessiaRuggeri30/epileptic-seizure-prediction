@@ -1,0 +1,74 @@
+EXPERIMENT 7: CONVOLUTIONAL NEURAL NETWORK
+
+Parameters
+	epochs:   10
+	batch_size:   64
+	depth_conv:   2
+	depth_dense:   2
+	filters:   64
+	kernel_size:   3
+	reg_n:   l2(5e-1)
+	activation:   relu
+	batch_norm:   True
+	dropout:   0.4
+	pooling:   True
+	pool_size:   2
+	padding:   causal
+	dilation_rate:   3
+	class_weight:   {0: 1.098901098901099, 1: 11.11111111111111}
+	look_back:   100
+	stride:   5
+	predicted_timestamps:   1
+	target_steps_ahead:   0
+	subsampling_factor:   2
+
+Model
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d (Conv1D)              (None, 100, 64)           17344     
+_________________________________________________________________
+max_pooling1d (MaxPooling1D) (None, 50, 64)            0         
+_________________________________________________________________
+conv1d_1 (Conv1D)            (None, 50, 32)            6176      
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 25, 32)            0         
+_________________________________________________________________
+flatten (Flatten)            (None, 800)               0         
+_________________________________________________________________
+batch_normalization_v2 (Batc (None, 800)               3200      
+_________________________________________________________________
+dropout (Dropout)            (None, 800)               0         
+_________________________________________________________________
+dense (Dense)                (None, 256)               205056    
+_________________________________________________________________
+batch_normalization_v2_1 (Ba (None, 256)               1024      
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 256)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 257       
+=================================================================
+Total params: 233,057
+Trainable params: 230,945
+Non-trainable params: 2,112
+_________________________________________________________________
+
+Data shape
+	X_train:   (16200, 100, 90)
+	y_train:   (16200,)
+	X_test:   (14991, 100, 90)
+	y_test:   (14991,)
+
+Results on train set
+	loss_train:   0.02657075058284523
+	accuracy_train:   0.9952469135802469
+	roc_auc_train:   0.9998725651577505
+	recall_train:   0.9966666666666667
+
+Results on test set
+	loss_test:   0.2313034483526195
+	accuracy_test:   0.9241544926956173
+	roc_auc_test:   0.9233680231265288
+	recall_test:   0.2886666666666667
+
