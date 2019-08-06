@@ -26,7 +26,7 @@ num = 37
 """ Neural network hyperparameters """
 epochs = [20]
 batch_size = 32
-units = [256]
+units = [512]
 reg_n = ['5e-2']
 activation = ['relu', 'tanh']
 batch_norm = True
