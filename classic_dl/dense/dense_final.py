@@ -26,8 +26,8 @@ num = 37
 """ Neural network hyperparameters """
 epochs = [20]
 batch_size = 32
-units = [512]
-reg_n = ['5e-1']
+units = [256]
+reg_n = ['5e-2']
 activation = ['relu', 'tanh']
 batch_norm = True
 dropout = [0.4, 0.5]
@@ -88,7 +88,7 @@ for fold in range(n_folds):
         model.add(Dropout(dropout))
         model.add(Dense(units, activation=activation, kernel_regularizer=reg))
         model.add(Dropout(dropout))
-        model.add(Dense(int(units/2), activation=activation, kernel_regularizer=reg))
+        model.add(Dense(int(units), activation=activation, kernel_regularizer=reg))
         model.add(Dropout(dropout))
         model.add(Dense(1, activation='sigmoid', kernel_regularizer=reg))
 

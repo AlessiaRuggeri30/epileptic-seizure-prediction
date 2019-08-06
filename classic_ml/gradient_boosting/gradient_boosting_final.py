@@ -158,9 +158,9 @@ for fold in range(n_folds):
             experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
             EXP_FILENAME = "experiments_gradientboosting"
-            hyperpar = ['', 'n_estimators', 'max_depth', 'weighted', 'fold_set'
-                        'brier_loss_test', 'loss', 'acc', 'roc-auc', 'recall']
-            exp_hyperpar = [n_estimators, max_depth, weighted, fold_set, f"{brier_loss_test:.5f}"
+            hyperpar = ['', 'n_estimators', 'max_depth', 'weighted', 'fold_set',
+                        'brier_loss', 'loss', 'acc', 'roc-auc', 'recall']
+            exp_hyperpar = [n_estimators, max_depth, weighted, fold_set, f"{brier_loss_test:.5f}",
                             f"{loss_test:.5f}", f"{accuracy_test:.5f}", f"{roc_auc_test:.5f}", f"{recall_test:.5f}"]
             df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
             save_experiments(EXP_FILENAME, df)
