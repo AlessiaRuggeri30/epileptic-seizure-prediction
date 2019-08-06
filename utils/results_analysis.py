@@ -53,6 +53,18 @@ print(group_df)
 print(df[(df['epochs'] == 15) & (df['stride'] == 1) & (df['look_back'] == 200) & (df['target_steps_ahead'] == 500)])
 
 # -----------------------------------------------------------------------------
+# Cross validation results DENSE
+# -----------------------------------------------------------------------------
+import pandas as pd
+filename = "experiments_dense_det_final.csv"
+df = pd.read_csv(filename)
+columns = ['epochs', 'units', 'activation', 'l2_reg', 'batch_norm', 'dropout']
+group_df = df.groupby(columns)['loss', 'acc', 'roc-auc', 'recall'].agg('mean')
+print(group_df)
+
+print(df[(df['epochs'] == 15) & (df['stride'] == 1) & (df['look_back'] == 200) & (df['target_steps_ahead'] == 500)])
+
+# -----------------------------------------------------------------------------
 # Cross validation results GRAPH-CONVOLUTIONAL
 # -----------------------------------------------------------------------------
 import pandas as pd

@@ -21,13 +21,13 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 1
+num = 37
 
 """ Neural network hyperparameters """
 epochs = [20]
 batch_size = 32
 units = [512]
-reg_n = ['5e-4', '5e-3', '5e-2']
+reg_n = ['5e-1']
 activation = ['relu', 'tanh']
 batch_norm = True
 dropout = [0.4, 0.5]
