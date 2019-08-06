@@ -19,11 +19,11 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 1
+num = 19
 
 """ Model hyperparameters """
-n_estimators = [100]
-max_depth = [10, 8, 6]
+n_estimators = [100, 80]
+max_depth = [5, 4]
 weighted = [True, False]
 random_state = 42
 
