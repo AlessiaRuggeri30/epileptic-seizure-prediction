@@ -3,8 +3,7 @@ from joblib import dump, load
 
 import numpy as np
 from itertools import product
-from sklearn.ensemble import GradientBoostingClassifier
-import xgboost as xgb
+from sklearn import svm
 from sklearn.metrics import brier_score_loss
 from sklearn.utils import shuffle
 import sys
@@ -22,13 +21,12 @@ saving = True
 num = 1
 
 """ Model hyperparameters """
-n_estimators = [100, 80, 60, 40, 20]
-max_depth = [10, 8, 6, 5, 4]
+gamma = 'scale'
 weighted = [True, False]
 random_state = 42
 
 """ Set tunables """
-tunables_model = [n_estimators, max_depth, weighted]
+tunables_model = [weighted]
 
 # -----------------------------------------------------------------------------
 # DATA PREPROCESSING
@@ -51,11 +49,9 @@ for fold in range(n_folds):
     y_test = y_test_fold[fold]
 
     if weighted:
-        n_positive = np.sum(y_train)
-        n_negative = len(y_train) - n_positive
-        class_weight = n_negative/n_positive
+        class_weight = 'balanced'
     else:
-        class_weight = 1
+        class_weight = None
 
     original_X_train = X_train
     original_y_train = y_train
@@ -69,26 +65,24 @@ for fold in range(n_folds):
     print(X_test.shape, y_test.shape)
 
     """ Iterate through network parameters """
-    for n_estimators, max_depth, weighted in product(*tunables_model):
+    for weighted in product(*tunables_model):
         # -----------------------------------------------------------------------------
         # MODEL BUILDING, TRAINING AND TESTING
         # -----------------------------------------------------------------------------
         exp = "exp" + str(num)
-        file_name = exp + "_gradientboosting.txt"
+        file_name = exp + "_svm.txt"
         print(f"\n{exp}\n")
 
         """ Build the model """
-        clf = xgb.XGBClassifier(n_estimators=n_estimators, max_depth=max_depth,
-                                random_state=random_state, n_jobs=-1,
-                                scale_pos_weight=class_weight)
+        clf = svm.SVC(gamma=gamma, probability=True, class_weight=class_weight)
 
         clf.fit(X_train_shuffled, y_train_shuffled)
 
         if saving:
             """ Save and reload the model """
             MODEL_PATH = "models_final/"
-            dump(clf, f"{MODEL_PATH}gradientboosting_model{num}.joblib")
-            # clf = load(f"gradientboosting_model{num}.joblib")
+            dump(clf, f"{MODEL_PATH}svm_model{num}.joblib")
+            # clf = load(f"svm_model{num}.joblib")
 
         # -----------------------------------------------------------------------------
         # RESULTS EVALUATION
@@ -124,7 +118,7 @@ for fold in range(n_folds):
         # -----------------------------------------------------------------------------
         if saving:
             RESULTS_PATH = f"results_final/{file_name}"
-            title = "GRADIENT BOOSTING"
+            title = "SVM"
             shapes = {
                 "X_train": X_train.shape,
                 "y_train": y_train.shape,
@@ -132,11 +126,10 @@ for fold in range(n_folds):
                 "y_test": y_test.shape
             }
             parameters = {
-                "n_estimators": n_estimators,
-                "max_depth": max_depth,
+                "gamma": gamma,
                 "random_state": random_state,
                 "weighted": weighted,
-                "scale_pos_weight": str(class_weight)
+                "class_weight": str(class_weight)
             }
             results_train = {
                 "brier_loss_train": brier_loss_train,
@@ -156,10 +149,10 @@ for fold in range(n_folds):
             summary = f"Features importance: {str(clf.feature_importances_)}"
             experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
-            EXP_FILENAME = "experiments_gradientboosting"
-            hyperpar = ['', 'n_estimators', 'max_depth', 'weighted', 'fold_set',
+            EXP_FILENAME = "experiments_svm"
+            hyperpar = ['', 'gamma', 'weighted', 'fold_set',
                         'brier_loss', 'loss', 'acc', 'roc-auc', 'recall']
-            exp_hyperpar = [n_estimators, max_depth, weighted, fold_set, f"{brier_loss_test:.5f}",
+            exp_hyperpar = [gamma, weighted, fold_set, f"{brier_loss_test:.5f}",
                             f"{loss_test:.5f}", f"{accuracy_test:.5f}", f"{roc_auc_test:.5f}", f"{recall_test:.5f}"]
             df = add_experiment(EXP_FILENAME, num, hyperpar, exp_hyperpar)
             save_experiments(EXP_FILENAME, df)
