@@ -55,7 +55,7 @@ percentiles = (40, 60)
 
 """ Sequences hyperparameters """
 subsampling_factor = [2]
-stride = [5]
+stride = [10]
 look_back = [5000]
 target_steps_ahead = [0]  # starting from the position len(sequence)
 predicted_timestamps = 1
