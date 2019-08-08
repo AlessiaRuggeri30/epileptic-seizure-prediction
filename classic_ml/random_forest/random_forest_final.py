@@ -10,8 +10,7 @@ import sys
 sys.path.append("....")
 from utils.load_data import load_data
 from utils.utils import add_experiment, save_experiments, model_evaluation,\
-                        experiment_results_summary, generate_prediction_plots, train_test_split,\
-                        compute_class_weight
+                        experiment_results_summary, generate_prediction_plots, train_test_split
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(42)
@@ -19,11 +18,11 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 43
+num = 79
 
 """ Model hyperparameters """
-n_estimators = [60, 40, 20]
-max_depth = [5, 4]
+n_estimators = [100, 80, 60, 40, 20]
+max_depth = [10, 8, 6, 5, 4]
 weighted = [True, False]
 random_state = 42
 

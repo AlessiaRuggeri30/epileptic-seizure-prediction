@@ -11,8 +11,7 @@ import sys
 sys.path.append("....")
 from utils.load_data import load_data
 from utils.utils import add_experiment, save_experiments, model_evaluation,\
-                        experiment_results_summary, generate_prediction_plots, train_test_split,\
-                        compute_class_weight
+                        experiment_results_summary, generate_prediction_plots, train_test_split
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(42)
