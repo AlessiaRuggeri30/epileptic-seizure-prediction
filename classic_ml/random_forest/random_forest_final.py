@@ -18,7 +18,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 79
+num = 1
 
 """ Model hyperparameters """
 n_estimators = [100, 80, 60, 40, 20]

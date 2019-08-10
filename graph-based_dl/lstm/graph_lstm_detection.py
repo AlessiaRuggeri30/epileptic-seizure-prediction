@@ -169,7 +169,7 @@ for fold in range(n_folds):
             # -----------------------------------------------------------------------------
             """ Predictions on training data """
             print("Predicting values on training data...")
-            loss_train_keras, accuracy_train_keras = model.evaluate([X_train, A_train, E_train], y_train, batch_size=batch_size)
+            # loss_train_keras, accuracy_train_keras = model.evaluate([X_train, A_train, E_train], y_train, batch_size=batch_size)
             predictions_train = model.predict([X_train, A_train, E_train], batch_size=batch_size).flatten()
             loss_train, accuracy_train, roc_auc_train, recall_train = model_evaluation(predictions=predictions_train,
                                                                                        y=y_train)
@@ -181,7 +181,7 @@ for fold in range(n_folds):
 
             """ Predictions on test data """
             print("Predicting values on test data...")
-            loss_test_keras, accuracy_test_keras = model.evaluate([X_test, A_test, E_test], y_test, batch_size=batch_size)
+            # loss_test_keras, accuracy_test_keras = model.evaluate([X_test, A_test, E_test], y_test, batch_size=batch_size)
             predictions_test = model.predict([X_test, A_test, E_test], batch_size=batch_size).flatten()
             loss_test, accuracy_test, roc_auc_test, recall_test = model_evaluation(predictions=predictions_test,
                                                                                    y=y_test)
