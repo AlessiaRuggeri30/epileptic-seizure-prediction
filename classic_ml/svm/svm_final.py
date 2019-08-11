@@ -74,7 +74,7 @@ for fold in range(n_folds):
         print(f"\n{exp}\n")
 
         """ Build the model """
-        clf = svm.SVC(gamma=gamma, probability=True, class_weight=class_weight)
+        clf = svm.SVC(gamma=gamma, probability=True, class_weight=class_weight, verbose=True)
 
         clf.fit(X_train_shuffled, y_train_shuffled)
 
