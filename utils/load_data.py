@@ -1,15 +1,20 @@
 import numpy as np
 
 
-def load_data():
+def load_data(reduced=False):
     """ Variables """
     n_clip = 3
     X = {}
     y = {}
     # Trimming around the centered seizure
-    interval = {1: {'start': 1590000, 'end': 1740000},
-                2: {'start': 100000, 'end': 250000},
-                3: {'start': 10000, 'end': 160000}}
+    if reduced:
+        interval = {1: {'start': 1650000, 'end': 1710000},
+                    2: {'start': 150000, 'end': 210000},
+                    3: {'start': 60000, 'end': 120000}}
+    else:
+        interval = {1: {'start': 1590000, 'end': 1740000},
+                    2: {'start': 100000, 'end': 250000},
+                    3: {'start': 10000, 'end': 160000}}
     # Trimming so that the interval finishes exactly with the end of the seizure
     # interval = {1: {'start': 1599381, 'end': 1699381},
     #             2: {'start': 101013, 'end': 201013},

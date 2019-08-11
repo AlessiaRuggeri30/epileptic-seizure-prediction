@@ -32,7 +32,7 @@ tunables_model = [weighted]
 # DATA PREPROCESSING
 # -----------------------------------------------------------------------------
 """ Import dataset """
-X, y, dataset, seizure = load_data()
+X, y, dataset, seizure = load_data(reduced=True)
 
 """ Select training set and test set """
 X_train_fold, y_train_fold, X_test_fold, y_test_fold = train_test_split(X, y, cross_val=cross_val)
