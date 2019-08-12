@@ -146,7 +146,7 @@ for fold in range(n_folds):
                 "recall_test": recall_test
             }
 
-            summary = f"Features importance: {str(clf.feature_importances_)}"
+            summary = f"Num of svm for each class: {str(clf.n_support_)}"
             experiment_results_summary(RESULTS_PATH, num, title, summary, shapes, parameters, results_train, results_test)
 
             EXP_FILENAME = "experiments_svm"
