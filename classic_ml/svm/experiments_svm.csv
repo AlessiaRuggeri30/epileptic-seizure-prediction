@@ -1,2 +1,5 @@
 ,gamma,weighted,fold_set,brier_loss,loss,acc,roc-auc,recall
 exp1,scale,"(True,)",0,0.19092,0.72852,0.76835,0.55996,0.17773
+exp2,scale,"(False,)",0,0.19091,0.72841,0.76835,0.55995,0.17760
+exp3,scale,"(True,)",1,0.19709,0.61215,0.75487,0.50640,0.01392
+exp4,scale,"(False,)",1,0.19708,0.61217,0.75490,0.50640,0.01392
