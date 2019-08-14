@@ -1,0 +1,31 @@
+EXPERIMENT 6: SVM
+
+Parameters
+	gamma:   scale
+	random_state:   42
+	weighted:   (False,)
+	class_weight:   balanced
+
+Model
+Num of svm for each class: [77235 23514]
+
+Data shape
+	X_train:   (120000, 90)
+	y_train:   (120000,)
+	X_test:   (60000, 90)
+	y_test:   (60000,)
+
+Results on train set
+	brier_loss_train:   0.14045617395707172
+	loss_train:   0.4393593892153672
+	accuracy_train:   0.8053
+	roc_auc_train:   0.7873319017857143
+	recall_train:   0.3307857142857143
+
+Results on test set
+	brier_loss_test:   0.19789475286207397
+	loss_test:   0.6015974936326226
+	accuracy_test:   0.74805
+	roc_auc_test:   0.5052208819875776
+	recall_test:   0.05028571428571429
+
