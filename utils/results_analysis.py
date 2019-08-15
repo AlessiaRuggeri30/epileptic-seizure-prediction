@@ -93,7 +93,7 @@ columns = ['epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'g_filters',
            'stride', 'subsampling_factor', 'samples_per_graph', 'look_back',
            'target_steps_ahead']
 # treshold = 0.63
-group_df = group_df.groupby(columns)['loss', 'acc', 'roc-auc', 'recall'].agg('mean')
+group_df = df.groupby(columns)['loss', 'acc', 'roc-auc', 'recall'].agg('mean')
 # group_df = group_df[group_df['recall'] >= treshold]
 print(group_df)
 
