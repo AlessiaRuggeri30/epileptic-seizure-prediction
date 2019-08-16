@@ -23,19 +23,19 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(42)
 
 """ Global parameters """
-cross_val = False
+cross_val = True
 saving = True
 num = 13
 
 """ Neural network hyperparameters """
-epochs = [400]
+epochs = [200]
 batch_size = 32
-depth_conv = [2]
+depth_conv = [3]
 depth_dense = [2]
 filters = [64]
 kernel_size = [3]
 g_filters = [32]
-reg_n = ['5e-4']
+reg_n = ['5e-3']
 activation = 'relu'
 batch_norm = False    # Keep it always False, since adding it leads to inconsistent results
 dropout = [0.4]
@@ -48,7 +48,7 @@ learning_rate = [1e-3]
 """ Functional connectivity hyperparameters """
 band_freq = (70., 100.)
 sampling_freq = 500.
-samples_per_graph = [100]
+samples_per_graph = [500]
 # fc_measure = 'corr'
 link_cutoff = 0.
 percentiles = (40, 60)
@@ -60,9 +60,9 @@ percentiles = (40, 60)
 
 """ Sequences hyperparameters """
 subsampling_factor = [1]
-stride = [2]
-look_back = [500]
-target_steps_ahead = [2000]  # starting from the position len(sequence)
+stride = [4]
+look_back = [5000]
+target_steps_ahead = [500, 1000, 2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
