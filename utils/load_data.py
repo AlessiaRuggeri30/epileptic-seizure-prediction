@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def load_data(reduced=False):
+def load_data(reduced=False, local=False):
     """ Variables """
     n_clip = 3
     X = {}
@@ -25,8 +25,10 @@ def load_data(reduced=False):
 
     """ Load datasets """
     for c in range(1, n_clip + 1):
-        path = "/home/phait/datasets/ieeg/TWH056/clips/TWH056_Day-504_Clip-0-{}.npz".format(c)  # server
-        # path = "../../dataset/TWH056_Day-504_Clip-0-1.npz"                     # local
+        if local:
+            path = "../dataset/TWH056_Day-504_Clip-0-{}.npz".format(c)  # local
+        else:
+            path = "/home/phait/datasets/ieeg/TWH056/clips/TWH056_Day-504_Clip-0-{}.npz".format(c)  # server
 
         with np.load(path) as data:
             data = dict(data)

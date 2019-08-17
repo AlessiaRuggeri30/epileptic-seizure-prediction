@@ -75,7 +75,7 @@ columns = ['epochs', 'depth_conv', 'depth_dense', 'filters', 'kernel_size', 'g_f
            'dilation_rate', 'stride', 'subsampling_factor', 'samples_per_graph', 'look_back',
            'target_steps_ahead']
 # treshold = 0.63
-group_df = df[group_df['fold_set'] != '/']
+group_df = df[df['fold_set'] != '/']
 group_df = group_df.groupby(columns)['loss', 'acc', 'roc-auc', 'recall'].agg('mean')
 # group_df = group_df[group_df['recall'] >= treshold]
 print(group_df)
@@ -94,7 +94,7 @@ columns = ['epochs', 'depth_lstm', 'depth_dense', 'units_lstm', 'g_filters',
            'stride', 'subsampling_factor', 'samples_per_graph', 'look_back',
            'target_steps_ahead']
 # treshold = 0.63
-group_df = df[group_df['fold_set'] != '/']
+group_df = df[df['fold_set'] != '/']
 group_df = group_df.groupby(columns)['loss', 'acc', 'roc-auc', 'recall'].agg('mean')
 # group_df = group_df[group_df['recall'] >= treshold]
 print(group_df)
