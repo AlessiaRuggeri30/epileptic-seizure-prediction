@@ -22,6 +22,7 @@ from graph_model import build_graph_based_conv
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 np.random.seed(42)
 
+
 """ Global parameters """
 cross_val = True
 saving = True
