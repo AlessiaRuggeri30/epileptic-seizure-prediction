@@ -24,9 +24,10 @@ np.random.seed(42)
 
 
 """ Global parameters """
-cross_val = True
+cross_val = False
+single = 3
 saving = True
-num = 13
+num = 18
 
 """ Neural network hyperparameters """
 epochs = [200]
@@ -61,9 +62,9 @@ percentiles = (40, 60)
 
 """ Sequences hyperparameters """
 subsampling_factor = [1]
-stride = [4]
+stride = [5]
 look_back = [5000]
-target_steps_ahead = [500, 1000, 2000]  # starting from the position len(sequence)
+target_steps_ahead = [2000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
@@ -79,12 +80,13 @@ tunables_network = [epochs, depth_conv, depth_dense, filters, kernel_size, g_fil
 X, y, dataset, seizure = load_data()
 
 """ Select training set and test set """
-X_train_fold, y_train_fold, X_test_fold, y_test_fold = train_test_split(X, y, cross_val=cross_val)
+X_train_fold, y_train_fold, X_test_fold, y_test_fold = train_test_split(X, y, cross_val=cross_val, single=single)
 n_folds = len(X_train_fold)
 
 """ Iterate through fold-sets """
 for fold in range(n_folds):
-    fold_set = fold if cross_val else '/'
+    fold_set = fold if cross_val else (single-1)
+    # fold_set = fold if cross_val else '/'
     if cross_val: print(f"Fold set: {fold_set}")
 
     X_train = X_train_fold[fold]

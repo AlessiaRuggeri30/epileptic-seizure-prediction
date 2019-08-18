@@ -222,12 +222,14 @@ def compute_class_weight(y_train):
     return class_weight
 
 
-def train_test_split(X, y, cross_val=False):
+def train_test_split(X, y, single=1, cross_val=False):
     if not cross_val:
-        X_train = [np.concatenate((X[2], X[3]), axis=0)]
-        y_train = [np.concatenate((y[2], y[3]), axis=0)]
-        X_test = [X[1]]
-        y_test = [y[1]]
+        clips = [1,2,3]
+        clips.remove(single)
+        X_train = [np.concatenate((X[clips[0]], X[clips[1]]), axis=0)]
+        y_train = [np.concatenate((y[clips[0]], y[clips[1]]), axis=0)]
+        X_test = [X[single]]
+        y_test = [y[single]]
     else:
         X_train1 = np.concatenate((X[2], X[3]), axis=0)
         y_train1 = np.concatenate((y[2], y[3]), axis=0)
