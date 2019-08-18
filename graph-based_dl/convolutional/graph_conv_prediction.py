@@ -27,7 +27,7 @@ np.random.seed(42)
 cross_val = False
 single = 3
 saving = True
-num = 18
+num = 19
 
 """ Neural network hyperparameters """
 epochs = [200]
@@ -64,7 +64,7 @@ percentiles = (40, 60)
 subsampling_factor = [1]
 stride = [5]
 look_back = [5000]
-target_steps_ahead = [2000]  # starting from the position len(sequence)
+target_steps_ahead = [500, 1000]  # starting from the position len(sequence)
 predicted_timestamps = 1
 
 """ Set tunables """
