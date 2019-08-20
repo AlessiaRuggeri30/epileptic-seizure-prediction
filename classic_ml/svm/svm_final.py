@@ -9,7 +9,7 @@ from sklearn.utils import shuffle
 import sys
 sys.path.append("....")
 from utils.load_data import load_data
-from utils.utils import add_experiment, save_experiments, model_evaluation,\
+from utils.utils import add_experiment, save_experiments, model_evaluation, data_standardization,\
                         experiment_results_summary, generate_prediction_plots, train_test_split
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
@@ -18,7 +18,7 @@ np.random.seed(42)
 """ Global parameters """
 cross_val = True
 saving = True
-num = 1
+num = 7
 
 """ Model hyperparameters """
 gamma = 'scale'
@@ -52,6 +52,9 @@ for fold in range(n_folds):
         class_weight = 'balanced'
     else:
         class_weight = None
+
+    """ Standardize data """
+    X_train, X_test = data_standardization(X_train, X_test)
 
     original_X_train = X_train
     original_y_train = y_train
